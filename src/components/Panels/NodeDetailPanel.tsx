@@ -122,7 +122,7 @@ export function NodeDetailPanel() {
                   </span>
                 </div>
               )}
-              {service.costModel.freeTrierAvailable && (
+              {service.costModel.freeTierAvailable && (
                 <div className="flex items-center gap-1 text-xs text-green-600">
                   <Zap className="w-3 h-3" />
                   <span>Free tier available</span>

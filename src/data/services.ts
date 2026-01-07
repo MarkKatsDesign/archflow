@@ -31,7 +31,7 @@ export const services: Service[] = [
     costModel: {
       type: 'tiered',
       baseCost: 0,
-      freeTrierAvailable: true,
+      freeTierAvailable: true,
       estimatedMonthlyCost: { min: 0, max: 20 },
     },
     scalability: 5,
@@ -92,7 +92,7 @@ export const services: Service[] = [
     costModel: {
       type: 'usage',
       baseCost: 0,
-      freeTrierAvailable: true,
+      freeTierAvailable: true,
       estimatedMonthlyCost: { min: 0, max: 100 },
     },
     scalability: 5,
@@ -155,7 +155,7 @@ export const services: Service[] = [
       type: 'tiered',
       baseCost: 15,
       scalingFactor: 2,
-      freeTrierAvailable: true,
+      freeTierAvailable: true,
       estimatedMonthlyCost: { min: 15, max: 500 },
     },
     scalability: 4,
@@ -177,7 +177,7 @@ export const services: Service[] = [
     costModel: {
       type: 'tiered',
       baseCost: 0,
-      freeTrierAvailable: true,
+      freeTierAvailable: true,
       estimatedMonthlyCost: { min: 0, max: 25 },
     },
     scalability: 4,
@@ -230,7 +230,7 @@ export const services: Service[] = [
       type: 'tiered',
       baseCost: 12,
       scalingFactor: 3,
-      freeTrierAvailable: false,
+      freeTierAvailable: false,
       estimatedMonthlyCost: { min: 12, max: 300 },
     },
     scalability: 5,
@@ -292,7 +292,7 @@ export const services: Service[] = [
     costModel: {
       type: 'usage',
       baseCost: 0,
-      freeTrierAvailable: true,
+      freeTierAvailable: true,
       estimatedMonthlyCost: { min: 5, max: 100 },
     },
     scalability: 5,
@@ -325,7 +325,7 @@ export const services: Service[] = [
     costModel: {
       type: 'tiered',
       baseCost: 0,
-      freeTrierAvailable: true,
+      freeTierAvailable: true,
       estimatedMonthlyCost: { min: 0, max: 240 },
     },
     scalability: 5,
@@ -347,7 +347,7 @@ export const services: Service[] = [
     costModel: {
       type: 'tiered',
       baseCost: 0,
-      freeTrierAvailable: true,
+      freeTierAvailable: true,
       estimatedMonthlyCost: { min: 0, max: 25 },
     },
     scalability: 4,

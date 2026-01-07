@@ -1,0 +1,150 @@
+import { useMemo } from 'react';
+import { useArchitectureStore } from '../store/useArchitectureStore';
+import type { Service } from '../types/service';
+
+export interface CompatibilityStatus {
+  isCompatible: boolean;
+  isRecommended: boolean;
+  isIncompatible: boolean;
+  reason?: string;
+}
+
+export function useCompatibility() {
+  const { nodes } = useArchitectureStore();
+
+  // Get all services currently on the canvas
+  const canvasServices = useMemo(() => {
+    return nodes.map((node) => node.data.service);
+  }, [nodes]);
+
+  const canvasServiceIds = useMemo(() => {
+    return new Set(canvasServices.map((s) => s.id));
+  }, [canvasServices]);
+
+  // Check compatibility for a given service
+  const checkCompatibility = (service: Service): CompatibilityStatus => {
+    if (canvasServices.length === 0) {
+      return {
+        isCompatible: true,
+        isRecommended: false,
+        isIncompatible: false,
+      };
+    }
+
+    let isIncompatible = false;
+    let isRecommended = false;
+    let reason: string | undefined;
+
+    // Check for incompatibilities
+    for (const canvasService of canvasServices) {
+      // Check if canvas service marks this as incompatible
+      if (canvasService.incompatibleWith?.includes(service.id)) {
+        isIncompatible = true;
+        reason = `Incompatible with ${canvasService.name}`;
+        break;
+      }
+
+      // Check if this service marks canvas service as incompatible
+      if (service.incompatibleWith?.includes(canvasService.id)) {
+        isIncompatible = true;
+        reason = `Incompatible with ${canvasService.name}`;
+        break;
+      }
+    }
+
+    // Check for recommendations (if compatible)
+    if (!isIncompatible) {
+      for (const canvasService of canvasServices) {
+        // Check if canvas service recommends this
+        if (canvasService.compatibleWith?.includes(service.id)) {
+          isRecommended = true;
+          reason = `Works well with ${canvasService.name}`;
+          break;
+        }
+
+        // Check if this service recommends canvas service
+        if (service.compatibleWith?.includes(canvasService.id)) {
+          isRecommended = true;
+          reason = `Works well with ${canvasService.name}`;
+          break;
+        }
+      }
+    }
+
+    return {
+      isCompatible: !isIncompatible,
+      isRecommended,
+      isIncompatible,
+      reason,
+    };
+  };
+
+  // Get recommended services based on canvas state
+  const getRecommendations = (allServices: Service[]): Service[] => {
+    if (canvasServices.length === 0) return [];
+
+    const recommendations = new Set<string>();
+
+    canvasServices.forEach((canvasService) => {
+      // Add all compatible services as recommendations
+      canvasService.compatibleWith?.forEach((serviceId) => {
+        // Only recommend if not already on canvas
+        if (!canvasServiceIds.has(serviceId)) {
+          recommendations.add(serviceId);
+        }
+      });
+    });
+
+    return allServices.filter((s) => recommendations.has(s.id));
+  };
+
+  // Detect missing requirements and anti-patterns
+  const getWarnings = (): string[] => {
+    const warnings: string[] = [];
+
+    canvasServices.forEach((service) => {
+      // Check if service requires at least one of certain services
+      if (service.requiresOneOf && service.requiresOneOf.length > 0) {
+        const hasRequired = service.requiresOneOf.some((reqId) =>
+          canvasServiceIds.has(reqId)
+        );
+
+        if (!hasRequired) {
+          warnings.push(
+            `${service.name} requires at least one of: ${service.requiresOneOf.join(', ')}`
+          );
+        }
+      }
+    });
+
+    // Anti-pattern: Database without backend
+    const hasDatabaseCategory = canvasServices.some(
+      (s) => s.category === 'Database'
+    );
+    const hasBackendCategory = canvasServices.some(
+      (s) => s.category === 'Backend'
+    );
+
+    if (hasDatabaseCategory && !hasBackendCategory) {
+      warnings.push(
+        'Consider adding a Backend service to access your database securely'
+      );
+    }
+
+    // Anti-pattern: Backend without database (for non-trivial apps)
+    if (hasBackendCategory && !hasDatabaseCategory && canvasServices.length > 2) {
+      warnings.push(
+        'Most applications need a Database for persistent storage'
+      );
+    }
+
+    return warnings;
+  };
+
+  return {
+    checkCompatibility,
+    getRecommendations,
+    getWarnings,
+    canvasServices,
+  };
+}

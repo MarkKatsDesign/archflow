@@ -47,7 +47,7 @@ export interface CostModel {
   type: 'fixed' | 'usage' | 'tiered' | 'free';
   baseCost?: number;           // Monthly base in USD
   scalingFactor?: number;      // Cost multiplier per scale tier
-  freeTrierAvailable: boolean;
+  freeTierAvailable: boolean;
   estimatedMonthlyCost?: {     // For display purposes
     min: number;
     max: number;

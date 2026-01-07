@@ -1,4 +1,4 @@
-# ArchFlow - Phase 2 Complete
+# ArchFlow - Phase 3 Complete
 
 Visual System Architecture Designer - A drag-and-drop webapp for designing system architectures.
 
@@ -34,6 +34,24 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing syste
   - Tags and documentation links
 - ✅ Interactive node selection (click to view details, click pane to deselect)
 
+### Phase 3: Smart Constraints ✅
+- ✅ Compatibility checking system (useCompatibility hook)
+- ✅ Real-time service filtering based on canvas state:
+  - Incompatible services grayed out and non-draggable
+  - Compatible services highlighted with green background
+  - Visual indicators (sparkles for recommended, ban icon for incompatible)
+  - Helpful reason tooltips explaining why services are recommended/blocked
+- ✅ RecommendationsPanel with smart suggestions:
+  - Shows recommended services based on current architecture
+  - Displays warnings for anti-patterns (e.g., database without backend)
+  - Detects missing requirements (e.g., services that need specific dependencies)
+  - Draggable recommendation cards with service details
+  - Shows "Architecture looks good!" when no issues
+- ✅ Anti-pattern detection:
+  - Database without backend warning
+  - Backend without database suggestion
+  - Missing required services alerts
+
 ## Getting Started
 
 ```bash
@@ -52,10 +70,18 @@ npm run build
 1. **Browse Components**: Use the sidebar to browse available services
 2. **Filter by Category**: Click category badges to filter services
 3. **Search**: Use the search bar to find specific services
-4. **Drag & Drop**: Drag any service from the sidebar onto the canvas
-5. **Connect Services**: Click and drag from one node's handle to another to create connections
-6. **View Details**: Click on any service node to see detailed information in the right panel
-7. **Navigate Canvas**:
+4. **Smart Suggestions**: Services are automatically filtered based on compatibility:
+   - Green background with ✨ = Recommended (works well with your current setup)
+   - Grayed out with 🚫 = Incompatible (conflicts with existing services)
+   - Normal appearance = Compatible but not specifically recommended
+5. **Drag & Drop**: Drag any compatible service from the sidebar onto the canvas
+6. **Connect Services**: Click and drag from one node's handle to another to create connections
+7. **View Details**: Click on any service node to see detailed information in the right panel
+8. **Smart Recommendations**: Check the bottom-right panel for:
+   - Recommended services based on your architecture
+   - Warnings about potential issues
+   - Suggestions to complete your setup
+9. **Navigate Canvas**:
    - Pan by dragging the background
    - Zoom with mouse wheel or controls
    - Use minimap for overview
@@ -86,7 +112,6 @@ npm run build
 
 ## Next Steps (Future Phases)
 
-- Phase 3: Smart constraints and recommendations
 - Phase 4: Onboarding wizard
 - Phase 5: Cost estimation
 - Phase 6: Templates and export functionality

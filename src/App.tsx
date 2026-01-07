@@ -1,6 +1,7 @@
 import ComponentPalette from './components/Sidebar/ComponentPalette';
 import ArchitectureCanvas from './components/Canvas/ArchitectureCanvas';
 import { NodeDetailPanel } from './components/Panels/NodeDetailPanel';
+import { RecommendationsPanel } from './components/Panels/RecommendationsPanel';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <div className="flex-1 relative">
           <ArchitectureCanvas />
           <NodeDetailPanel />
+          <RecommendationsPanel />
         </div>
       </div>
     </div>

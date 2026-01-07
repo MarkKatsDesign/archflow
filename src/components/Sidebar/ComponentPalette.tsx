@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Sparkles, Ban } from 'lucide-react';
 import { services } from '../../data/services';
 import type { Service, Category } from '../../types/service';
+import { useCompatibility } from '../../hooks/useCompatibility';
 
 const categories: Category[] = [
   'Frontend',
@@ -22,29 +23,66 @@ interface ServiceItemProps {
 }
 
 function ServiceItem({ service }: ServiceItemProps) {
+  const { checkCompatibility } = useCompatibility();
+  const compatibility = checkCompatibility(service);
+
   const onDragStart = (event: React.DragEvent, service: Service) => {
+    // Prevent dragging if incompatible
+    if (compatibility.isIncompatible) {
+      event.preventDefault();
+      return;
+    }
     event.dataTransfer.setData('application/reactflow', JSON.stringify(service));
     event.dataTransfer.effectAllowed = 'move';
   };
 
+  const isDisabled = compatibility.isIncompatible;
+  const isRecommended = compatibility.isRecommended;
+
   return (
     <div
-      draggable
+      draggable={!isDisabled}
       onDragStart={(e) => onDragStart(e, service)}
-      className="flex items-start gap-3 p-3 bg-white rounded-lg border-2 hover:border-gray-400 cursor-move transition-all hover:shadow-md"
-      style={{ borderColor: service.color }}
+      className={`flex items-start gap-3 p-3 rounded-lg border-2 transition-all relative ${
+        isDisabled
+          ? 'bg-gray-100 border-gray-300 opacity-50 cursor-not-allowed'
+          : isRecommended
+          ? 'bg-green-50 border-green-300 hover:border-green-500 cursor-move hover:shadow-md'
+          : 'bg-white hover:border-gray-400 cursor-move hover:shadow-md'
+      }`}
+      style={{
+        borderColor: isDisabled
+          ? undefined
+          : isRecommended
+          ? undefined
+          : service.color,
+      }}
+      title={compatibility.reason}
     >
       <div
         className="w-3 h-3 rounded-full mt-0.5 flex-shrink-0"
-        style={{ backgroundColor: service.color }}
+        style={{ backgroundColor: isDisabled ? '#9ca3af' : service.color }}
       />
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm text-gray-800 truncate">
-          {service.shortName}
+        <div className="flex items-center gap-1">
+          <div className={`font-medium text-sm truncate ${isDisabled ? 'text-gray-500' : 'text-gray-800'}`}>
+            {service.shortName}
+          </div>
+          {isRecommended && (
+            <Sparkles className="w-3 h-3 text-green-600 flex-shrink-0" />
+          )}
+          {isDisabled && (
+            <Ban className="w-3 h-3 text-red-500 flex-shrink-0" />
+          )}
         </div>
-        <div className="text-xs text-gray-500 mt-0.5">
+        <div className={`text-xs mt-0.5 ${isDisabled ? 'text-gray-400' : 'text-gray-500'}`}>
           {service.provider}
         </div>
+        {compatibility.reason && (isRecommended || isDisabled) && (
+          <div className={`text-xs mt-1 ${isRecommended ? 'text-green-600' : 'text-red-600'}`}>
+            {compatibility.reason}
+          </div>
+        )}
       </div>
     </div>
   );
