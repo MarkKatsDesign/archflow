@@ -1,4 +1,4 @@
-# ArchFlow - Phase 3 Complete
+# ArchFlow - Phase 4 Complete
 
 Visual System Architecture Designer - A drag-and-drop webapp for designing system architectures.
 
@@ -52,6 +52,34 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing syste
   - Backend without database suggestion
   - Missing required services alerts
 
+### Phase 4: Onboarding Wizard ✅
+- ✅ Multi-step wizard UI with Radix Dialog:
+  - 6 interactive steps with progress tracking
+  - Smooth navigation (back/next buttons, keyboard shortcuts)
+  - Skip functionality with confirmation dialog
+  - Responsive design with gradient headers
+- ✅ Comprehensive questionnaire:
+  - Project type selection (SaaS, E-commerce, Serverless, etc.)
+  - Scale expectations (Startup MVP, Growth, Enterprise)
+  - Budget range (Free tier to Enterprise)
+  - Existing infrastructure (AWS, GCP, Azure, etc.)
+  - Priority ranking (Cost, Performance, Simplicity, Scalability)
+- ✅ Intelligent template matching:
+  - Scoring algorithm (40pts project type, 20pts scale, 20pts budget, 10pts provider, 10pts priorities)
+  - 3 starter templates (SaaS MVP, E-commerce Standard, Serverless AWS)
+  - Real-time template recommendations with match reasons
+  - Template preview with services, costs, pros/cons
+- ✅ Template application to canvas:
+  - One-click template deployment
+  - Auto-generates nodes with proper positioning
+  - Creates edges between services
+  - "Start from scratch" option available
+- ✅ First-time user experience:
+  - Auto-launches wizard on first visit
+  - Saves completion state to localStorage
+  - "Get Started" button prominent when canvas empty
+  - "New Project" button available when canvas has nodes
+
 ## Getting Started
 
 ```bash
@@ -67,6 +95,18 @@ npm run build
 
 ## How to Use
 
+### First-Time Setup
+1. **Launch Wizard**: On first visit, the onboarding wizard automatically appears (or click "Get Started")
+2. **Answer Questions**: Go through 6 steps to define your project:
+   - Choose project type (SaaS, E-commerce, etc.)
+   - Select expected scale (MVP, Growth, Enterprise)
+   - Set budget range ($0 to Enterprise)
+   - Specify existing infrastructure (if any)
+   - Rank your priorities (Cost, Performance, Simplicity, Scalability)
+3. **Choose Template**: Review personalized template recommendations with match scores
+4. **Apply & Customize**: Click "Use This Template" to populate your canvas, then customize as needed
+
+### Building Your Architecture
 1. **Browse Components**: Use the sidebar to browse available services
 2. **Filter by Category**: Click category badges to filter services
 3. **Search**: Use the search bar to find specific services
@@ -86,6 +126,27 @@ npm run build
    - Zoom with mouse wheel or controls
    - Use minimap for overview
    - Click the canvas background to deselect nodes
+10. **Start New Project**: Click "New Project" in header to run the wizard again
+
+## Architecture Templates
+
+### SaaS MVP Starter
+- **Services**: Vercel, Supabase, Cloudflare CDN
+- **Cost**: $0-20/month
+- **Best for**: Startups, MVPs, free tier projects
+- **Pros**: Free tier, quick setup, built-in auth
+
+### E-commerce Standard
+- **Services**: Vercel, Auth0, RDS Postgres, S3, Algolia
+- **Cost**: $100-500/month
+- **Best for**: Growth stage, e-commerce platforms
+- **Pros**: Scalable, robust search, secure payments ready
+
+### Serverless AWS
+- **Services**: Lambda, DynamoDB, S3, CloudFront, SQS
+- **Cost**: $20-150/month
+- **Best for**: Variable workloads, pay-per-use
+- **Pros**: Auto-scaling, no server management
 
 ## Available Services (28)
 
@@ -112,9 +173,8 @@ npm run build
 
 ## Next Steps (Future Phases)
 
-- Phase 4: Onboarding wizard
-- Phase 5: Cost estimation
-- Phase 6: Templates and export functionality
+- Phase 5: Real-time cost estimation with breakdown
+- Phase 6: Export functionality (PNG, PDF, JSON, Markdown)
 
 ## Project Structure
 

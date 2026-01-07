@@ -13,6 +13,8 @@ import type {
   OnConnect,
 } from 'reactflow';
 import type { ServiceNode, ServiceEdge } from '../types/architecture';
+import type { ArchitectureTemplate } from '../types/template';
+import { services } from '../data/services';
 
 interface ArchitectureStore {
   nodes: ServiceNode[];
@@ -25,6 +27,7 @@ interface ArchitectureStore {
   setNodes: (nodes: ServiceNode[]) => void;
   setEdges: (edges: ServiceEdge[]) => void;
   setSelectedNodeId: (nodeId: string | null) => void;
+  applyTemplate: (template: ArchitectureTemplate) => void;
 }
 
 export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
@@ -64,5 +67,42 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
 
   setSelectedNodeId: (nodeId: string | null) => {
     set({ selectedNodeId: nodeId });
+  },
+
+  applyTemplate: (template: ArchitectureTemplate) => {
+    // Generate unique node IDs and populate with full service data
+    const nodes: ServiceNode[] = template.nodes.map((templateNode, idx) => {
+      const service = services.find((s) => s.id === templateNode.data.service.id);
+      if (!service) {
+        throw new Error(`Service not found: ${templateNode.data.service.id}`);
+      }
+
+      return {
+        id: `${service.id}-${Date.now()}-${idx}`,
+        type: 'custom',
+        position: templateNode.position,
+        data: {
+          service,
+          label: service.shortName,
+        },
+      };
+    });
+
+    // Map edges to actual node IDs
+    const edges: ServiceEdge[] = template.edges.map((templateEdge, idx) => {
+      const sourceNode = nodes[templateEdge.sourceIndex];
+      const targetNode = nodes[templateEdge.targetIndex];
+
+      return {
+        id: `edge-${Date.now()}-${idx}`,
+        source: sourceNode.id,
+        target: targetNode.id,
+        type: templateEdge.type,
+        animated: templateEdge.animated,
+        label: templateEdge.label,
+      };
+    });
+
+    set({ nodes, edges, selectedNodeId: null });
   },
 }));
