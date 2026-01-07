@@ -1,4 +1,4 @@
-# ArchFlow - Phase 4 Complete
+# ArchFlow - Phase 5 Complete
 
 Visual System Architecture Designer - A drag-and-drop webapp for designing system architectures.
 
@@ -80,6 +80,32 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing syste
   - "Get Started" button prominent when canvas empty
   - "New Project" button available when canvas has nodes
 
+### Phase 5: Real-Time Cost Estimation ✅
+- ✅ Cost calculation engine (useCostCalculator hook):
+  - Real-time cost calculations based on canvas services
+  - Intelligent scaling formula: baseCost * (scalingFactor ^ scaleExponent)
+  - Support for 3 scale tiers (Startup MVP, Growth, Enterprise)
+  - Automatic grouping by service category
+  - Excludes services without cost data
+- ✅ Cost Estimate Panel (bottom-left):
+  - Collapsible panel to save screen space
+  - Displays total monthly cost range ($min - $max)
+  - Expandable category breakdowns with individual service costs
+  - Color-coded budget status (green/amber/red)
+  - Scale selector with dropdown (Startup MVP, Growth, Enterprise)
+  - Real-time updates when adding/removing services
+- ✅ Budget warnings:
+  - Within budget (<80%): green checkmark
+  - Approaching limit (80-100%): amber warning
+  - Exceeds budget (>100%): red alert
+  - Budget thresholds: Free ($0), Minimal ($50), Moderate ($500), Flexible ($5K), Enterprise (unlimited)
+- ✅ Smart cost scaling:
+  - Defaults to 'startup-mvp' scale if onboarding not completed
+  - Applies service-specific scaling factors at different tiers
+  - Growth tier: applies scaling factor once
+  - Enterprise tier: applies scaling factor twice
+  - Example: RDS with baseCost=$15, scalingFactor=2 → MVP: $15, Growth: $30, Enterprise: $60
+
 ## Getting Started
 
 ```bash
@@ -127,6 +153,12 @@ npm run build
    - Use minimap for overview
    - Click the canvas background to deselect nodes
 10. **Start New Project**: Click "New Project" in header to run the wizard again
+11. **View Cost Estimates**: Check the bottom-left panel for:
+    - Total monthly cost based on your selected scale
+    - Cost breakdown by category (Frontend, Backend, Database, etc.)
+    - Budget status and warnings
+    - Individual service costs (expand categories to see details)
+12. **Adjust Scale**: Change scale tier (Startup MVP → Growth → Enterprise) to see cost changes
 
 ## Architecture Templates
 
@@ -173,8 +205,7 @@ npm run build
 
 ## Next Steps (Future Phases)
 
-- Phase 5: Real-time cost estimation with breakdown
-- Phase 6: Export functionality (PNG, PDF, JSON, Markdown)
+- Phase 6: Export functionality (PNG, PDF, JSON, Markdown, Terraform stubs)
 
 ## Project Structure
 

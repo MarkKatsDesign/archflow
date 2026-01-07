@@ -3,6 +3,7 @@ import ComponentPalette from './components/Sidebar/ComponentPalette';
 import ArchitectureCanvas from './components/Canvas/ArchitectureCanvas';
 import { NodeDetailPanel } from './components/Panels/NodeDetailPanel';
 import { RecommendationsPanel } from './components/Panels/RecommendationsPanel';
+import { CostEstimatePanel } from './components/Panels/CostEstimatePanel';
 import { OnboardingWizard } from './components/Onboarding/OnboardingWizard';
 import { WizardButton } from './components/Onboarding/WizardButton';
 import { useOnboardingStore } from './store/useOnboardingStore';
@@ -42,6 +43,7 @@ function App() {
           <ArchitectureCanvas />
           <NodeDetailPanel />
           <RecommendationsPanel />
+          <CostEstimatePanel />
         </div>
       </div>
 
