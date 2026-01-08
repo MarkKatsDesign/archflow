@@ -69,6 +69,55 @@ resource "aws_iam_role_policy_attachment" "lambda_${index}_basic" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
   role       = aws_iam_role.lambda_${index}_role.name
 }
+
+# VPC access policy (for accessing RDS, ElastiCache in private subnets)
+resource "aws_iam_role_policy_attachment" "lambda_${index}_vpc" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  role       = aws_iam_role.lambda_${index}_role.name
+}
+
+# Custom policy for accessing other AWS services
+resource "aws_iam_role_policy" "lambda_${index}_custom" {
+  name = "\${var.lambda_${index}_name}-custom-policy"
+  role = aws_iam_role.lambda_${index}_role.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "sqs:SendMessage",
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:Query",
+          "dynamodb:Scan"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
 `,
     dependencies: [],
   }),
@@ -317,6 +366,13 @@ resource "aws_ecs_service" "ecs_${index}_service" {
     assign_public_ip = false
   }
 
+  # TODO: Uncomment if using ALB - connect to target group
+  # load_balancer {
+  #   target_group_arn = aws_lb_target_group.alb_X_tg.arn
+  #   container_name   = "\${var.ecs_${index}_cluster_name}-container"
+  #   container_port   = 80
+  # }
+
   tags = {
     Name        = "\${var.ecs_${index}_cluster_name}"
     Environment = "\${var.environment}"
@@ -385,6 +441,57 @@ resource "aws_iam_role_policy_attachment" "ecs_${index}_execution_policy" {
   role       = aws_iam_role.ecs_${index}_execution_role.name
 }
 
+# Task role policy for accessing AWS services
+resource "aws_iam_role_policy" "ecs_${index}_task_policy" {
+  name = "\${var.ecs_${index}_cluster_name}-task-policy"
+  role = aws_iam_role.ecs_${index}_task_role.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "sqs:SendMessage",
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "sns:Publish"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:Query",
+          "dynamodb:Scan"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_cloudwatch_log_group" "ecs_${index}_logs" {
   name              = "/ecs/\${var.ecs_${index}_cluster_name}"
   retention_in_days = 7
@@ -399,7 +506,7 @@ resource "aws_cloudwatch_log_group" "ecs_${index}_logs" {
   }),
 
   // SQS
-  'sqs': (_node, index) => ({
+  'aws-sqs': (_node, index) => ({
     type: 'aws_sqs_queue',
     name: `sqs_${index}`,
     config: `
@@ -438,7 +545,7 @@ resource "aws_sqs_queue" "sqs_${index}_dlq" {
   }),
 
   // SNS
-  'sns': (_node, index) => ({
+  'aws-sns': (_node, index) => ({
     type: 'aws_sns_topic',
     name: `sns_${index}`,
     config: `
@@ -455,7 +562,7 @@ resource "aws_sns_topic" "sns_${index}" {
   }),
 
   // CloudFront
-  'cloudfront': (_node, index) => ({
+  'aws-cloudfront': (_node, index) => ({
     type: 'aws_cloudfront_distribution',
     name: `cloudfront_${index}`,
     config: `
