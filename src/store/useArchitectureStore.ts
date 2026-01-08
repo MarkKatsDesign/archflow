@@ -79,7 +79,7 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
 
       return {
         id: `${service.id}-${Date.now()}-${idx}`,
-        type: 'custom',
+        type: 'service',
         position: templateNode.position,
         data: {
           service,
