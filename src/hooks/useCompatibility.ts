@@ -9,6 +9,13 @@ export interface CompatibilityStatus {
   reason?: string;
 }
 
+// Full-stack platforms that have backend capabilities (serverless functions, edge workers, etc.)
+const FULL_STACK_PLATFORMS = new Set([
+  'vercel',
+  'netlify',
+  'cloudflare-pages',
+]);
+
 export function useCompatibility() {
   const { nodes } = useArchitectureStore();
 
@@ -102,6 +109,11 @@ export function useCompatibility() {
   const getWarnings = (): string[] => {
     const warnings: string[] = [];
 
+    // Check if we have a full-stack platform (counts as having backend)
+    const hasFullStackPlatform = canvasServices.some((s) =>
+      FULL_STACK_PLATFORMS.has(s.id)
+    );
+
     canvasServices.forEach((service) => {
       // Check if service requires at least one of certain services
       if (service.requiresOneOf && service.requiresOneOf.length > 0) {
@@ -109,7 +121,15 @@ export function useCompatibility() {
           canvasServiceIds.has(reqId)
         );
 
-        if (!hasRequired) {
+        // Also check if we have a full-stack platform that can satisfy backend requirements
+        const requiresBackend = service.requiresOneOf.some((reqId) => {
+          const reqService = canvasServices.find((s) => s.id === reqId);
+          return reqService?.category === 'Backend';
+        });
+
+        const canBeMetByFullStack = requiresBackend && hasFullStackPlatform;
+
+        if (!hasRequired && !canBeMetByFullStack) {
           warnings.push(
             `${service.name} requires at least one of: ${service.requiresOneOf.join(', ')}`
           );
@@ -125,13 +145,15 @@ export function useCompatibility() {
       (s) => s.category === 'Backend'
     );
 
-    if (hasDatabaseCategory && !hasBackendCategory) {
+    // Only warn if no backend AND no full-stack platform
+    if (hasDatabaseCategory && !hasBackendCategory && !hasFullStackPlatform) {
       warnings.push(
-        'Consider adding a Backend service to access your database securely'
+        'Consider adding a Backend service or full-stack platform (Vercel, Netlify) to access your database securely'
       );
     }
 
     // Anti-pattern: Backend without database (for non-trivial apps)
+    // Only warn if we have explicit Backend category (not full-stack platforms)
     if (hasBackendCategory && !hasDatabaseCategory && canvasServices.length > 2) {
       warnings.push(
         'Most applications need a Database for persistent storage'
