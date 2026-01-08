@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Download, FileJson, Image, FileText, FileType, Upload, ChevronDown } from 'lucide-react';
+import { Download, FileJson, Image, FileText, FileType, Upload, ChevronDown, FileCode } from 'lucide-react';
 import { useArchitectureStore } from '../../store/useArchitectureStore';
 import { useCostCalculator } from '../../hooks/useCostCalculator';
 import { useOnboardingStore } from '../../store/useOnboardingStore';
@@ -10,6 +10,7 @@ import {
   exportToMarkdown,
   exportToPDF,
 } from '../../utils/exportUtils';
+import { exportToTerraform } from '../../utils/terraformGenerator';
 
 export function ExportPanel() {
   const [isOpen, setIsOpen] = useState(false);
@@ -90,6 +91,18 @@ export function ExportPanel() {
       });
     } catch (error) {
       console.error('PDF export failed:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportTerraform = async () => {
+    setIsExporting(true);
+    try {
+      await exportToTerraform(nodes, edges);
+    } catch (error) {
+      console.error('Terraform export failed:', error);
+      alert('Failed to export Terraform files. Please try again.');
     } finally {
       setIsExporting(false);
     }
@@ -254,6 +267,25 @@ export function ExportPanel() {
                       <div className="font-medium text-sm text-gray-900">PDF Document</div>
                       <div className="text-xs text-gray-500">
                         {isExporting ? 'Generating...' : 'Multi-page report'}
+                      </div>
+                    </div>
+                  </button>
+
+                  <div className="border-t my-1"></div>
+
+                  {/* Terraform Export */}
+                  <button
+                    onClick={handleExportTerraform}
+                    disabled={isExporting}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-50 transition-colors text-left disabled:opacity-50"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                      <FileCode className="w-4 h-4 text-indigo-600" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-sm text-gray-900">Terraform (IaC)</div>
+                      <div className="text-xs text-gray-500">
+                        {isExporting ? 'Generating...' : 'Infrastructure as Code'}
                       </div>
                     </div>
                   </button>

@@ -1,4 +1,4 @@
-# ArchFlow - Phase 7 Complete
+# ArchFlow - Phase 8 Complete
 
 Visual System Architecture Designer - A drag-and-drop webapp for designing, documenting, and sharing production-ready system architectures.
 
@@ -158,6 +158,40 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing, docu
   - Hides when canvas is empty
   - One-click operations for all export types
 
+### Phase 8: Infrastructure as Code (Terraform) ✅
+- ✅ **Terraform Code Generation** - Export architecture as Infrastructure as Code:
+  - Generates complete Terraform configuration from visual design
+  - Multi-file structure (main.tf, variables.tf, outputs.tf, terraform.tfvars.example)
+  - Comprehensive README with setup instructions and prerequisites
+  - Downloads as convenient ZIP file for immediate use
+- ✅ **AWS Service Support** - Full resource definitions for popular AWS services:
+  - **Compute**: Lambda (with IAM roles), ECS (Fargate with task definitions)
+  - **Database**: RDS Postgres (with security groups, subnet groups)
+  - **Storage**: S3 (versioning, encryption, public access blocks), DynamoDB
+  - **Networking**: API Gateway (HTTP API), ALB (with target groups), VPC infrastructure
+  - **Messaging**: SQS (with DLQ), SNS
+  - **Cache**: ElastiCache Redis (with subnet groups, security groups)
+  - **CDN**: CloudFront (with OAI for S3)
+- ✅ **Smart Infrastructure Generation**:
+  - Automatic VPC creation when needed (public/private subnets, NAT gateways, route tables)
+  - Security groups with proper ingress/egress rules
+  - IAM roles and policies for service-to-service communication
+  - CloudWatch log groups for monitoring
+  - Subnet groups for database and cache services
+  - Load balancer target groups and listeners
+- ✅ **SaaS Service Documentation**:
+  - Smart handling of managed SaaS services (Vercel, Auth0, Stripe, etc.)
+  - Generates documentation comments with setup instructions
+  - Links to provider dashboards and documentation
+  - Cost estimates and configuration guidance
+- ✅ **Production-Ready Configuration**:
+  - Parameterized variables for easy customization
+  - Example terraform.tfvars with sensible defaults
+  - Output values for endpoints, ARNs, and connection strings
+  - Security best practices (encryption, private subnets, least privilege IAM)
+  - Resource tagging for organization and cost tracking
+  - Backup and monitoring configurations
+
 ## Getting Started
 
 ```bash
@@ -216,6 +250,7 @@ npm run build
     - **Share Visually**: Export to PNG for presentations, Slack, or documentation
     - **Document**: Export to Markdown for GitHub READMEs or wikis
     - **Professional Reports**: Export to PDF for client deliverables
+    - **Deploy Infrastructure**: Export to Terraform for Infrastructure as Code deployment
 
 ## Architecture Templates
 
@@ -302,12 +337,13 @@ The service library has been expanded to include the "glue" services that real p
 - **State**: Zustand
 - **Icons**: Lucide React
 - **Build**: Vite
+- **Export**: html-to-image, jsPDF, JSZip, FileSaver
 
 ## Next Steps (Future Phases)
 
-- Phase 8: Terraform stub generation (Infrastructure as Code templates)
 - Phase 9: Group nodes for network boundaries (VPC, Private Subnet, Public Zone)
 - Phase 10: Collaboration features (real-time editing, comments, version history)
+- Phase 11: Multi-cloud support (GCP and Azure Terraform generation)
 
 ## Project Structure
 
