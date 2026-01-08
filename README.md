@@ -1,6 +1,6 @@
-# ArchFlow - Phase 6 Complete
+# ArchFlow - Phase 7 Complete
 
-Visual System Architecture Designer - A drag-and-drop webapp for designing production-ready system architectures.
+Visual System Architecture Designer - A drag-and-drop webapp for designing, documenting, and sharing production-ready system architectures.
 
 ## What's Implemented
 
@@ -130,6 +130,34 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing produ
   - CI/CD pipeline connections
   - Secrets management and security best practices
 
+### Phase 7: Export & Documentation ✅
+- ✅ **JSON Export/Import** - Save and load architectures:
+  - Export current architecture as JSON with full metadata
+  - Import previously saved architectures
+  - Preserves all nodes, edges, and configuration
+  - Enables project versioning and sharing
+- ✅ **PNG Export** - High-resolution image export:
+  - Export canvas as publication-quality PNG
+  - 2x pixel ratio for crisp rendering
+  - Auto-excludes UI controls and minimap
+  - Perfect for presentations, documentation, and sharing
+- ✅ **Markdown Export** - Comprehensive text documentation:
+  - Auto-generates markdown documentation
+  - Includes service details, categories, and connections
+  - Contains cost estimates and scalability ratings
+  - Ready for GitHub READMEs, wikis, and documentation sites
+- ✅ **PDF Export** - Professional multi-page documents:
+  - Page 1: Full architecture diagram
+  - Page 2+: Detailed service documentation
+  - Includes metadata footer with cost estimates
+  - Suitable for client deliverables and reports
+- ✅ **Export Panel UI**:
+  - Convenient top-left dropdown menu
+  - Color-coded export options with icons
+  - Shows export progress for image/PDF generation
+  - Hides when canvas is empty
+  - One-click operations for all export types
+
 ## Getting Started
 
 ```bash
@@ -183,6 +211,11 @@ npm run build
     - Budget status and warnings
     - Individual service costs (expand categories to see details)
 12. **Adjust Scale**: Change scale tier (Startup MVP → Growth → Enterprise) to see cost changes
+13. **Export & Share**: Click the "Export" button (top-left) to:
+    - **Save Progress**: Export to JSON to save your architecture and reload it later
+    - **Share Visually**: Export to PNG for presentations, Slack, or documentation
+    - **Document**: Export to Markdown for GitHub READMEs or wikis
+    - **Professional Reports**: Export to PDF for client deliverables
 
 ## Architecture Templates
 
@@ -272,8 +305,9 @@ The service library has been expanded to include the "glue" services that real p
 
 ## Next Steps (Future Phases)
 
-- Phase 7: Export functionality (PNG, PDF, JSON, Markdown, Terraform stubs)
-- Phase 8: Group nodes for network boundaries (VPC, Private Subnet, Public Zone)
+- Phase 8: Terraform stub generation (Infrastructure as Code templates)
+- Phase 9: Group nodes for network boundaries (VPC, Private Subnet, Public Zone)
+- Phase 10: Collaboration features (real-time editing, comments, version history)
 
 ## Project Structure
 

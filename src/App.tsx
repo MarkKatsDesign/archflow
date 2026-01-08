@@ -4,6 +4,7 @@ import ArchitectureCanvas from './components/Canvas/ArchitectureCanvas';
 import { NodeDetailPanel } from './components/Panels/NodeDetailPanel';
 import { RecommendationsPanel } from './components/Panels/RecommendationsPanel';
 import { CostEstimatePanel } from './components/Panels/CostEstimatePanel';
+import { ExportPanel } from './components/Panels/ExportPanel';
 import { OnboardingWizard } from './components/Onboarding/OnboardingWizard';
 import { WizardButton } from './components/Onboarding/WizardButton';
 import { useOnboardingStore } from './store/useOnboardingStore';
@@ -41,6 +42,7 @@ function App() {
         <ComponentPalette />
         <div className="flex-1 relative">
           <ArchitectureCanvas />
+          <ExportPanel />
           <NodeDetailPanel />
           <RecommendationsPanel />
           <CostEstimatePanel />
