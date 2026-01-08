@@ -1,6 +1,6 @@
-# ArchFlow - Phase 5 Complete
+# ArchFlow - Phase 6 Complete
 
-Visual System Architecture Designer - A drag-and-drop webapp for designing system architectures.
+Visual System Architecture Designer - A drag-and-drop webapp for designing production-ready system architectures.
 
 ## What's Implemented
 
@@ -106,6 +106,30 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing syste
   - Enterprise tier: applies scaling factor twice
   - Example: RDS with baseCost=$15, scalingFactor=2 → MVP: $15, Growth: $30, Enterprise: $60
 
+### Phase 6: Production-Ready Architecture Library ✅
+- ✅ Expanded service library (28 → 44 services):
+  - **Networking** (4 services): AWS API Gateway, AWS ALB, Route53, Cloudflare DNS
+  - **DevOps** (5 services): GitHub Actions, AWS Secrets Manager, Doppler, AWS ECR, Docker Hub
+  - **Integrations** (7 services): Stripe, Resend, SendGrid, AWS SES, Sanity, Contentful, Strapi
+  - All new services include full metadata (compatibility, costs, scalability, complexity)
+- ✅ Enhanced templates (3 → 7 production-ready architectures):
+  - **Modern SaaS (Jamstack)**: Vercel + Clerk + Supabase + Stripe + Resend - Complete SaaS starter
+  - **Event-Driven Serverless**: S3 + Lambda + SQS + DynamoDB + SNS - Async processing workflows
+  - **Containerized Microservices**: ALB + ECS + ElastiCache + RDS + CloudWatch - Enterprise-grade
+  - **Rapid PaaS Monolith**: Render + PlanetScale + Upstash + GitHub Actions - Indie hacker friendly
+  - Existing templates updated with edge labels
+- ✅ Connection labeling system:
+  - All template edges now include descriptive labels
+  - Shows HOW services communicate (e.g., "Auth Token", "SQL Queries", "S3 Event")
+  - Teaches users about connection patterns and protocols
+- ✅ Real-world architecture patterns:
+  - API Gateway + Lambda serverless pattern
+  - Load Balancer + Container orchestration
+  - Event-driven async processing with queues
+  - Payments, email, and CMS integrations
+  - CI/CD pipeline connections
+  - Secrets management and security best practices
+
 ## Getting Started
 
 ```bash
@@ -165,34 +189,77 @@ npm run build
 ### SaaS MVP Starter
 - **Services**: Vercel, Supabase, Cloudflare CDN
 - **Cost**: $0-20/month
+- **Complexity**: Low (1/5)
 - **Best for**: Startups, MVPs, free tier projects
 - **Pros**: Free tier, quick setup, built-in auth
 
 ### E-commerce Standard
 - **Services**: Vercel, Auth0, RDS Postgres, S3, Algolia
 - **Cost**: $100-500/month
+- **Complexity**: Medium (3/5)
 - **Best for**: Growth stage, e-commerce platforms
 - **Pros**: Scalable, robust search, secure payments ready
 
 ### Serverless AWS
 - **Services**: Lambda, DynamoDB, S3, CloudFront, SQS
 - **Cost**: $20-150/month
+- **Complexity**: Medium (3/5)
 - **Best for**: Variable workloads, pay-per-use
 - **Pros**: Auto-scaling, no server management
 
-## Available Services (28)
+### Modern SaaS (Jamstack)
+- **Services**: Vercel, Clerk, Supabase, Stripe, Resend
+- **Cost**: $0-50/month
+- **Complexity**: Low-Medium (2/5)
+- **Best for**: SaaS products needing auth, payments, and email
+- **Pros**: Complete starter kit, generous free tiers, minimal backend
+
+### Event-Driven Serverless
+- **Services**: S3, Lambda, SQS, DynamoDB, SNS
+- **Cost**: $10-200/month
+- **Complexity**: High (4/5)
+- **Best for**: Async processing, data pipelines, workflows
+- **Pros**: Fully decoupled, scales automatically, pay-per-use
+
+### Containerized Microservices
+- **Services**: ALB, ECS (×2), ElastiCache, RDS, CloudWatch
+- **Cost**: $150-1000/month
+- **Complexity**: Very High (5/5)
+- **Best for**: Enterprise applications, heavy compute
+- **Pros**: Full control, independent scaling, battle-tested
+
+### Rapid PaaS Monolith
+- **Services**: Render, PlanetScale, Upstash Redis, GitHub Actions
+- **Cost**: $7-100/month
+- **Complexity**: Very Low (1/5)
+- **Best for**: Indie hackers, MVPs, simple full-stack apps
+- **Pros**: Simplest deployment, all free tiers, auto-deploy
+
+## Available Services (44)
 
 ### Categories
-- Frontend (3): Vercel, Netlify, Cloudflare Pages
-- CDN (2): Cloudflare CDN, AWS CloudFront
-- Backend (5): AWS Lambda, AWS ECS, GCP Cloud Run, Railway, Render
-- Database (5): RDS Postgres, Supabase, PlanetScale, MongoDB Atlas, DynamoDB
-- Cache (2): ElastiCache, Upstash Redis
-- Queue (3): SQS, SNS, RabbitMQ
-- Storage (2): S3, Cloudflare R2
-- Auth (3): Auth0, Clerk, Supabase Auth
-- Search (2): Algolia, Elasticsearch
-- Monitoring (2): Datadog, CloudWatch
+- **Frontend** (3): Vercel, Netlify, Cloudflare Pages
+- **CDN** (2): Cloudflare CDN, AWS CloudFront
+- **Backend** (5): AWS Lambda, AWS ECS, GCP Cloud Run, Railway, Render
+- **Database** (5): RDS Postgres, Supabase, PlanetScale, MongoDB Atlas, DynamoDB
+- **Cache** (2): ElastiCache, Upstash Redis
+- **Queue** (3): SQS, SNS, RabbitMQ
+- **Storage** (2): S3, Cloudflare R2
+- **Auth** (3): Auth0, Clerk, Supabase Auth
+- **Search** (2): Algolia, Elasticsearch
+- **Monitoring** (2): Datadog, CloudWatch
+- **Networking** (4): AWS API Gateway, AWS ALB, Route53, Cloudflare DNS
+- **DevOps** (5): GitHub Actions, AWS Secrets Manager, Doppler, AWS ECR, Docker Hub
+- **Integrations** (7): Stripe, Resend, SendGrid, AWS SES, Sanity, Contentful, Strapi
+
+### What's New in Phase 6
+The service library has been expanded to include the "glue" services that real production architectures need:
+
+**Networking Layer**: No more direct Frontend → Database connections. Now you can add API Gateways for serverless architectures and Load Balancers for containerized services, showing realistic traffic flow.
+
+**DevOps & Security**: Include CI/CD pipelines (GitHub Actions), secrets management (AWS Secrets Manager, Doppler), and container registries (ECR, Docker Hub) to show complete deployment workflows.
+
+**Third-Party Integrations**: Add payments (Stripe), transactional email (Resend, SendGrid, SES), and headless CMS (Sanity, Contentful, Strapi) to build complete SaaS and e-commerce architectures.
 
 ## Tech Stack
 
@@ -205,7 +272,8 @@ npm run build
 
 ## Next Steps (Future Phases)
 
-- Phase 6: Export functionality (PNG, PDF, JSON, Markdown, Terraform stubs)
+- Phase 7: Export functionality (PNG, PDF, JSON, Markdown, Terraform stubs)
+- Phase 8: Group nodes for network boundaries (VPC, Private Subnet, Public Zone)
 
 ## Project Structure
 

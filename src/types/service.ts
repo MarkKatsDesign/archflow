@@ -11,6 +11,9 @@ export const Category = {
   AIml: 'AI/ML',
   Monitoring: 'Monitoring',
   Search: 'Search',
+  Networking: 'Networking',
+  DevOps: 'DevOps',
+  Integrations: 'Integrations',
 } as const;
 
 export type Category = typeof Category[keyof typeof Category];
@@ -36,6 +39,7 @@ export type UseCase =
   | 'ecommerce'
   | 'data-pipeline'
   | 'mobile-backend'
+  | 'microservices'
   | 'ai-ml'
   | 'content-site'
   | 'real-time-app'

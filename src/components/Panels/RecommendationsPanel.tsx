@@ -1,16 +1,23 @@
 import { Lightbulb, AlertTriangle, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useCompatibility } from '../../hooks/useCompatibility';
+import { useArchitectureStore } from '../../store/useArchitectureStore';
 import { services } from '../../data/services';
 import type { Service } from '../../types/service';
 
 export function RecommendationsPanel() {
   const { getRecommendations, getWarnings, canvasServices } = useCompatibility();
+  const { selectedNodeId } = useArchitectureStore();
 
   const recommendations = getRecommendations(services);
   const warnings = getWarnings();
 
   // Don't show panel if canvas is empty
   if (canvasServices.length === 0) {
+    return null;
+  }
+
+  // Auto-hide when a node is selected to avoid overlapping with NodeDetailPanel
+  if (selectedNodeId) {
     return null;
   }
 
