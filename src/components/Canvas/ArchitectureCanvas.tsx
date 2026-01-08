@@ -86,10 +86,28 @@ function ArchitectureCanvasInner() {
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
+        defaultEdgeOptions={{
+          type: 'smoothstep',
+          style: {
+            strokeWidth: 2,
+            stroke: '#64748b',
+          },
+          labelStyle: {
+            fill: '#1e293b',
+            fontWeight: 600,
+            fontSize: 12,
+          },
+          labelBgStyle: {
+            fill: '#ffffff',
+            fillOpacity: 0.9,
+          },
+          labelBgPadding: [8, 4],
+          labelBgBorderRadius: 4,
+        }}
         fitView
-        className="bg-gray-50"
+        className="bg-gradient-to-br from-gray-50 to-blue-50"
       >
-        <Background />
+        <Background color="#94a3b8" gap={16} size={1} />
         <Controls />
         <MiniMap
           nodeColor={(node) => {
