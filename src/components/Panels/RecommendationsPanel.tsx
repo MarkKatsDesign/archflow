@@ -6,7 +6,7 @@ import type { Service } from '../../types/service';
 
 export function RecommendationsPanel() {
   const { getRecommendations, getWarnings, canvasServices } = useCompatibility();
-  const { selectedNodeId } = useArchitectureStore();
+  const { selectedNodeId, selectedEdgeId } = useArchitectureStore();
 
   const recommendations = getRecommendations(services);
   const warnings = getWarnings();
@@ -16,8 +16,8 @@ export function RecommendationsPanel() {
     return null;
   }
 
-  // Auto-hide when a node is selected to avoid overlapping with NodeDetailPanel
-  if (selectedNodeId) {
+  // Auto-hide when a node or edge is selected to avoid overlapping with detail panels
+  if (selectedNodeId || selectedEdgeId) {
     return null;
   }
 

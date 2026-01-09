@@ -25,6 +25,8 @@ interface ArchitectureStore {
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
   addNode: (node: ServiceNode) => void;
+  updateEdge: (edgeId: string, updates: Partial<ServiceEdge>) => void;
+  deleteEdge: (edgeId: string) => void;
   setNodes: (nodes: ServiceNode[]) => void;
   setEdges: (edges: ServiceEdge[]) => void;
   setSelectedNodeId: (nodeId: string | null) => void;
@@ -52,12 +54,33 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
 
   onConnect: (connection: Connection) => {
     set({
-      edges: addEdge(connection, get().edges),
+      edges: addEdge(
+        {
+          ...connection,
+          animated: true,
+        },
+        get().edges
+      ),
     });
   },
 
   addNode: (node: ServiceNode) => {
     set({ nodes: [...get().nodes, node] });
+  },
+
+  updateEdge: (edgeId: string, updates: Partial<ServiceEdge>) => {
+    set({
+      edges: get().edges.map((edge) =>
+        edge.id === edgeId ? { ...edge, ...updates } : edge
+      ),
+    });
+  },
+
+  deleteEdge: (edgeId: string) => {
+    set({
+      edges: get().edges.filter((edge) => edge.id !== edgeId),
+      selectedEdgeId: null,
+    });
   },
 
   setNodes: (nodes: ServiceNode[]) => {
@@ -104,8 +127,7 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
         id: `edge-${Date.now()}-${idx}`,
         source: sourceNode.id,
         target: targetNode.id,
-        type: templateEdge.type,
-        animated: templateEdge.animated,
+        animated: templateEdge.animated ?? false,
         label: templateEdge.label,
       };
     });

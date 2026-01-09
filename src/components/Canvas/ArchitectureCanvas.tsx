@@ -132,7 +132,7 @@ function ArchitectureCanvasInner() {
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
         defaultEdgeOptions={{
-          type: 'smoothstep',
+          type: 'default',
           style: {
             strokeWidth: 2,
             stroke: '#64748b',
@@ -149,7 +149,7 @@ function ArchitectureCanvasInner() {
           labelBgPadding: [8, 4],
           labelBgBorderRadius: 4,
         }}
-        connectionLineType={ConnectionLineType.SmoothStep}
+        connectionLineType={ConnectionLineType.Bezier}
         connectionLineStyle={{
           strokeWidth: 2,
           stroke: '#3b82f6',

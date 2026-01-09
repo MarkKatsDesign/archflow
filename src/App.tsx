@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import ComponentPalette from './components/Sidebar/ComponentPalette';
 import ArchitectureCanvas from './components/Canvas/ArchitectureCanvas';
 import { NodeDetailPanel } from './components/Panels/NodeDetailPanel';
+import { EdgeDetailPanel } from './components/Panels/EdgeDetailPanel';
 import { RecommendationsPanel } from './components/Panels/RecommendationsPanel';
 import { CostEstimatePanel } from './components/Panels/CostEstimatePanel';
 import { ExportPanel } from './components/Panels/ExportPanel';
@@ -46,6 +47,7 @@ function App() {
           <ArchitectureCanvas />
           <ExportPanel />
           <NodeDetailPanel />
+          <EdgeDetailPanel />
           <RecommendationsPanel />
           <CostEstimatePanel />
           <LegendPanel />

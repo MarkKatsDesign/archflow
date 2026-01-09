@@ -1,0 +1,181 @@
+import { useState } from 'react';
+import { X, Tag, Zap, GitBranch, Trash2 } from 'lucide-react';
+import { useArchitectureStore } from '../../store/useArchitectureStore';
+import type { Edge } from 'reactflow';
+import type { ServiceNode } from '../../types/architecture';
+
+function EdgeDetailPanelContent({ edge, nodes }: { edge: Edge; nodes: ServiceNode[] }) {
+  const { setSelectedEdgeId, updateEdge, deleteEdge } = useArchitectureStore();
+
+  const [label, setLabel] = useState<string>(
+    typeof edge.label === 'string' ? edge.label : ''
+  );
+
+  // Find source and target node names for display
+  const sourceNode = nodes.find((node) => node.id === edge.source);
+  const targetNode = nodes.find((node) => node.id === edge.target);
+
+  const handleLabelChange = (newLabel: string) => {
+    setLabel(newLabel);
+    updateEdge(edge.id, { label: newLabel });
+  };
+
+  const handleAnimatedToggle = () => {
+    updateEdge(edge.id, { animated: !edge.animated });
+  };
+
+  const handleEdgeTypeChange = (type: string) => {
+    updateEdge(edge.id, { type });
+  };
+
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this connection?')) {
+      deleteEdge(edge.id);
+    }
+  };
+
+  return (
+    <div className="absolute top-4 right-4 w-80 bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden flex flex-col">
+      {/* Header */}
+      <div className="px-4 py-3 border-b flex items-center justify-between border-l-4 border-l-blue-500">
+        <div className="flex-1">
+          <h3 className="font-semibold text-gray-900">Connection Properties</h3>
+          <p className="text-sm text-gray-500">
+            {sourceNode?.data.label || 'Source'} → {targetNode?.data.label || 'Target'}
+          </p>
+        </div>
+        <button
+          onClick={() => setSelectedEdgeId(null)}
+          className="p-1 hover:bg-gray-100 rounded transition-colors"
+          aria-label="Close panel"
+        >
+          <X className="w-5 h-5 text-gray-500" />
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="px-4 py-4 space-y-4">
+        {/* Label Input */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <Tag className="w-4 h-4" />
+            Connection Label
+          </label>
+          <input
+            type="text"
+            value={label || ''}
+            onChange={(e) => handleLabelChange(e.target.value)}
+            placeholder="e.g., Data & Auth, API Call"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Describe the data or communication flow
+          </p>
+        </div>
+
+        {/* Animated Toggle */}
+        <div className="border-t border-gray-200 pt-4">
+          <label className="flex items-center justify-between cursor-pointer">
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-gray-700" />
+              <div>
+                <span className="text-sm font-medium text-gray-700 block">
+                  Animated Flow
+                </span>
+                <span className="text-xs text-gray-500">
+                  Dashed line with animation
+                </span>
+              </div>
+            </div>
+            <div className="relative">
+              <input
+                type="checkbox"
+                checked={edge.animated || false}
+                onChange={handleAnimatedToggle}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </div>
+          </label>
+        </div>
+
+        {/* Edge Type Selection */}
+        <div className="border-t border-gray-200 pt-4">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <GitBranch className="w-4 h-4" />
+            Connection Style
+          </label>
+          <div className="space-y-2">
+            <button
+              onClick={() => handleEdgeTypeChange('default')}
+              className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
+                (edge.type === 'default' || !edge.type)
+                  ? 'bg-blue-50 border-2 border-blue-500 text-blue-700'
+                  : 'bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <div className="font-medium">Bezier (Curved)</div>
+              <div className="text-xs opacity-75">Smooth curved lines</div>
+            </button>
+            <button
+              onClick={() => handleEdgeTypeChange('smoothstep')}
+              className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
+                edge.type === 'smoothstep'
+                  ? 'bg-blue-50 border-2 border-blue-500 text-blue-700'
+                  : 'bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <div className="font-medium">Smooth Step</div>
+              <div className="text-xs opacity-75">Rounded right angles</div>
+            </button>
+            <button
+              onClick={() => handleEdgeTypeChange('straight')}
+              className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
+                edge.type === 'straight'
+                  ? 'bg-blue-50 border-2 border-blue-500 text-blue-700'
+                  : 'bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <div className="font-medium">Straight</div>
+              <div className="text-xs opacity-75">Direct line connection</div>
+            </button>
+          </div>
+        </div>
+
+        {/* Info Box */}
+        <div className="border-t border-gray-200 pt-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+            <p className="text-xs text-blue-800">
+              <strong>Tip:</strong> Use animated connections for active data flows
+              (APIs, real-time sync) and static connections for configuration or
+              one-time setup.
+            </p>
+          </div>
+        </div>
+
+        {/* Delete Button */}
+        <div className="border-t border-gray-200 pt-4">
+          <button
+            onClick={handleDelete}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-md hover:bg-red-100 transition-colors font-medium text-sm"
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete Connection
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function EdgeDetailPanel() {
+  const { edges, selectedEdgeId, nodes } = useArchitectureStore();
+  const selectedEdge = edges.find((edge) => edge.id === selectedEdgeId);
+
+  if (!selectedEdge) {
+    return null;
+  }
+
+  // Use key to reset component state when edge changes
+  return <EdgeDetailPanelContent key={selectedEdge.id} edge={selectedEdge} nodes={nodes} />;
+}
