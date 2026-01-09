@@ -1,14 +1,20 @@
-import { useState } from 'react';
-import { X, Tag, Zap, GitBranch, Trash2 } from 'lucide-react';
-import { useArchitectureStore } from '../../store/useArchitectureStore';
-import type { Edge } from 'reactflow';
-import type { ServiceNode } from '../../types/architecture';
+import { useState } from "react";
+import { X, Tag, Zap, GitBranch, Trash2 } from "lucide-react";
+import { useArchitectureStore } from "../../store/useArchitectureStore";
+import type { Edge } from "reactflow";
+import type { ServiceNode } from "../../types/architecture";
 
-function EdgeDetailPanelContent({ edge, nodes }: { edge: Edge; nodes: ServiceNode[] }) {
+function EdgeDetailPanelContent({
+  edge,
+  nodes,
+}: {
+  edge: Edge;
+  nodes: ServiceNode[];
+}) {
   const { setSelectedEdgeId, updateEdge, deleteEdge } = useArchitectureStore();
 
   const [label, setLabel] = useState<string>(
-    typeof edge.label === 'string' ? edge.label : ''
+    typeof edge.label === "string" ? edge.label : ""
   );
 
   // Find source and target node names for display
@@ -29,7 +35,7 @@ function EdgeDetailPanelContent({ edge, nodes }: { edge: Edge; nodes: ServiceNod
   };
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this connection?')) {
+    if (window.confirm("Are you sure you want to delete this connection?")) {
       deleteEdge(edge.id);
     }
   };
@@ -41,7 +47,8 @@ function EdgeDetailPanelContent({ edge, nodes }: { edge: Edge; nodes: ServiceNod
         <div className="flex-1">
           <h3 className="font-semibold text-gray-900">Connection Properties</h3>
           <p className="text-sm text-gray-500">
-            {sourceNode?.data.label || 'Source'} → {targetNode?.data.label || 'Target'}
+            {sourceNode?.data.label || "Source"} →{" "}
+            {targetNode?.data.label || "Target"}
           </p>
         </div>
         <button
@@ -63,7 +70,7 @@ function EdgeDetailPanelContent({ edge, nodes }: { edge: Edge; nodes: ServiceNod
           </label>
           <input
             type="text"
-            value={label || ''}
+            value={label || ""}
             onChange={(e) => handleLabelChange(e.target.value)}
             placeholder="e.g., Data & Auth, API Call"
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -94,7 +101,7 @@ function EdgeDetailPanelContent({ edge, nodes }: { edge: Edge; nodes: ServiceNod
                 onChange={handleAnimatedToggle}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
             </div>
           </label>
         </div>
@@ -107,33 +114,33 @@ function EdgeDetailPanelContent({ edge, nodes }: { edge: Edge; nodes: ServiceNod
           </label>
           <div className="space-y-2">
             <button
-              onClick={() => handleEdgeTypeChange('default')}
+              onClick={() => handleEdgeTypeChange("default")}
               className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
-                (edge.type === 'default' || !edge.type)
-                  ? 'bg-blue-50 border-2 border-blue-500 text-blue-700'
-                  : 'bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100'
+                edge.type === "default" || !edge.type
+                  ? "bg-blue-50 border-2 border-blue-500 text-blue-700"
+                  : "bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100"
               }`}
             >
               <div className="font-medium">Bezier (Curved)</div>
               <div className="text-xs opacity-75">Smooth curved lines</div>
             </button>
             <button
-              onClick={() => handleEdgeTypeChange('smoothstep')}
+              onClick={() => handleEdgeTypeChange("smoothstep")}
               className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
-                edge.type === 'smoothstep'
-                  ? 'bg-blue-50 border-2 border-blue-500 text-blue-700'
-                  : 'bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100'
+                edge.type === "smoothstep"
+                  ? "bg-blue-50 border-2 border-blue-500 text-blue-700"
+                  : "bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100"
               }`}
             >
               <div className="font-medium">Smooth Step</div>
               <div className="text-xs opacity-75">Rounded right angles</div>
             </button>
             <button
-              onClick={() => handleEdgeTypeChange('straight')}
+              onClick={() => handleEdgeTypeChange("straight")}
               className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
-                edge.type === 'straight'
-                  ? 'bg-blue-50 border-2 border-blue-500 text-blue-700'
-                  : 'bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100'
+                edge.type === "straight"
+                  ? "bg-blue-50 border-2 border-blue-500 text-blue-700"
+                  : "bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100"
               }`}
             >
               <div className="font-medium">Straight</div>
@@ -146,9 +153,9 @@ function EdgeDetailPanelContent({ edge, nodes }: { edge: Edge; nodes: ServiceNod
         <div className="border-t border-gray-200 pt-4">
           <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
             <p className="text-xs text-blue-800">
-              <strong>Tip:</strong> Use animated connections for active data flows
-              (APIs, real-time sync) and static connections for configuration or
-              one-time setup.
+              <strong>Tip:</strong> Use animated connections for active data
+              flows (APIs, real-time sync) and static connections for
+              configuration or one-time setup.
             </p>
           </div>
         </div>
@@ -177,5 +184,11 @@ export function EdgeDetailPanel() {
   }
 
   // Use key to reset component state when edge changes
-  return <EdgeDetailPanelContent key={selectedEdge.id} edge={selectedEdge} nodes={nodes} />;
+  return (
+    <EdgeDetailPanelContent
+      key={selectedEdge.id}
+      edge={selectedEdge}
+      nodes={nodes}
+    />
+  );
 }

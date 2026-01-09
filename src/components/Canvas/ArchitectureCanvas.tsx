@@ -158,7 +158,7 @@ function ArchitectureCanvasInner() {
         snapToGrid={true}
         snapGrid={[15, 15]}
         fitView
-        className="bg-gradient-to-br from-gray-50 to-blue-50"
+        className="bg-linear-to-br from-gray-50 to-blue-50"
       >
         <Background color="#94a3b8" gap={16} size={1} />
         <Controls />
@@ -169,14 +169,14 @@ function ArchitectureCanvasInner() {
             const data = node.data as ServiceNodeData;
             return data.service.color;
           }}
-          className="!absolute !bottom-24 !right-4 !z-50"
+          className="absolute! bottom-24! right-4! z-50!"
           style={{
             width: 200,
             height: 120,
-            border: '2px solid #d1d5db',
-            borderRadius: '8px',
-            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-            backgroundColor: 'white',
+            border: "2px solid #d1d5db",
+            borderRadius: "8px",
+            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+            backgroundColor: "white",
           }}
           maskColor="rgba(240, 243, 248, 0.7)"
           pannable

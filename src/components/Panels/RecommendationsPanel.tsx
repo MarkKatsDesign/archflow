@@ -1,14 +1,22 @@
-import { useState, useEffect } from 'react';
-import { Lightbulb, AlertTriangle, Sparkles, CheckCircle2, ChevronUp, ChevronDown } from 'lucide-react';
-import { useCompatibility } from '../../hooks/useCompatibility';
-import { useArchitectureStore } from '../../store/useArchitectureStore';
-import { services } from '../../data/services';
-import type { Service } from '../../types/service';
+import { useState, useEffect } from "react";
+import {
+  Lightbulb,
+  AlertTriangle,
+  Sparkles,
+  CheckCircle2,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
+import { useCompatibility } from "../../hooks/useCompatibility";
+import { useArchitectureStore } from "../../store/useArchitectureStore";
+import { services } from "../../data/services";
+import type { Service } from "../../types/service";
 
-const STORAGE_KEY = 'archflow_suggestions_expanded';
+const STORAGE_KEY = "archflow_suggestions_expanded";
 
 export function RecommendationsPanel() {
-  const { getRecommendations, getWarnings, canvasServices } = useCompatibility();
+  const { getRecommendations, getWarnings, canvasServices } =
+    useCompatibility();
   const { selectedNodeId, selectedEdgeId } = useArchitectureStore();
 
   // Load expansion state from localStorage, default to collapsed
@@ -48,18 +56,22 @@ export function RecommendationsPanel() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Lightbulb className="w-5 h-5 text-blue-600" />
-            <span className="font-semibold text-gray-900">Smart Suggestions</span>
+            <span className="font-semibold text-gray-900">
+              Smart Suggestions
+            </span>
           </div>
           {totalCount > 0 && (
             <div className="flex items-center gap-2">
               {warnings.length > 0 && (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                  {warnings.length} {warnings.length === 1 ? 'warning' : 'warnings'}
+                  {warnings.length}{" "}
+                  {warnings.length === 1 ? "warning" : "warnings"}
                 </span>
               )}
               {recommendations.length > 0 && (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  {recommendations.length} {recommendations.length === 1 ? 'tip' : 'tips'}
+                  {recommendations.length}{" "}
+                  {recommendations.length === 1 ? "tip" : "tips"}
                 </span>
               )}
             </div>
@@ -82,12 +94,14 @@ export function RecommendationsPanel() {
       <div className="absolute bottom-4 right-4 z-40 w-80 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
         <button
           onClick={() => setIsExpanded(false)}
-          className="w-full px-4 py-3 border-b bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 transition-colors text-left"
+          className="w-full px-4 py-3 border-b bg-linear-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 transition-colors text-left"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-green-600" />
-              <h3 className="font-semibold text-gray-900">Architecture looks good!</h3>
+              <h3 className="font-semibold text-gray-900">
+                Architecture looks good!
+              </h3>
             </div>
             <ChevronDown className="w-4 h-4 text-gray-600" />
           </div>
@@ -102,11 +116,11 @@ export function RecommendationsPanel() {
   }
 
   return (
-    <div className="absolute bottom-4 right-4 z-40 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-[500px] overflow-hidden flex flex-col">
+    <div className="absolute bottom-4 right-4 z-40 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-125 overflow-hidden flex flex-col">
       {/* Header - Clickable to collapse */}
       <button
         onClick={() => setIsExpanded(false)}
-        className="px-4 py-3 border-b bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 transition-colors text-left w-full"
+        className="px-4 py-3 border-b bg-linear-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 transition-colors text-left w-full"
       >
         <div className="flex items-center justify-between">
           <div>
@@ -123,7 +137,7 @@ export function RecommendationsPanel() {
               Based on your current architecture
             </p>
           </div>
-          <ChevronDown className="w-4 h-4 text-gray-600 flex-shrink-0" />
+          <ChevronDown className="w-4 h-4 text-gray-600 shrink-0" />
         </div>
       </button>
 
@@ -181,8 +195,11 @@ interface RecommendationCardProps {
 
 function RecommendationCard({ service }: RecommendationCardProps) {
   const onDragStart = (event: React.DragEvent, service: Service) => {
-    event.dataTransfer.setData('application/reactflow', JSON.stringify(service));
-    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData(
+      "application/reactflow",
+      JSON.stringify(service)
+    );
+    event.dataTransfer.effectAllowed = "move";
   };
 
   return (
@@ -193,7 +210,7 @@ function RecommendationCard({ service }: RecommendationCardProps) {
     >
       <div className="flex items-start gap-3">
         <div
-          className="w-3 h-3 rounded-full mt-0.5 flex-shrink-0"
+          className="w-3 h-3 rounded-full mt-0.5 shrink-0"
           style={{ backgroundColor: service.color }}
         />
         <div className="flex-1 min-w-0">

@@ -36,10 +36,10 @@ function ProgressBar({ currentStep }: { currentStep: number }) {
 // Skip confirmation dialog
 function SkipConfirmation({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60]">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-60">
       <div className="bg-white rounded-xl shadow-2xl max-w-md p-6">
         <div className="flex items-start gap-3 mb-4">
-          <AlertCircle className="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
           <div>
             <h3 className="font-semibold text-gray-900 mb-2">Skip Onboarding?</h3>
             <p className="text-sm text-gray-600">
@@ -152,7 +152,7 @@ export function OnboardingWizard() {
           <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
           <Dialog.Content className="fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
             {/* Header */}
-            <div className="px-6 py-4 border-b bg-gradient-to-r from-blue-50 to-purple-50">
+            <div className="px-6 py-4 border-b bg-linear-to-r from-blue-50 to-purple-50">
               <div className="flex items-center justify-between mb-3">
                 <Dialog.Title className="text-xl font-semibold text-gray-900">
                   Let's Design Your Architecture

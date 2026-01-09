@@ -1,6 +1,6 @@
-import { Sparkles, Plus } from 'lucide-react';
-import { useOnboardingStore } from '../../store/useOnboardingStore';
-import { useArchitectureStore } from '../../store/useArchitectureStore';
+import { Sparkles, Plus } from "lucide-react";
+import { useOnboardingStore } from "../../store/useOnboardingStore";
+import { useArchitectureStore } from "../../store/useArchitectureStore";
 
 export function WizardButton() {
   const { openWizard } = useOnboardingStore();

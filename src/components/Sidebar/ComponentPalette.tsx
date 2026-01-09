@@ -1,23 +1,23 @@
-import { useState } from 'react';
-import { Search, Sparkles, Ban } from 'lucide-react';
-import { services } from '../../data/services';
-import type { Service, Category } from '../../types/service';
-import { useCompatibility } from '../../hooks/useCompatibility';
+import { useState } from "react";
+import { Search, Sparkles, Ban } from "lucide-react";
+import { services } from "../../data/services";
+import type { Service, Category } from "../../types/service";
+import { useCompatibility } from "../../hooks/useCompatibility";
 
 const categories: Category[] = [
-  'Frontend',
-  'Backend',
-  'Database',
-  'Cache',
-  'Queue',
-  'Storage',
-  'CDN',
-  'Auth',
-  'Search',
-  'Monitoring',
-  'Networking',
-  'DevOps',
-  'Integrations',
+  "Frontend",
+  "Backend",
+  "Database",
+  "Cache",
+  "Queue",
+  "Storage",
+  "CDN",
+  "Auth",
+  "Search",
+  "Monitoring",
+  "Networking",
+  "DevOps",
+  "Integrations",
 ];
 
 interface ServiceItemProps {
@@ -34,8 +34,11 @@ function ServiceItem({ service }: ServiceItemProps) {
       event.preventDefault();
       return;
     }
-    event.dataTransfer.setData('application/reactflow', JSON.stringify(service));
-    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData(
+      "application/reactflow",
+      JSON.stringify(service)
+    );
+    event.dataTransfer.effectAllowed = "move";
   };
 
   const isDisabled = compatibility.isIncompatible;
@@ -47,10 +50,10 @@ function ServiceItem({ service }: ServiceItemProps) {
       onDragStart={(e) => onDragStart(e, service)}
       className={`flex items-start gap-3 p-3 rounded-lg border-2 transition-all relative ${
         isDisabled
-          ? 'bg-gray-100 border-gray-300 opacity-50 cursor-not-allowed'
+          ? "bg-gray-100 border-gray-300 opacity-50 cursor-not-allowed"
           : isRecommended
-          ? 'bg-green-50 border-green-300 hover:border-green-500 cursor-move hover:shadow-md'
-          : 'bg-white hover:border-gray-400 cursor-move hover:shadow-md'
+          ? "bg-green-50 border-green-300 hover:border-green-500 cursor-move hover:shadow-md"
+          : "bg-white hover:border-gray-400 cursor-move hover:shadow-md"
       }`}
       style={{
         borderColor: isDisabled
@@ -62,26 +65,36 @@ function ServiceItem({ service }: ServiceItemProps) {
       title={compatibility.reason}
     >
       <div
-        className="w-3 h-3 rounded-full mt-0.5 flex-shrink-0"
-        style={{ backgroundColor: isDisabled ? '#9ca3af' : service.color }}
+        className="w-3 h-3 rounded-full mt-0.5 shrink-0"
+        style={{ backgroundColor: isDisabled ? "#9ca3af" : service.color }}
       />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1">
-          <div className={`font-medium text-sm truncate ${isDisabled ? 'text-gray-500' : 'text-gray-800'}`}>
+          <div
+            className={`font-medium text-sm truncate ${
+              isDisabled ? "text-gray-500" : "text-gray-800"
+            }`}
+          >
             {service.shortName}
           </div>
           {isRecommended && (
-            <Sparkles className="w-3 h-3 text-green-600 flex-shrink-0" />
+            <Sparkles className="w-3 h-3 text-green-600 shrink-0" />
           )}
-          {isDisabled && (
-            <Ban className="w-3 h-3 text-red-500 flex-shrink-0" />
-          )}
+          {isDisabled && <Ban className="w-3 h-3 text-red-500 shrink-0" />}
         </div>
-        <div className={`text-xs mt-0.5 ${isDisabled ? 'text-gray-400' : 'text-gray-500'}`}>
+        <div
+          className={`text-xs mt-0.5 ${
+            isDisabled ? "text-gray-400" : "text-gray-500"
+          }`}
+        >
           {service.provider}
         </div>
         {compatibility.reason && (isRecommended || isDisabled) && (
-          <div className={`text-xs mt-1 ${isRecommended ? 'text-green-600' : 'text-red-600'}`}>
+          <div
+            className={`text-xs mt-1 ${
+              isRecommended ? "text-green-600" : "text-red-600"
+            }`}
+          >
             {compatibility.reason}
           </div>
         )}
@@ -91,8 +104,10 @@ function ServiceItem({ service }: ServiceItemProps) {
 }
 
 export default function ComponentPalette() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<Category | "All">(
+    "All"
+  );
 
   const filteredServices = services.filter((service) => {
     const matchesSearch =
@@ -101,7 +116,7 @@ export default function ComponentPalette() {
       service.provider.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCategory =
-      selectedCategory === 'All' || service.category === selectedCategory;
+      selectedCategory === "All" || service.category === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
@@ -124,11 +139,11 @@ export default function ComponentPalette() {
 
         <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => setSelectedCategory('All')}
+            onClick={() => setSelectedCategory("All")}
             className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-              selectedCategory === 'All'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              selectedCategory === "All"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
             All
@@ -139,8 +154,8 @@ export default function ComponentPalette() {
               onClick={() => setSelectedCategory(category)}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 selectedCategory === category
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
               {category}

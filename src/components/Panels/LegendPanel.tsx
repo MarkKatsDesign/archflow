@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Info, ChevronDown, ChevronUp } from 'lucide-react';
-import { useArchitectureStore } from '../../store/useArchitectureStore';
+import { useState } from "react";
+import { Info, ChevronDown, ChevronUp } from "lucide-react";
+import { useArchitectureStore } from "../../store/useArchitectureStore";
 
 export function LegendPanel() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -12,7 +12,7 @@ export function LegendPanel() {
   }
 
   return (
-    <div className="absolute bottom-4 right-[420px] z-10 w-72">
+    <div className="absolute bottom-4 right-105 z-10 w-72">
       <div className="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
         {/* Header - Always visible */}
         <button
@@ -41,7 +41,7 @@ export function LegendPanel() {
               <div className="space-y-3">
                 {/* Solid Line */}
                 <div className="flex items-center gap-3">
-                  <svg width="40" height="2" className="flex-shrink-0">
+                  <svg width="40" height="2" className="shrink-0">
                     <line
                       x1="0"
                       y1="1"
@@ -58,7 +58,7 @@ export function LegendPanel() {
 
                 {/* Animated Line */}
                 <div className="flex items-center gap-3">
-                  <svg width="40" height="2" className="flex-shrink-0">
+                  <svg width="40" height="2" className="shrink-0">
                     <line
                       x1="0"
                       y1="1"
@@ -76,14 +76,12 @@ export function LegendPanel() {
                       />
                     </line>
                   </svg>
-                  <div className="text-xs text-gray-600">
-                    Active data flow
-                  </div>
+                  <div className="text-xs text-gray-600">Active data flow</div>
                 </div>
 
                 {/* Edge Label Example */}
                 <div className="flex items-start gap-3 pt-2 border-t">
-                  <div className="flex-shrink-0 px-2 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-900 shadow-sm">
+                  <div className="shrink-0 px-2 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-900 shadow-sm">
                     Auth Token
                   </div>
                   <div className="text-xs text-gray-600 pt-1">
@@ -125,8 +123,8 @@ export function LegendPanel() {
             <div className="border-t pt-3">
               <div className="bg-blue-50 rounded px-3 py-2">
                 <p className="text-xs text-blue-900">
-                  <span className="font-semibold">Tip:</span> Click the{' '}
-                  <span className="font-mono bg-white px-1 rounded">?</span>{' '}
+                  <span className="font-semibold">Tip:</span> Click the{" "}
+                  <span className="font-mono bg-white px-1 rounded">?</span>{" "}
                   icon in the top-right for detailed help
                 </p>
               </div>

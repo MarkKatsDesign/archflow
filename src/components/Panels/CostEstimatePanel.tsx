@@ -1,17 +1,27 @@
-import { useState } from 'react';
-import { DollarSign, ChevronDown, ChevronUp, ChevronRight, AlertTriangle, CheckCircle2, Rocket, TrendingUp, Building2 } from 'lucide-react';
-import { useCostCalculator } from '../../hooks/useCostCalculator';
-import { useOnboardingStore } from '../../store/useOnboardingStore';
-import { useArchitectureStore } from '../../store/useArchitectureStore';
-import type { Category } from '../../types/service';
-import type { Scale } from '../../types/onboarding';
-import { SCALE_LABELS } from '../../types/onboarding';
+import { useState } from "react";
+import {
+  DollarSign,
+  ChevronDown,
+  ChevronUp,
+  ChevronRight,
+  AlertTriangle,
+  CheckCircle2,
+  Rocket,
+  TrendingUp,
+  Building2,
+} from "lucide-react";
+import { useCostCalculator } from "../../hooks/useCostCalculator";
+import { useOnboardingStore } from "../../store/useOnboardingStore";
+import { useArchitectureStore } from "../../store/useArchitectureStore";
+import type { Category } from "../../types/service";
+import type { Scale } from "../../types/onboarding";
+import { SCALE_LABELS } from "../../types/onboarding";
 
 const SCALE_ICONS: Record<Scale, typeof Rocket> = {
-  'startup-mvp': Rocket,
-  'growth': TrendingUp,
-  'enterprise': Building2,
-  'unsure': Rocket,
+  "startup-mvp": Rocket,
+  growth: TrendingUp,
+  enterprise: Building2,
+  unsure: Rocket,
 };
 
 export function CostEstimatePanel() {
@@ -21,7 +31,9 @@ export function CostEstimatePanel() {
 
   // Local state for UI
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState<Set<Category>>(new Set());
+  const [expandedCategories, setExpandedCategories] = useState<Set<Category>>(
+    new Set()
+  );
   const [showScaleSelector, setShowScaleSelector] = useState(false);
 
   // Don't show panel if canvas is empty
@@ -50,9 +62,9 @@ export function CostEstimatePanel() {
   };
 
   const formatCost = (amount: number): string => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
@@ -62,16 +74,16 @@ export function CostEstimatePanel() {
 
   // Budget status colors
   const budgetColorClasses = {
-    ok: 'bg-green-50 text-green-700 border-green-200',
-    warning: 'bg-amber-50 text-amber-700 border-amber-200',
-    exceeded: 'bg-red-50 text-red-700 border-red-200',
+    ok: "bg-green-50 text-green-700 border-green-200",
+    warning: "bg-amber-50 text-amber-700 border-amber-200",
+    exceeded: "bg-red-50 text-red-700 border-red-200",
   };
 
   return (
-    <div className="absolute bottom-4 left-4 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-[600px] overflow-hidden flex flex-col">
+    <div className="absolute bottom-4 left-4 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-150 overflow-hidden flex flex-col">
       {/* Header - Collapsible */}
       <div
-        className="px-4 py-3 border-b bg-gradient-to-r from-green-50 to-blue-50 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="px-4 py-3 border-b bg-linear-to-r from-green-50 to-blue-50 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <div className="flex items-center justify-between">
@@ -85,7 +97,7 @@ export function CostEstimatePanel() {
               setIsCollapsed(!isCollapsed);
             }}
             className="p-1 hover:bg-white/50 rounded transition-colors"
-            aria-label={isCollapsed ? 'Expand' : 'Collapse'}
+            aria-label={isCollapsed ? "Expand" : "Collapse"}
           >
             {isCollapsed ? (
               <ChevronUp className="w-4 h-4 text-gray-600" />
@@ -96,7 +108,8 @@ export function CostEstimatePanel() {
         </div>
         <div className="mt-2">
           <p className="text-2xl font-bold text-gray-900">
-            {formatCost(costEstimate.totalMin)} - {formatCost(costEstimate.totalMax)}
+            {formatCost(costEstimate.totalMin)} -{" "}
+            {formatCost(costEstimate.totalMax)}
             <span className="text-sm font-normal text-gray-600">/month</span>
           </p>
         </div>
@@ -125,21 +138,25 @@ export function CostEstimatePanel() {
                   </button>
                   {showScaleSelector && (
                     <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-10 w-40">
-                      {(['startup-mvp', 'growth', 'enterprise'] as Scale[]).map((scale) => {
-                        const Icon = SCALE_ICONS[scale];
-                        return (
-                          <button
-                            key={scale}
-                            onClick={() => handleScaleChange(scale)}
-                            className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${
-                              costEstimate.scale === scale ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
-                            }`}
-                          >
-                            <Icon className="w-4 h-4" />
-                            {SCALE_LABELS[scale].label}
-                          </button>
-                        );
-                      })}
+                      {(["startup-mvp", "growth", "enterprise"] as Scale[]).map(
+                        (scale) => {
+                          const Icon = SCALE_ICONS[scale];
+                          return (
+                            <button
+                              key={scale}
+                              onClick={() => handleScaleChange(scale)}
+                              className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${
+                                costEstimate.scale === scale
+                                  ? "bg-blue-50 text-blue-700"
+                                  : "text-gray-700"
+                              }`}
+                            >
+                              <Icon className="w-4 h-4" />
+                              {SCALE_LABELS[scale].label}
+                            </button>
+                          );
+                        }
+                      )}
                     </div>
                   )}
                 </div>
@@ -155,27 +172,36 @@ export function CostEstimatePanel() {
           </div>
 
           {/* Budget Status */}
-          {costEstimate.budgetRange && costEstimate.budgetRange !== 'unsure' && (
-            <div className={`px-4 py-2 border-b ${budgetColorClasses[costEstimate.budgetStatus]}`}>
-              <div className="flex items-center gap-2">
-                {costEstimate.budgetStatus === 'ok' ? (
-                  <CheckCircle2 className="w-4 h-4" />
-                ) : (
-                  <AlertTriangle className="w-4 h-4" />
-                )}
-                <span className="text-sm font-medium">
-                  {costEstimate.budgetStatus === 'ok' && 'Within budget'}
-                  {costEstimate.budgetStatus === 'warning' && 'Approaching budget limit'}
-                  {costEstimate.budgetStatus === 'exceeded' && 'Exceeds budget'}
-                </span>
+          {costEstimate.budgetRange &&
+            costEstimate.budgetRange !== "unsure" && (
+              <div
+                className={`px-4 py-2 border-b ${
+                  budgetColorClasses[costEstimate.budgetStatus]
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {costEstimate.budgetStatus === "ok" ? (
+                    <CheckCircle2 className="w-4 h-4" />
+                  ) : (
+                    <AlertTriangle className="w-4 h-4" />
+                  )}
+                  <span className="text-sm font-medium">
+                    {costEstimate.budgetStatus === "ok" && "Within budget"}
+                    {costEstimate.budgetStatus === "warning" &&
+                      "Approaching budget limit"}
+                    {costEstimate.budgetStatus === "exceeded" &&
+                      "Exceeds budget"}
+                  </span>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Category Breakdown - Scrollable */}
           <div className="flex-1 overflow-y-auto">
             {costEstimate.categoryBreakdowns.map((categoryBreakdown) => {
-              const isExpanded = expandedCategories.has(categoryBreakdown.category);
+              const isExpanded = expandedCategories.has(
+                categoryBreakdown.category
+              );
 
               return (
                 <div key={categoryBreakdown.category}>
@@ -187,7 +213,7 @@ export function CostEstimatePanel() {
                     <div className="flex items-center gap-2">
                       <ChevronRight
                         className={`w-4 h-4 text-gray-500 transition-transform ${
-                          isExpanded ? 'rotate-90' : ''
+                          isExpanded ? "rotate-90" : ""
                         }`}
                       />
                       <span className="text-sm font-medium text-gray-900">
@@ -198,7 +224,8 @@ export function CostEstimatePanel() {
                       </span>
                     </div>
                     <span className="text-sm font-medium text-gray-700">
-                      {formatCost(categoryBreakdown.totalMin)} - {formatCost(categoryBreakdown.totalMax)}
+                      {formatCost(categoryBreakdown.totalMin)} -{" "}
+                      {formatCost(categoryBreakdown.totalMax)}
                     </span>
                   </button>
 
@@ -212,8 +239,10 @@ export function CostEstimatePanel() {
                         >
                           <div className="flex items-center gap-2 flex-1 min-w-0">
                             <div
-                              className="w-2 h-2 rounded-full flex-shrink-0"
-                              style={{ backgroundColor: serviceCost.service.color }}
+                              className="w-2 h-2 rounded-full shrink-0"
+                              style={{
+                                backgroundColor: serviceCost.service.color,
+                              }}
                             />
                             <span className="text-gray-700 truncate">
                               {serviceCost.service.shortName}
@@ -225,7 +254,8 @@ export function CostEstimatePanel() {
                             )}
                           </div>
                           <span className="text-gray-600 ml-2 whitespace-nowrap">
-                            {formatCost(serviceCost.scaledMin)} - {formatCost(serviceCost.scaledMax)}
+                            {formatCost(serviceCost.scaledMin)} -{" "}
+                            {formatCost(serviceCost.scaledMax)}
                           </span>
                         </div>
                       ))}
@@ -240,11 +270,14 @@ export function CostEstimatePanel() {
           <div className="px-4 py-2 border-t bg-gray-50">
             <div className="text-xs text-gray-600">
               <p>
-                {costEstimate.servicesWithCosts} of {nodes.length} services counted
+                {costEstimate.servicesWithCosts} of {nodes.length} services
+                counted
               </p>
               {costEstimate.servicesWithoutCosts > 0 && (
                 <p className="text-gray-500 mt-1">
-                  {costEstimate.servicesWithoutCosts} service{costEstimate.servicesWithoutCosts > 1 ? 's' : ''} excluded (no cost data)
+                  {costEstimate.servicesWithoutCosts} service
+                  {costEstimate.servicesWithoutCosts > 1 ? "s" : ""} excluded
+                  (no cost data)
                 </p>
               )}
             </div>

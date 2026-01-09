@@ -1,9 +1,17 @@
-import { CheckCircle2, Sparkles, DollarSign, Layers, ThumbsUp, ThumbsDown, ArrowRight } from 'lucide-react';
-import { useTemplateMatching } from '../../../hooks/useTemplateMatching';
-import { useOnboardingStore } from '../../../store/useOnboardingStore';
-import { useArchitectureStore } from '../../../store/useArchitectureStore';
-import { services } from '../../../data/services';
-import type { ArchitectureTemplate } from '../../../types/template';
+import {
+  CheckCircle2,
+  Sparkles,
+  DollarSign,
+  Layers,
+  ThumbsUp,
+  ThumbsDown,
+  ArrowRight,
+} from "lucide-react";
+import { useTemplateMatching } from "../../../hooks/useTemplateMatching";
+import { useOnboardingStore } from "../../../store/useOnboardingStore";
+import { useArchitectureStore } from "../../../store/useArchitectureStore";
+import { services } from "../../../data/services";
+import type { ArchitectureTemplate } from "../../../types/template";
 
 interface TemplateCardProps {
   template: ArchitectureTemplate;
@@ -14,31 +22,42 @@ interface TemplateCardProps {
   onApply: () => void;
 }
 
-function TemplateCard({ template, score, matchReasons, isSelected, onSelect, onApply }: TemplateCardProps) {
+function TemplateCard({
+  template,
+  score,
+  matchReasons,
+  isSelected,
+  onSelect,
+  onApply,
+}: TemplateCardProps) {
   // Get service names for display
   const serviceNames = template.nodes
     .map((node) => {
       const service = services.find((s) => s.id === node.data.service.id);
       return service?.shortName || node.data.service.id;
     })
-    .join(', ');
+    .join(", ");
 
   return (
     <div
       className={`border-2 rounded-xl p-6 transition-all cursor-pointer ${
         isSelected
-          ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
-          : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-lg'
+          ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
+          : "border-gray-200 hover:border-gray-300 bg-white hover:shadow-lg"
       }`}
       onClick={onSelect}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">{template.name}</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+            {template.name}
+          </h3>
           <p className="text-sm text-gray-600">{template.description}</p>
         </div>
-        {isSelected && <CheckCircle2 className="w-6 h-6 text-blue-600 flex-shrink-0" />}
+        {isSelected && (
+          <CheckCircle2 className="w-6 h-6 text-blue-600 shrink-0" />
+        )}
       </div>
 
       {/* Match Score */}
@@ -46,11 +65,16 @@ function TemplateCard({ template, score, matchReasons, isSelected, onSelect, onA
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-4 h-4 text-yellow-500" />
-            <span className="text-sm font-medium text-gray-700">Match: {score}%</span>
+            <span className="text-sm font-medium text-gray-700">
+              Match: {score}%
+            </span>
           </div>
           <ul className="space-y-1">
             {matchReasons.map((reason, idx) => (
-              <li key={idx} className="text-xs text-green-700 flex items-start gap-2">
+              <li
+                key={idx}
+                className="text-xs text-green-700 flex items-start gap-2"
+              >
                 <span className="text-green-500 mt-0.5">✓</span>
                 <span>{reason}</span>
               </li>
@@ -72,10 +96,13 @@ function TemplateCard({ template, score, matchReasons, isSelected, onSelect, onA
       <div className="mb-4">
         <div className="flex items-center gap-2 mb-1">
           <DollarSign className="w-4 h-4 text-gray-500" />
-          <span className="text-sm font-medium text-gray-700">Estimated Cost:</span>
+          <span className="text-sm font-medium text-gray-700">
+            Estimated Cost:
+          </span>
         </div>
         <p className="text-sm text-gray-900">
-          ${template.estimatedMonthlyCost.min} - ${template.estimatedMonthlyCost.max}/month
+          ${template.estimatedMonthlyCost.min} - $
+          {template.estimatedMonthlyCost.max}/month
         </p>
       </div>
 
@@ -88,7 +115,10 @@ function TemplateCard({ template, score, matchReasons, isSelected, onSelect, onA
           </div>
           <ul className="space-y-1">
             {template.pros.slice(0, 3).map((pro, idx) => (
-              <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
+              <li
+                key={idx}
+                className="text-xs text-gray-600 flex items-start gap-1"
+              >
                 <span className="text-green-500 mt-0.5">+</span>
                 <span>{pro}</span>
               </li>
@@ -102,7 +132,10 @@ function TemplateCard({ template, score, matchReasons, isSelected, onSelect, onA
           </div>
           <ul className="space-y-1">
             {template.cons.slice(0, 3).map((con, idx) => (
-              <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
+              <li
+                key={idx}
+                className="text-xs text-gray-600 flex items-start gap-1"
+              >
                 <span className="text-amber-500 mt-0.5">-</span>
                 <span>{con}</span>
               </li>
@@ -130,8 +163,12 @@ function TemplateCard({ template, score, matchReasons, isSelected, onSelect, onA
 
 export function TemplatePreviewStep() {
   const templateMatches = useTemplateMatching();
-  const { selectedTemplateId, setSelectedTemplate, completeOnboarding, closeWizard } =
-    useOnboardingStore();
+  const {
+    selectedTemplateId,
+    setSelectedTemplate,
+    completeOnboarding,
+    closeWizard,
+  } = useOnboardingStore();
   const { applyTemplate } = useArchitectureStore();
 
   const handleSelectTemplate = (templateId: string) => {
@@ -139,7 +176,9 @@ export function TemplatePreviewStep() {
   };
 
   const handleApplyTemplate = () => {
-    const match = templateMatches.find((m) => m.template.id === selectedTemplateId);
+    const match = templateMatches.find(
+      (m) => m.template.id === selectedTemplateId
+    );
     if (match) {
       applyTemplate(match.template);
       completeOnboarding();
@@ -155,10 +194,12 @@ export function TemplatePreviewStep() {
     <div className="space-y-6">
       <div className="text-center">
         <p className="text-gray-600 mb-2">
-          Based on your answers, here are our recommended architecture templates:
+          Based on your answers, here are our recommended architecture
+          templates:
         </p>
         <p className="text-sm text-gray-500">
-          Select a template and click "Use This Template" to apply it to your canvas.
+          Select a template and click "Use This Template" to apply it to your
+          canvas.
         </p>
       </div>
 

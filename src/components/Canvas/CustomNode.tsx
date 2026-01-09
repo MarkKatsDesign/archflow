@@ -20,7 +20,7 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
   return (
     <div
       className={`
-        px-4 py-3 rounded-lg min-w-[160px] max-w-[200px]
+        px-4 py-3 rounded-lg min-w-40 max-w-50
         border-2 transition-all duration-300
         hover:scale-105 hover:shadow-2xl
         ${selected ? 'shadow-2xl ring-2 ring-blue-400 scale-105' : 'shadow-lg'}
