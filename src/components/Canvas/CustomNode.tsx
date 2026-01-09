@@ -27,9 +27,22 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
       `}
       style={gradientStyle}
     >
+      {/* Connection handles on all 4 sides for flexible layouts */}
       <Handle
         type="target"
         position={Position.Top}
+        className="w-3 h-3 transition-all hover:scale-150"
+        style={{ background: service.color }}
+      />
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="w-3 h-3 transition-all hover:scale-150"
+        style={{ background: service.color }}
+      />
+      <Handle
+        type="source"
+        position={Position.Right}
         className="w-3 h-3 transition-all hover:scale-150"
         style={{ background: service.color }}
       />

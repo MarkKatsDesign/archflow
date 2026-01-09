@@ -1,12 +1,26 @@
-import { Lightbulb, AlertTriangle, Sparkles, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Lightbulb, AlertTriangle, Sparkles, CheckCircle2, ChevronUp, ChevronDown } from 'lucide-react';
 import { useCompatibility } from '../../hooks/useCompatibility';
 import { useArchitectureStore } from '../../store/useArchitectureStore';
 import { services } from '../../data/services';
 import type { Service } from '../../types/service';
 
+const STORAGE_KEY = 'archflow_suggestions_expanded';
+
 export function RecommendationsPanel() {
   const { getRecommendations, getWarnings, canvasServices } = useCompatibility();
   const { selectedNodeId, selectedEdgeId } = useArchitectureStore();
+
+  // Load expansion state from localStorage, default to collapsed
+  const [isExpanded, setIsExpanded] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  // Save expansion state to localStorage
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(isExpanded));
+  }, [isExpanded]);
 
   const recommendations = getRecommendations(services);
   const warnings = getWarnings();
@@ -22,33 +36,96 @@ export function RecommendationsPanel() {
   }
 
   const hasContent = recommendations.length > 0 || warnings.length > 0;
+  const totalCount = recommendations.length + warnings.length;
 
+  // Collapsed state - minimal button
+  if (!isExpanded) {
+    return (
+      <button
+        onClick={() => setIsExpanded(true)}
+        className="absolute bottom-4 right-4 z-40 bg-white rounded-lg shadow-lg border border-gray-200 px-4 py-3 hover:shadow-xl transition-all hover:scale-105 group"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Lightbulb className="w-5 h-5 text-blue-600" />
+            <span className="font-semibold text-gray-900">Smart Suggestions</span>
+          </div>
+          {totalCount > 0 && (
+            <div className="flex items-center gap-2">
+              {warnings.length > 0 && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                  {warnings.length} {warnings.length === 1 ? 'warning' : 'warnings'}
+                </span>
+              )}
+              {recommendations.length > 0 && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  {recommendations.length} {recommendations.length === 1 ? 'tip' : 'tips'}
+                </span>
+              )}
+            </div>
+          )}
+          {!hasContent && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <CheckCircle2 className="w-3 h-3 mr-1" />
+              All good
+            </span>
+          )}
+          <ChevronUp className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+        </div>
+      </button>
+    );
+  }
+
+  // Expanded state - full panel
   if (!hasContent) {
     return (
-      <div className="absolute bottom-4 right-4 w-80 bg-white rounded-lg shadow-xl border border-gray-200 p-4">
-        <div className="flex items-center gap-2 text-green-600">
-          <CheckCircle2 className="w-5 h-5" />
-          <h3 className="font-semibold">Architecture looks good!</h3>
+      <div className="absolute bottom-4 right-4 z-40 w-80 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
+        <button
+          onClick={() => setIsExpanded(false)}
+          className="w-full px-4 py-3 border-b bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 transition-colors text-left"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-green-600" />
+              <h3 className="font-semibold text-gray-900">Architecture looks good!</h3>
+            </div>
+            <ChevronDown className="w-4 h-4 text-gray-600" />
+          </div>
+        </button>
+        <div className="px-4 py-3">
+          <p className="text-sm text-gray-600">
+            No warnings or critical recommendations at this time.
+          </p>
         </div>
-        <p className="text-sm text-gray-600 mt-2">
-          No warnings or critical recommendations at this time.
-        </p>
       </div>
     );
   }
 
   return (
-    <div className="absolute bottom-4 right-4 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-[500px] overflow-hidden flex flex-col">
-      {/* Header */}
-      <div className="px-4 py-3 border-b bg-gradient-to-r from-blue-50 to-purple-50">
-        <div className="flex items-center gap-2">
-          <Lightbulb className="w-5 h-5 text-blue-600" />
-          <h3 className="font-semibold text-gray-900">Smart Suggestions</h3>
+    <div className="absolute bottom-4 right-4 z-40 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-[500px] overflow-hidden flex flex-col">
+      {/* Header - Clickable to collapse */}
+      <button
+        onClick={() => setIsExpanded(false)}
+        className="px-4 py-3 border-b bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 transition-colors text-left w-full"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5 text-blue-600" />
+              <h3 className="font-semibold text-gray-900">Smart Suggestions</h3>
+              {totalCount > 0 && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  {totalCount}
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-gray-600 mt-1">
+              Based on your current architecture
+            </p>
+          </div>
+          <ChevronDown className="w-4 h-4 text-gray-600 flex-shrink-0" />
         </div>
-        <p className="text-xs text-gray-600 mt-1">
-          Based on your current architecture
-        </p>
-      </div>
+      </button>
 
       {/* Content - Scrollable */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">

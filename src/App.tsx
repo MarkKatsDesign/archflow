@@ -6,7 +6,6 @@ import { EdgeDetailPanel } from './components/Panels/EdgeDetailPanel';
 import { RecommendationsPanel } from './components/Panels/RecommendationsPanel';
 import { CostEstimatePanel } from './components/Panels/CostEstimatePanel';
 import { ExportPanel } from './components/Panels/ExportPanel';
-import { LegendPanel } from './components/Panels/LegendPanel';
 import { HelpModal } from './components/Help/HelpModal';
 import { OnboardingWizard } from './components/Onboarding/OnboardingWizard';
 import { WizardButton } from './components/Onboarding/WizardButton';
@@ -50,7 +49,6 @@ function App() {
           <EdgeDetailPanel />
           <RecommendationsPanel />
           <CostEstimatePanel />
-          <LegendPanel />
           <HelpModal />
         </div>
       </div>

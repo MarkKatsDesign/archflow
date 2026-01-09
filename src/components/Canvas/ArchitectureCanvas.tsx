@@ -1,18 +1,18 @@
-import React, { useCallback, useRef, useState, useMemo } from 'react';
+import React, { useCallback, useRef, useState, useMemo } from "react";
 import ReactFlow, {
   Background,
   Controls,
   MiniMap,
   ReactFlowProvider,
   ConnectionLineType,
-} from 'reactflow';
-import type { ReactFlowInstance, EdgeMouseHandler } from 'reactflow';
-import 'reactflow/dist/style.css';
+} from "reactflow";
+import type { ReactFlowInstance, EdgeMouseHandler } from "reactflow";
+import "reactflow/dist/style.css";
 
-import CustomNode from './CustomNode';
-import { useArchitectureStore } from '../../store/useArchitectureStore';
-import type { Service } from '../../types/service';
-import type { ServiceNodeData, ServiceNode } from '../../types/architecture';
+import CustomNode from "./CustomNode";
+import { useArchitectureStore } from "../../store/useArchitectureStore";
+import type { Service } from "../../types/service";
+import type { ServiceNodeData, ServiceNode } from "../../types/architecture";
 
 const nodeTypes = {
   service: CustomNode,
@@ -37,7 +37,7 @@ function ArchitectureCanvasInner() {
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.dropEffect = "move";
   }, []);
 
   const onDrop = useCallback(
@@ -46,7 +46,7 @@ function ArchitectureCanvasInner() {
 
       if (!reactFlowWrapper.current || !reactFlowInstance) return;
 
-      const serviceData = event.dataTransfer.getData('application/reactflow');
+      const serviceData = event.dataTransfer.getData("application/reactflow");
       if (!serviceData) return;
 
       const service: Service = JSON.parse(serviceData);
@@ -58,7 +58,7 @@ function ArchitectureCanvasInner() {
 
       const newNode: ServiceNode = {
         id: `${service.id}-${Date.now()}`,
-        type: 'service',
+        type: "service",
         position,
         data: {
           service,
@@ -100,16 +100,16 @@ function ArchitectureCanvasInner() {
         style: {
           ...edge.style,
           strokeWidth: isSelected ? 4 : 2,
-          stroke: isSelected ? '#3b82f6' : edge.style?.stroke || '#64748b',
+          stroke: isSelected ? "#3b82f6" : edge.style?.stroke || "#64748b",
         },
         labelStyle: {
           ...edge.labelStyle,
-          fill: isSelected ? '#1e40af' : '#1e293b',
+          fill: isSelected ? "#1e40af" : "#1e293b",
           fontWeight: isSelected ? 700 : 600,
         },
         labelBgStyle: {
           ...edge.labelBgStyle,
-          fill: isSelected ? '#dbeafe' : '#ffffff',
+          fill: isSelected ? "#dbeafe" : "#ffffff",
           fillOpacity: isSelected ? 1 : 0.9,
         },
       };
@@ -132,18 +132,18 @@ function ArchitectureCanvasInner() {
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
         defaultEdgeOptions={{
-          type: 'default',
+          type: "default",
           style: {
             strokeWidth: 2,
-            stroke: '#64748b',
+            stroke: "#64748b",
           },
           labelStyle: {
-            fill: '#1e293b',
+            fill: "#1e293b",
             fontWeight: 600,
             fontSize: 12,
           },
           labelBgStyle: {
-            fill: '#ffffff',
+            fill: "#ffffff",
             fillOpacity: 0.9,
           },
           labelBgPadding: [8, 4],
@@ -152,8 +152,8 @@ function ArchitectureCanvasInner() {
         connectionLineType={ConnectionLineType.Bezier}
         connectionLineStyle={{
           strokeWidth: 2,
-          stroke: '#3b82f6',
-          strokeDasharray: '5 5',
+          stroke: "#3b82f6",
+          strokeDasharray: "5 5",
         }}
         snapToGrid={true}
         snapGrid={[15, 15]}
@@ -162,12 +162,26 @@ function ArchitectureCanvasInner() {
       >
         <Background color="#94a3b8" gap={16} size={1} />
         <Controls />
+
+        {/* Canvas Overview - Bottom Right, above Smart Suggestions */}
         <MiniMap
           nodeColor={(node) => {
             const data = node.data as ServiceNodeData;
             return data.service.color;
           }}
-          className="bg-white"
+          className="!absolute !bottom-24 !right-4 !z-50"
+          style={{
+            width: 200,
+            height: 120,
+            border: '2px solid #d1d5db',
+            borderRadius: '8px',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+            backgroundColor: 'white',
+          }}
+          maskColor="rgba(240, 243, 248, 0.7)"
+          pannable
+          zoomable
+          ariaLabel="Canvas Overview"
         />
       </ReactFlow>
     </div>
