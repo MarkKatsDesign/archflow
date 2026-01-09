@@ -13,9 +13,11 @@ const categories: Category[] = [
   'Storage',
   'CDN',
   'Auth',
-  'Analytics',
   'Search',
   'Monitoring',
+  'Networking',
+  'DevOps',
+  'Integrations',
 ];
 
 interface ServiceItemProps {
