@@ -1,11 +1,12 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useMemo } from 'react';
 import ReactFlow, {
   Background,
   Controls,
   MiniMap,
   ReactFlowProvider,
+  ConnectionLineType,
 } from 'reactflow';
-import type { ReactFlowInstance } from 'reactflow';
+import type { ReactFlowInstance, EdgeMouseHandler } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 import CustomNode from './CustomNode';
@@ -19,8 +20,17 @@ const nodeTypes = {
 
 function ArchitectureCanvasInner() {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, addNode, setSelectedNodeId } =
-    useArchitectureStore();
+  const {
+    nodes,
+    edges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    addNode,
+    setSelectedNodeId,
+    selectedEdgeId,
+    setSelectedEdgeId,
+  } = useArchitectureStore();
 
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
@@ -70,13 +80,47 @@ function ArchitectureCanvasInner() {
 
   const onPaneClick = useCallback(() => {
     setSelectedNodeId(null);
-  }, [setSelectedNodeId]);
+    setSelectedEdgeId(null);
+  }, [setSelectedNodeId, setSelectedEdgeId]);
+
+  const onEdgeClick: EdgeMouseHandler = useCallback(
+    (_event, edge) => {
+      setSelectedEdgeId(edge.id);
+      setSelectedNodeId(null); // Deselect any selected node
+    },
+    [setSelectedEdgeId, setSelectedNodeId]
+  );
+
+  // Apply dynamic styling to edges based on selection
+  const styledEdges = useMemo(() => {
+    return edges.map((edge) => {
+      const isSelected = edge.id === selectedEdgeId;
+      return {
+        ...edge,
+        style: {
+          ...edge.style,
+          strokeWidth: isSelected ? 4 : 2,
+          stroke: isSelected ? '#3b82f6' : edge.style?.stroke || '#64748b',
+        },
+        labelStyle: {
+          ...edge.labelStyle,
+          fill: isSelected ? '#1e40af' : '#1e293b',
+          fontWeight: isSelected ? 700 : 600,
+        },
+        labelBgStyle: {
+          ...edge.labelBgStyle,
+          fill: isSelected ? '#dbeafe' : '#ffffff',
+          fillOpacity: isSelected ? 1 : 0.9,
+        },
+      };
+    });
+  }, [edges, selectedEdgeId]);
 
   return (
     <div ref={reactFlowWrapper} className="h-full w-full">
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={styledEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
@@ -84,6 +128,7 @@ function ArchitectureCanvasInner() {
         onDrop={onDrop}
         onDragOver={onDragOver}
         onNodeClick={onNodeClick}
+        onEdgeClick={onEdgeClick}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
         defaultEdgeOptions={{
@@ -104,6 +149,14 @@ function ArchitectureCanvasInner() {
           labelBgPadding: [8, 4],
           labelBgBorderRadius: 4,
         }}
+        connectionLineType={ConnectionLineType.SmoothStep}
+        connectionLineStyle={{
+          strokeWidth: 2,
+          stroke: '#3b82f6',
+          strokeDasharray: '5 5',
+        }}
+        snapToGrid={true}
+        snapGrid={[15, 15]}
         fitView
         className="bg-gradient-to-br from-gray-50 to-blue-50"
       >

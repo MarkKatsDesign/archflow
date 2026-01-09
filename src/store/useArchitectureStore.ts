@@ -20,6 +20,7 @@ interface ArchitectureStore {
   nodes: ServiceNode[];
   edges: ServiceEdge[];
   selectedNodeId: string | null;
+  selectedEdgeId: string | null;
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
@@ -27,6 +28,7 @@ interface ArchitectureStore {
   setNodes: (nodes: ServiceNode[]) => void;
   setEdges: (edges: ServiceEdge[]) => void;
   setSelectedNodeId: (nodeId: string | null) => void;
+  setSelectedEdgeId: (edgeId: string | null) => void;
   applyTemplate: (template: ArchitectureTemplate) => void;
 }
 
@@ -34,6 +36,7 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
   nodes: [],
   edges: [],
   selectedNodeId: null,
+  selectedEdgeId: null,
 
   onNodesChange: (changes: NodeChange[]) => {
     set({
@@ -67,6 +70,10 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
 
   setSelectedNodeId: (nodeId: string | null) => {
     set({ selectedNodeId: nodeId });
+  },
+
+  setSelectedEdgeId: (edgeId: string | null) => {
+    set({ selectedEdgeId: edgeId });
   },
 
   applyTemplate: (template: ArchitectureTemplate) => {
