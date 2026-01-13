@@ -15,6 +15,8 @@ export interface TemplateNode {
 export interface TemplateEdge {
   sourceIndex: number;  // Index in nodes array
   targetIndex: number;  // Index in nodes array
+  sourceHandle?: 'top' | 'bottom' | 'left' | 'right';  // Optional: auto-calculated if not provided
+  targetHandle?: 'top' | 'bottom' | 'left' | 'right';  // Optional: auto-calculated if not provided
   type?: string;
   animated?: boolean;
   label?: string;

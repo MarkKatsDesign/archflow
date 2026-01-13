@@ -28,21 +28,50 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
       style={gradientStyle}
     >
       {/* Connection handles on all 4 sides for flexible layouts */}
+      {/* Top handles */}
       <Handle
         type="target"
         position={Position.Top}
+        id="top"
         className="w-3 h-3 transition-all hover:scale-150"
         style={{ background: service.color }}
       />
       <Handle
+        type="source"
+        position={Position.Top}
+        id="top"
+        className="w-3 h-3 transition-all hover:scale-150"
+        style={{ background: service.color }}
+      />
+
+      {/* Left handles */}
+      <Handle
         type="target"
         position={Position.Left}
+        id="left"
+        className="w-3 h-3 transition-all hover:scale-150"
+        style={{ background: service.color }}
+      />
+      <Handle
+        type="source"
+        position={Position.Left}
+        id="left"
+        className="w-3 h-3 transition-all hover:scale-150"
+        style={{ background: service.color }}
+      />
+
+      {/* Right handles */}
+      <Handle
+        type="target"
+        position={Position.Right}
+        id="right"
         className="w-3 h-3 transition-all hover:scale-150"
         style={{ background: service.color }}
       />
       <Handle
         type="source"
         position={Position.Right}
+        id="right"
         className="w-3 h-3 transition-all hover:scale-150"
         style={{ background: service.color }}
       />
@@ -92,9 +121,18 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
         </div>
       </div>
 
+      {/* Bottom handles */}
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id="bottom"
+        className="w-3 h-3 transition-all hover:scale-150"
+        style={{ background: service.color }}
+      />
       <Handle
         type="source"
         position={Position.Bottom}
+        id="bottom"
         className="w-3 h-3 transition-all hover:scale-150"
         style={{ background: service.color }}
       />

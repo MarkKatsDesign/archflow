@@ -45,6 +45,8 @@ export function PrioritiesStep() {
         bg: 'bg-white',
         icon: 'text-gray-400',
         text: 'text-gray-900',
+        ring: '',
+        badgeBg: 'bg-gray-600',
       };
     }
 
@@ -54,24 +56,32 @@ export function PrioritiesStep() {
         bg: 'bg-green-50',
         icon: 'text-green-600',
         text: 'text-gray-900',
+        ring: 'ring-green-200',
+        badgeBg: 'bg-green-600',
       },
       yellow: {
         border: 'border-yellow-500',
         bg: 'bg-yellow-50',
         icon: 'text-yellow-600',
         text: 'text-gray-900',
+        ring: 'ring-yellow-200',
+        badgeBg: 'bg-yellow-600',
       },
       blue: {
         border: 'border-blue-500',
         bg: 'bg-blue-50',
         icon: 'text-blue-600',
         text: 'text-gray-900',
+        ring: 'ring-blue-200',
+        badgeBg: 'bg-blue-600',
       },
       purple: {
         border: 'border-purple-500',
         bg: 'bg-purple-50',
         icon: 'text-purple-600',
         text: 'text-gray-900',
+        ring: 'ring-purple-200',
+        badgeBg: 'bg-purple-600',
       },
     };
 
@@ -103,11 +113,11 @@ export function PrioritiesStep() {
                   }
                 }}
                 className={`w-full p-6 border-2 rounded-xl cursor-pointer transition-all hover:shadow-lg ${
-                  isRanked ? `${colorClasses.border} ${colorClasses.bg} ring-2 ring-${color}-200` : `${colorClasses.border} ${colorClasses.bg} hover:border-gray-300`
+                  isRanked ? `${colorClasses.border} ${colorClasses.bg} ring-2 ${colorClasses.ring}` : `${colorClasses.border} ${colorClasses.bg} hover:border-gray-300`
                 }`}
               >
                 {isRanked && (
-                  <div className={`absolute top-3 right-3 w-8 h-8 rounded-full bg-${color}-600 text-white flex items-center justify-center font-bold text-sm`}>
+                  <div className={`absolute top-3 right-3 w-8 h-8 rounded-full ${colorClasses.badgeBg} text-white flex items-center justify-center font-bold text-sm`}>
                     {rank}
                   </div>
                 )}

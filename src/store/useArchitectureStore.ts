@@ -13,8 +13,44 @@ import type {
   OnConnect,
 } from 'reactflow';
 import type { ServiceNode, ServiceEdge } from '../types/architecture';
-import type { ArchitectureTemplate } from '../types/template';
+import type { ArchitectureTemplate, TemplateNode } from '../types/template';
 import { services } from '../data/services';
+
+/**
+ * Calculates the optimal source and target handles based on node positions.
+ * Returns handles that create the most direct and visually appealing connection.
+ */
+function calculateOptimalHandles(
+  sourceNode: TemplateNode,
+  targetNode: TemplateNode
+): { sourceHandle: 'top' | 'bottom' | 'left' | 'right'; targetHandle: 'top' | 'bottom' | 'left' | 'right' } {
+  const dx = targetNode.position.x - sourceNode.position.x;
+  const dy = targetNode.position.y - sourceNode.position.y;
+
+  // Use absolute values to determine primary direction
+  const absDx = Math.abs(dx);
+  const absDy = Math.abs(dy);
+
+  // If vertical distance is greater, prefer vertical connections (top/bottom)
+  if (absDy > absDx) {
+    if (dy > 0) {
+      // Target is below source
+      return { sourceHandle: 'bottom', targetHandle: 'top' };
+    } else {
+      // Target is above source
+      return { sourceHandle: 'top', targetHandle: 'bottom' };
+    }
+  } else {
+    // Horizontal distance is greater, prefer horizontal connections (left/right)
+    if (dx > 0) {
+      // Target is to the right of source
+      return { sourceHandle: 'right', targetHandle: 'left' };
+    } else {
+      // Target is to the left of source
+      return { sourceHandle: 'left', targetHandle: 'right' };
+    }
+  }
+}
 
 interface ArchitectureStore {
   nodes: ServiceNode[];
@@ -123,10 +159,17 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
       const sourceNode = nodes[templateEdge.sourceIndex];
       const targetNode = nodes[templateEdge.targetIndex];
 
+      // Calculate optimal handles if not explicitly specified in template
+      const sourceTemplateNode = template.nodes[templateEdge.sourceIndex];
+      const targetTemplateNode = template.nodes[templateEdge.targetIndex];
+      const optimalHandles = calculateOptimalHandles(sourceTemplateNode, targetTemplateNode);
+
       return {
         id: `edge-${Date.now()}-${idx}`,
         source: sourceNode.id,
         target: targetNode.id,
+        sourceHandle: templateEdge.sourceHandle ?? optimalHandles.sourceHandle,
+        targetHandle: templateEdge.targetHandle ?? optimalHandles.targetHandle,
         animated: templateEdge.animated ?? false,
         label: templateEdge.label,
       };
