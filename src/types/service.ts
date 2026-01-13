@@ -56,6 +56,10 @@ export interface CostModel {
     min: number;
     max: number;
   };
+  lastUpdated?: string;        // Date when pricing was last verified (YYYY-MM format)
+  pricingUrl?: string;         // Link to official pricing page
+  confidence?: 'low' | 'medium' | 'high';  // Confidence level in estimate accuracy
+  assumptions?: string;        // Notes about what the estimate assumes
 }
 
 export interface Service {

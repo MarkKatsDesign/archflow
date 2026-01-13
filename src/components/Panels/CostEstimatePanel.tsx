@@ -267,19 +267,28 @@ export function CostEstimatePanel() {
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-2 border-t bg-gray-50">
-            <div className="text-xs text-gray-600">
+          <div className="px-4 py-3 border-t bg-gray-50">
+            <div className="text-xs text-gray-600 space-y-2">
               <p>
                 {costEstimate.servicesWithCosts} of {nodes.length} services
                 counted
               </p>
               {costEstimate.servicesWithoutCosts > 0 && (
-                <p className="text-gray-500 mt-1">
+                <p className="text-gray-500">
                   {costEstimate.servicesWithoutCosts} service
                   {costEstimate.servicesWithoutCosts > 1 ? "s" : ""} excluded
                   (no cost data)
                 </p>
               )}
+              <div className="pt-2 border-t border-gray-200">
+                <p className="text-amber-700 bg-amber-50 px-2 py-1.5 rounded flex items-start gap-1.5">
+                  <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
+                  <span>
+                    Cost estimates are approximate based on typical usage.
+                    Review official pricing before committing.
+                  </span>
+                </p>
+              </div>
             </div>
           </div>
         </>

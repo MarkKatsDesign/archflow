@@ -107,6 +107,15 @@ export function NodeDetailPanel() {
             <div className="flex items-center gap-2 mb-2">
               <DollarSign className="w-4 h-4 text-gray-500" />
               <span className="text-sm font-medium text-gray-700">Cost Estimate</span>
+              {service.costModel.confidence && (
+                <span className={`text-xs px-1.5 py-0.5 rounded ${
+                  service.costModel.confidence === 'high' ? 'bg-green-100 text-green-700' :
+                  service.costModel.confidence === 'medium' ? 'bg-amber-100 text-amber-700' :
+                  'bg-gray-100 text-gray-600'
+                }`}>
+                  {service.costModel.confidence}
+                </span>
+              )}
             </div>
             <div className="ml-6 space-y-1">
               <div className="flex items-center justify-between text-sm">
@@ -126,6 +135,29 @@ export function NodeDetailPanel() {
                 <div className="flex items-center gap-1 text-xs text-green-600">
                   <Zap className="w-3 h-3" />
                   <span>Free tier available</span>
+                </div>
+              )}
+              {service.costModel.lastUpdated && (
+                <div className="text-xs text-gray-500 mt-1">
+                  Last verified: {service.costModel.lastUpdated}
+                </div>
+              )}
+              {service.costModel.assumptions && (
+                <div className="text-xs text-gray-600 mt-1 italic">
+                  {service.costModel.assumptions}
+                </div>
+              )}
+              {service.costModel.pricingUrl && (
+                <div className="mt-2">
+                  <a
+                    href={service.costModel.pricingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    <span>View official pricing</span>
+                  </a>
                 </div>
               )}
             </div>
