@@ -903,26 +903,26 @@ export const services: Service[] = [
     category: Category.Auth,
     provider: "SaaS",
     description:
-      "Complete user management with pre-built UI components and authentication",
+      "User management and authentication with pre-built UI components, MFA, organizations, and enterprise SSO",
     color: categoryColors.Auth,
     compatibleWith: ["vercel", "netlify"],
     costModel: {
       type: "tiered",
       baseCost: 0,
       freeTierAvailable: true,
-      estimatedMonthlyCost: { min: 0, max: 25 },
+      estimatedMonthlyCost: { min: 0, max: 350 },
       lastUpdated: "2026-01",
       pricingUrl: "https://clerk.com/pricing",
       confidence: "high",
       assumptions:
-        "Free tier: up to 10,000 MAU. Pro plan at $25/mo for production features.",
+        "Free tier includes 10,000 monthly active users (MAUs) and 100 monthly active organizations (MAOs). Pro plan starts at $25/mo and charges $0.02 per additional MAU and $1 per additional MAO. Key add-ons are available at $100/mo each: Enhanced Authentication (MFA, Enterprise SSO), Enhanced Administration (user impersonation, audit logs), and Enhanced Organizations (verified domains, custom roles). Additional dashboard seats cost $10/mo each.",
     },
     scalability: 4,
-    complexity: 1,
+    complexity: 2,
     managedLevel: "fully",
-    useCases: ["saas-mvp", "content-site"],
+    useCases: ["saas-mvp", "content-site", "b2b-saas", "mobile-backend"],
     documentation: "https://clerk.com/docs",
-    tags: ["auth", "user-management", "ui-components"],
+    tags: ["auth", "user-management", "ui-components", "mfa", "sso"],
   },
 
   {
@@ -931,8 +931,27 @@ export const services: Service[] = [
     shortName: "Supabase Auth",
     category: Category.Auth,
     provider: "Supabase",
-    description: "Open source authentication",
+    description:
+      "Open-source authentication with email/password, magic links, OAuth, phone auth, MFA, and full Postgres integration",
     color: categoryColors.Auth,
+    compatibleWith: ["vercel", "netlify", "cloudflare-pages", "aws-lambda"],
+    costModel: {
+      type: "tiered", // Pricing is based on tiered plans (Free, Pro, Team, Enterprise) with usage-based overages.
+      baseCost: 0,
+      freeTierAvailable: true,
+      estimatedMonthlyCost: { min: 0, max: 200 }, // Note: Can scale significantly with MAU overages.
+      lastUpdated: "2026-01",
+      pricingUrl: "https://supabase.com/pricing",
+      confidence: "high",
+      assumptions:
+        "Auth pricing is tied to platform plans. Free tier includes 50,000 MAUs. Pro includes 100,000 MAUs, then $0.00325 per MAU. Advanced MFA (phone) costs $75/mo for the first project and $10/mo for each additional project. Branding removal is included in Pro and above. Auth audit logs: 1 hour (Free), 7 days (Pro), 28 days (Team). SMS/phone auth requires a separate provider (e.g., Twilio) with its own costs.",
+    },
+    scalability: 5,
+    complexity: 2,
+    managedLevel: "fully",
+    useCases: ["saas-mvp", "mobile-backend", "real-time-app", "full-stack-app"],
+    documentation: "https://supabase.com/docs",
+    tags: ["auth", "oauth", "mfa", "magic-links", "postgres-integrated"],
   },
 
   // Search
@@ -943,7 +962,7 @@ export const services: Service[] = [
     category: Category.Search,
     provider: "SaaS",
     description:
-      "Hosted search API with typo-tolerance, faceting, and instant results",
+      "Hosted AI-powered search with typo tolerance, neural search, faceting, and instant results",
     color: categoryColors.Search,
     compatibleWith: [
       "vercel",
@@ -953,32 +972,71 @@ export const services: Service[] = [
       "aws-ecs",
     ],
     costModel: {
-      type: "tiered",
+      type: "tiered", // Tiers with usage-based overages for searches and records
       baseCost: 0,
-      scalingFactor: 3,
       freeTierAvailable: true,
       estimatedMonthlyCost: { min: 0, max: 300 },
       lastUpdated: "2026-01",
       pricingUrl: "https://www.algolia.com/pricing/",
-      confidence: "medium",
+      confidence: "high",
       assumptions:
-        "Free tier: 10K searches/mo, 10K records. Growth plan starts around $100/mo. Costs scale with searches and records.",
+        "Build plan (Free) includes 10K search requests/month, 1M records, and basic AI features. Grow plan (pay-as-you-go) includes 10K free searches/mo ($0.50/1k thereafter) and 100K free records ($0.40/1k/mo thereafter). Grow Plus plan includes AI features (AI Synonyms, Personalization), 10K free searches/mo ($1.75/1k thereafter). Premium and Elevate plans are custom-priced for enterprise, including full AI suite and neural search. Costs scale primarily with search requests and records stored.",
     },
     scalability: 5,
-    complexity: 2,
+    complexity: 3, // Appropriate due to multiple cost metrics (searches, records, optional features)
     managedLevel: "fully",
     useCases: ["ecommerce", "saas-mvp", "content-site", "general"],
     documentation: "https://www.algolia.com/doc/",
-    tags: ["search", "instant-search", "autocomplete", "api"],
+    tags: ["search", "instant-search", "autocomplete", "api", "ai-search"],
   },
+
   {
     id: "elasticsearch",
     name: "Elasticsearch",
     shortName: "Elasticsearch",
     category: Category.Search,
     provider: "OpenSource",
-    description: "Search and analytics engine",
+    description:
+      "Open-source search and analytics engine supporting full-text search, vector search, aggregations, and real-time analytics",
     color: categoryColors.Search,
+    compatibleWith: [
+      "aws-ecs",
+      "aws-ec2",
+      "gcp-cloud-run",
+      "vercel",
+      "netlify",
+      "cloudflare-pages",
+    ],
+    costModel: {
+      type: "tiered", // Primary model for the Cloud Hosted service; self-hosted is free, serverless is usage-based.
+      baseCost: 0,
+      freeTierAvailable: true,
+      estimatedMonthlyCost: { min: 0, max: 500 },
+      lastUpdated: "2026-01",
+      pricingUrl: "https://www.elastic.co/pricing",
+      confidence: "high",
+      assumptions:
+        "Three deployment models: 1) Self-hosted: free and open-source, with costs for your own infrastructure. 2) Elastic Cloud Hosted: subscription tiers (Standard $99, Gold $114, Platinum $131, Enterprise $184+/mo) based on provisioned RAM/hour and storage. 3) Elasticsearch Serverless: usage-based pricing for Ingest VCUs (~$0.14/hr), Search VCUs (~$0.09/hr), ML VCUs (~$0.07/hr), storage (~$0.047/GB-month), egress, plus optional LLM ($4.5/M input tokens) and ELSER ($0.08/M tokens) fees. Free options include a 14-day cloud trial and the self-managed Basic features.",
+    },
+    scalability: 5,
+    complexity: 4,
+    managedLevel: "self-hosted-or-managed",
+    useCases: [
+      "ecommerce",
+      "analytics",
+      "log-search",
+      "vector-search",
+      "observability",
+      "security-analytics",
+    ],
+    documentation: "https://www.elastic.co/docs",
+    tags: [
+      "search",
+      "analytics",
+      "open-source",
+      "vector-search",
+      "observability",
+    ],
   },
 
   // Monitoring
@@ -989,28 +1047,34 @@ export const services: Service[] = [
     category: Category.Monitoring,
     provider: "SaaS",
     description:
-      "Unified observability platform with metrics, traces, logs, and APM",
+      "Unified observability platform with metrics, logs, traces, security, and APM across cloud and containerized environments",
     color: categoryColors.Monitoring,
     compatibleWith: ["aws-lambda", "aws-ecs", "vercel", "netlify"],
     costModel: {
       type: "tiered",
-      baseCost: 15,
-      scalingFactor: 4,
+      baseCost: 15, // Minimum paid plan (Infrastructure Pro) starts at $15/host/month.
       freeTierAvailable: true,
-      estimatedMonthlyCost: { min: 0, max: 600 },
+      estimatedMonthlyCost: { min: 0, max: 1000 },
       lastUpdated: "2026-01",
       pricingUrl: "https://www.datadoghq.com/pricing/",
-      confidence: "medium",
+      confidence: "high",
       assumptions:
-        "Free tier for 5 hosts. Pro plan at $15/host/mo. APM, logs, and other features have separate pricing.",
+        "Free tier (Infrastructure) includes up to 5 hosts with 1-day metric retention. Infrastructure Pro starts at $15/host/mo (annual) or $18 on-demand; Enterprise at $23/host/mo (annual) or $27 on-demand. DevSecOps Pro ($22/host/mo annual) and Enterprise ($34) are bundled SKUs with security features. Major additional products: APM ($31/host/mo), Log Management ($0.10/GB ingest, $1.70/M events indexed). Additional charges apply for custom metrics ($1 per 100), containers, and workflow executions.",
     },
     scalability: 5,
-    complexity: 3,
+    complexity: 4,
     managedLevel: "fully",
-    useCases: ["microservices", "saas-mvp", "ecommerce", "general"],
+    useCases: [
+      "microservices",
+      "saas-mvp",
+      "ecommerce",
+      "observability",
+      "security-monitoring",
+    ],
     documentation: "https://docs.datadoghq.com/",
-    tags: ["monitoring", "apm", "logs", "traces", "observability"],
+    tags: ["monitoring", "apm", "logs", "traces", "observability", "security"],
   },
+
   {
     id: "aws-cloudwatch",
     name: "AWS CloudWatch",
@@ -1018,7 +1082,7 @@ export const services: Service[] = [
     category: Category.Monitoring,
     provider: "AWS",
     description:
-      "Native AWS monitoring with metrics, logs, alarms, and dashboards",
+      "Native AWS observability service for metrics, logs, alarms, dashboards, traces, and application monitoring",
     color: categoryColors.Monitoring,
     compatibleWith: [
       "aws-lambda",
@@ -1030,21 +1094,26 @@ export const services: Service[] = [
     costModel: {
       type: "usage",
       baseCost: 0,
-      scalingFactor: 3,
       freeTierAvailable: true,
-      estimatedMonthlyCost: { min: 0, max: 200 },
+      estimatedMonthlyCost: { min: 0, max: 1000 }, // Updated to reflect potential production costs
       lastUpdated: "2026-01",
       pricingUrl: "https://aws.amazon.com/cloudwatch/pricing/",
-      confidence: "medium",
+      confidence: "high",
       assumptions:
-        "Free tier includes basic monitoring. Costs scale with custom metrics, logs ingestion, and alarms.",
+        "Free tier includes 5GB logs ingestion, 1,800 minutes of Live Tail, 10 custom metrics, 3 dashboards, 10 alarms, and 1M API requests. Paid usage includes logs ingestion and storage, Logs Insights queries, custom metrics, alarms, dashboards, X-Ray traces, Application Signals, RUM, Synthetics, Contributor Insights, and cross-account observability.",
     },
     scalability: 5,
-    complexity: 2,
+    complexity: 4,
     managedLevel: "fully",
-    useCases: ["microservices", "saas-mvp", "ecommerce", "general"],
+    useCases: [
+      "microservices",
+      "saas-mvp",
+      "ecommerce",
+      "observability",
+      "general",
+    ],
     documentation: "https://docs.aws.amazon.com/cloudwatch/",
-    tags: ["monitoring", "logs", "metrics", "alarms", "aws"],
+    tags: ["monitoring", "logs", "metrics", "alarms", "traces", "aws"],
   },
 
   // Networking
@@ -1055,7 +1124,7 @@ export const services: Service[] = [
     category: Category.Networking,
     provider: "AWS",
     description:
-      "Fully managed API gateway for creating, publishing, and securing REST, HTTP, and WebSocket APIs at any scale",
+      "Fully managed service for building, deploying, and securing REST, HTTP, and WebSocket APIs at scale",
     color: categoryColors.Networking,
     compatibleWith: ["aws-lambda", "aws-ecs", "dynamodb", "postgres-rds"],
     requiresOneOf: ["aws-lambda", "aws-ecs"],
@@ -1063,20 +1132,21 @@ export const services: Service[] = [
       type: "usage",
       baseCost: 0,
       freeTierAvailable: true,
-      estimatedMonthlyCost: { min: 0, max: 100 },
+      estimatedMonthlyCost: { min: 0, max: 500 }, // Updated: Realistic for moderate usage
       lastUpdated: "2026-01",
       pricingUrl: "https://aws.amazon.com/api-gateway/pricing/",
-      confidence: "medium",
+      confidence: "high",
       assumptions:
-        "Free tier: 1M API calls/mo for 12 months. REST API at $3.50 per million requests thereafter.",
+        "Free tier includes 1M REST calls, 1M HTTP calls, 1M WebSocket messages, and 750k connection minutes per month for 12 months. New AWS accounts (after July 2025) also receive $200 in service credits. HTTP APIs: $1.00 per million requests (first 300M). REST APIs: tiered at $3.50 per million (first 333M), $2.80 (next 667M), $2.38 (next 19B). WebSocket APIs: $1.00 per million messages + $0.25 per million connection minutes. Optional caching adds hourly charges. API Gateway Portals are a separate product with monthly fees.",
     },
     scalability: 5,
-    complexity: 2,
+    complexity: 3,
     managedLevel: "fully",
     useCases: ["saas-mvp", "mobile-backend", "microservices", "general"],
     documentation: "https://docs.aws.amazon.com/apigateway/",
     tags: ["api", "gateway", "serverless", "rest", "websocket"],
   },
+
   {
     id: "aws-alb",
     name: "AWS Application Load Balancer",
@@ -1084,29 +1154,29 @@ export const services: Service[] = [
     category: Category.Networking,
     provider: "AWS",
     description:
-      "Intelligent load balancer for HTTP/HTTPS traffic with advanced routing, SSL termination, and health checks",
+      "Layer 7 load balancer for HTTP/HTTPS traffic with advanced routing, SSL termination, and health checks",
     color: categoryColors.Networking,
     compatibleWith: ["aws-ecs", "postgres-rds", "redis-elasticache"],
     requiresOneOf: ["aws-ecs"],
     costModel: {
-      type: "tiered",
-      baseCost: 20,
-      scalingFactor: 2,
-      freeTierAvailable: false,
-      estimatedMonthlyCost: { min: 20, max: 200 },
+      type: "usage",
+      baseCost: 0,
+      freeTierAvailable: true,
+      estimatedMonthlyCost: { min: 20, max: 250 },
       lastUpdated: "2026-01",
       pricingUrl: "https://aws.amazon.com/elasticloadbalancing/pricing/",
-      confidence: "medium",
+      confidence: "high",
       assumptions:
-        "Base cost ~$20/mo per ALB. Additional costs for LCU (Load Balancer Capacity Units) usage.",
+        "ALB pricing includes $0.0225 per ALB-hour plus $0.008 per LCU-hour. LCUs are based on the highest of new connections, active connections, processed bytes (note: 1 LCU = 1GB/hr for EC2 targets, 0.4GB/hr for Lambda targets), or rule evaluations (first 10 rules free). Free tier includes 750 ALB hours and 15 LCUs per month for new AWS accounts. Data transfer and public IPv4 addresses are billed separately.",
     },
     scalability: 5,
-    complexity: 3,
+    complexity: 4,
     managedLevel: "fully",
     useCases: ["ecommerce", "microservices", "general"],
     documentation: "https://docs.aws.amazon.com/elasticloadbalancing/",
     tags: ["load-balancer", "networking", "ssl", "routing"],
   },
+
   {
     id: "route53",
     name: "AWS Route 53",
@@ -1114,27 +1184,28 @@ export const services: Service[] = [
     category: Category.Networking,
     provider: "AWS",
     description:
-      "Scalable DNS and domain name registration service with health checking and traffic routing",
+      "Highly available and scalable DNS, domain registration, health checking, and traffic routing service",
     color: categoryColors.Networking,
     compatibleWith: ["aws-cloudfront", "aws-alb", "aws-lambda"],
     costModel: {
-      type: "usage",
-      baseCost: 0.5,
-      freeTierAvailable: false,
-      estimatedMonthlyCost: { min: 1, max: 10 },
+      type: "usage", // Pay-as-you-go for hosted zones, queries, health checks, etc.
+      baseCost: 0, // No base fee, pay per component used
+      freeTierAvailable: true, // 50 free health checks for AWS endpoints
+      estimatedMonthlyCost: { min: 1, max: 20 },
       lastUpdated: "2026-01",
       pricingUrl: "https://aws.amazon.com/route53/pricing/",
       confidence: "high",
       assumptions:
-        "Hosted zone at $0.50/mo. DNS queries at $0.40 per million queries. Minimal traffic assumed.",
+        "Hosted zones cost $0.50/mo for the first 25 zones and $0.10/mo thereafter. Standard DNS queries cost $0.40 per million (first 1B). Latency, geo, and IP-based routing queries cost more. First 50 health checks for AWS endpoints are free; beyond that, basic checks cost $0.50 (AWS) or $0.75 (non-AWS) per month. Optional features (HTTPS, fast interval) add $1–$2 per feature per month. Traffic Flow policies cost $50 per policy record per month.",
     },
     scalability: 5,
-    complexity: 2,
+    complexity: 3,
     managedLevel: "fully",
     useCases: ["saas-mvp", "ecommerce", "content-site", "general"],
     documentation: "https://docs.aws.amazon.com/route53/",
-    tags: ["dns", "routing", "domains"],
+    tags: ["dns", "routing", "domains", "health-checks"],
   },
+
   {
     id: "cloudflare-dns",
     name: "Cloudflare DNS",
@@ -1142,7 +1213,7 @@ export const services: Service[] = [
     category: Category.Networking,
     provider: "Cloudflare",
     description:
-      "Fast, secure, and free DNS service with DNSSEC support and DDoS protection",
+      "Fast, secure, unmetered DNS with DNSSEC, DDoS protection, and global anycast performance",
     color: categoryColors.Networking,
     compatibleWith: ["cloudflare-cdn", "cloudflare-pages", "vercel"],
     costModel: {
@@ -1150,13 +1221,18 @@ export const services: Service[] = [
       baseCost: 0,
       freeTierAvailable: true,
       estimatedMonthlyCost: { min: 0, max: 0 },
+      lastUpdated: "2026-01",
+      pricingUrl: "https://www.cloudflare.com/plans",
+      confidence: "high",
+      assumptions:
+        "Cloudflare DNS is fully free and unmetered across all plans. Paid Cloudflare plans add features such as WAF, bot mitigation, advanced rules, and support, but DNS hosting and queries remain free.",
     },
     scalability: 5,
     complexity: 1,
     managedLevel: "fully",
     useCases: ["saas-mvp", "content-site", "general"],
     documentation: "https://developers.cloudflare.com/dns/",
-    tags: ["dns", "free", "ddos-protection"],
+    tags: ["dns", "free", "ddos-protection", "dnssec"],
   },
 
   // DevOps
@@ -1174,15 +1250,22 @@ export const services: Service[] = [
       type: "usage",
       baseCost: 0,
       freeTierAvailable: true,
-      estimatedMonthlyCost: { min: 0, max: 50 },
+      estimatedMonthlyCost: { min: 0, max: 100 },
+      lastUpdated: "2026-01",
+      pricingUrl:
+        "https://docs.github.com/en/billing/concepts/product-billing/github-actions",
+      confidence: "high",
+      assumptions:
+        "Free monthly minutes depend on the GitHub plan: Free organization accounts get 500 minutes, paid Team plans get 3,000 minutes for private repositories. Usage for public repositories and self-hosted runner **execution time** is free. Additional GitHub-hosted runner minutes are billed per-minute ($0.008 to $0.064/min based on OS and hardware). Artifact and package storage beyond the free allowance is billed per GB per month.",
     },
     scalability: 4,
-    complexity: 2,
+    complexity: 3,
     managedLevel: "fully",
     useCases: ["saas-mvp", "ecommerce", "microservices", "general"],
     documentation: "https://docs.github.com/actions",
     tags: ["ci-cd", "automation", "deployment", "testing"],
   },
+
   {
     id: "aws-secrets-manager",
     name: "AWS Secrets Manager",
@@ -1196,8 +1279,13 @@ export const services: Service[] = [
     costModel: {
       type: "usage",
       baseCost: 0,
-      freeTierAvailable: false,
-      estimatedMonthlyCost: { min: 1, max: 20 },
+      freeTierAvailable: true, // Corrected: New accounts get $200 in service credits.
+      estimatedMonthlyCost: { min: 1, max: 200 }, // Corrected: Max cost increased to reflect realistic scaling.
+      lastUpdated: "2026-01",
+      pricingUrl: "https://aws.amazon.com/secrets-manager/pricing",
+      confidence: "high",
+      assumptions:
+        "Pricing is $0.40 per secret per month (prorated hourly) and $0.05 per 10,000 API calls. New AWS accounts (after July 15, 2025) receive up to $200 in AWS Free Tier service credits usable for Secrets Manager. Replica secrets are billed separately. No charge for creating new secret versions.",
     },
     scalability: 5,
     complexity: 2,
@@ -1206,6 +1294,7 @@ export const services: Service[] = [
     documentation: "https://docs.aws.amazon.com/secretsmanager/",
     tags: ["security", "secrets", "encryption", "rotation"],
   },
+
   {
     id: "doppler",
     name: "Doppler",
@@ -1213,27 +1302,28 @@ export const services: Service[] = [
     category: Category.DevOps,
     provider: "SaaS",
     description:
-      "Universal secrets manager for developers with sync across environments and team collaboration",
+      "Universal secrets manager with environment syncing, access controls, and developer-friendly workflows",
     color: categoryColors.DevOps,
     compatibleWith: ["vercel", "render", "railway", "aws-lambda"],
     costModel: {
       type: "tiered",
       baseCost: 0,
       freeTierAvailable: true,
-      estimatedMonthlyCost: { min: 0, max: 40 },
+      estimatedMonthlyCost: { min: 0, max: 200 },
       lastUpdated: "2026-01",
       pricingUrl: "https://www.doppler.com/pricing",
       confidence: "high",
       assumptions:
-        "Free tier for personal use. Team plan at $12/user/mo. Enterprise features scale pricing.",
+        "Developer plan is free for up to 3 users, additional users cost $8/month each. Includes 3 days of activity logs, 5 config syncs. Team plan costs $21 per user per month (14-day trial available), adding SAML SSO, RBAC, 90-day logs, auto rotation, 100 syncs. Key add-ons (Custom Roles, User Groups, Integration Syncs) cost $9 per user per month each. Enterprise plan is custom-priced.",
     },
     scalability: 4,
-    complexity: 1,
+    complexity: 2,
     managedLevel: "fully",
-    useCases: ["saas-mvp", "general"],
+    useCases: ["saas-mvp", "general", "team-collaboration"],
     documentation: "https://docs.doppler.com/",
-    tags: ["secrets", "environment-variables", "security"],
+    tags: ["secrets", "environment-variables", "security", "rotation"],
   },
+
   {
     id: "aws-ecr",
     name: "AWS Elastic Container Registry",
@@ -1241,7 +1331,7 @@ export const services: Service[] = [
     category: Category.DevOps,
     provider: "AWS",
     description:
-      "Fully managed Docker container registry for storing, managing, and deploying container images",
+      "Fully managed container registry for storing, managing, and deploying Docker and OCI images",
     color: categoryColors.DevOps,
     compatibleWith: ["aws-ecs", "aws-lambda"],
     requiresOneOf: ["aws-ecs"],
@@ -1249,20 +1339,21 @@ export const services: Service[] = [
       type: "usage",
       baseCost: 0,
       freeTierAvailable: true,
-      estimatedMonthlyCost: { min: 0, max: 30 },
+      estimatedMonthlyCost: { min: 0, max: 40 },
       lastUpdated: "2026-01",
       pricingUrl: "https://aws.amazon.com/ecr/pricing/",
-      confidence: "medium",
+      confidence: "high",
       assumptions:
-        "Free tier: 500MB storage/mo for 12 months. $0.10/GB/mo storage and $0.09/GB data transfer out.",
+        "New AWS accounts receive 500 MB of private repository storage free per month for 12 months. Public repositories include 50 GB of long-term free storage. Standard storage is priced at $0.10 per GB-month. Data transfer out from private repositories to the internet starts at $0.09 per GB; crucially, data transfer to AWS services in the same Region (e.g., EC2, ECS, Lambda) is free. Public repositories include monthly free data transfer allowances (500 GB anonymous, 5 TB authenticated). Please refer to the latest official pricing page to confirm details on Archive storage tier pricing.",
     },
     scalability: 5,
-    complexity: 2,
+    complexity: 3,
     managedLevel: "fully",
-    useCases: ["microservices", "general"],
+    useCases: ["microservices", "general", "container-builds"],
     documentation: "https://docs.aws.amazon.com/ecr/",
     tags: ["docker", "containers", "registry", "images"],
   },
+
   {
     id: "docker-hub",
     name: "Docker Hub",
@@ -1270,26 +1361,26 @@ export const services: Service[] = [
     category: Category.DevOps,
     provider: "SaaS",
     description:
-      "Public and private container registry for sharing and distributing Docker images",
+      "Public and private container registry with image distribution, vulnerability scanning, and integrated build and test tooling",
     color: categoryColors.DevOps,
     compatibleWith: ["aws-ecs", "gcp-cloud-run", "render", "railway"],
     costModel: {
       type: "tiered",
       baseCost: 0,
       freeTierAvailable: true,
-      estimatedMonthlyCost: { min: 0, max: 10 },
+      estimatedMonthlyCost: { min: 0, max: 24 },
       lastUpdated: "2026-01",
       pricingUrl: "https://www.docker.com/pricing/",
       confidence: "high",
       assumptions:
-        "Free tier: unlimited public repos, 1 private repo. Pro plan at $5/mo for unlimited private repos.",
+        "Four main tiers: Personal ($0) for 1 user, 1 private repo, 100 pulls/hr. Pro ($9/user/mo annual) for individuals: unlimited private repos/pull rate, 2 Scout repos, 200 Build Cloud & 100 Testcontainers Cloud mins. Team ($15/user/mo annual) for up to 100 users: includes RBAC, audit logs, 500 build/runtime mins. Business ($24/user/mo annual) for unlimited users: adds SSO, SCIM, Hardened Desktop, 1500 mins.",
     },
     scalability: 4,
-    complexity: 1,
+    complexity: 2,
     managedLevel: "fully",
     useCases: ["saas-mvp", "microservices", "general"],
     documentation: "https://docs.docker.com/docker-hub/",
-    tags: ["docker", "containers", "registry"],
+    tags: ["docker", "containers", "registry", "build", "ci"],
   },
 
   // Integrations
@@ -1321,6 +1412,7 @@ export const services: Service[] = [
     documentation: "https://stripe.com/docs",
     tags: ["payments", "subscriptions", "checkout", "billing"],
   },
+
   {
     id: "resend",
     name: "Resend",
