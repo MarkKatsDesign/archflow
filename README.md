@@ -2,6 +2,8 @@
 
 Visual System Architecture Designer - A drag-and-drop webapp for designing, documenting, and sharing production-ready system architectures.
 
+**[Start Building Now](https://markkatsdesign.github.io/archflow/)** - No installation required, works directly in your browser.
+
 ## What's Implemented
 
 ### Phase 1: Foundation (Core Canvas) ✅
@@ -194,8 +196,12 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing, docu
 
 ## Getting Started
 
+### Use Online (Recommended)
+Visit **[https://markkatsdesign.github.io/archflow/](https://markkatsdesign.github.io/archflow/)** to start designing your architecture instantly - no setup required.
+
+### Run Locally
 ```bash
-# Install dependencies (already done)
+# Install dependencies
 npm install
 
 # Run development server
