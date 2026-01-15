@@ -107,7 +107,7 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing, docu
   - Example: RDS with baseCost=$15, scalingFactor=2 → MVP: $15, Growth: $30, Enterprise: $60
 
 ### Phase 6: Production-Ready Architecture Library ✅
-- ✅ Expanded service library (28 → 44 services):
+- ✅ Expanded service library (28 → 54 services):
   - **Networking** (4 services): AWS API Gateway, AWS ALB, Route53, Cloudflare DNS
   - **DevOps** (5 services): GitHub Actions, AWS Secrets Manager, Doppler, AWS ECR, Docker Hub
   - **Integrations** (7 services): Stripe, Resend, SendGrid, AWS SES, Sanity, Contentful, Strapi
@@ -303,22 +303,33 @@ npm run build
 - **Best for**: Indie hackers, MVPs, simple full-stack apps
 - **Pros**: Simplest deployment, all free tiers, auto-deploy
 
-## Available Services (44)
+## Available Services (54)
 
-### Categories
+### Multi-Cloud & Platform Coverage
+ArchFlow provides a comprehensive catalog of services across AWS, GCP, Azure, and popular SaaS providers, covering all layers of modern cloud architectures.
+
+### Services by Category
 - **Frontend** (3): Vercel, Netlify, Cloudflare Pages
 - **CDN** (2): Cloudflare CDN, AWS CloudFront
-- **Backend** (5): AWS Lambda, AWS ECS, GCP Cloud Run, Railway, Render
-- **Database** (5): RDS Postgres, Supabase, PlanetScale, MongoDB Atlas, DynamoDB
-- **Cache** (2): ElastiCache, Upstash Redis
-- **Queue** (3): SQS, SNS, RabbitMQ
-- **Storage** (2): S3, Cloudflare R2
+- **Backend** (11): AWS Lambda, AWS ECS, AWS ECS on EC2, AWS Fargate, GCP Cloud Run, Azure Functions, Azure Container Apps, Railway, Render, Fly.io, DigitalOcean App Platform
+- **Database** (7): RDS Postgres, Supabase, PlanetScale, DynamoDB, MongoDB Atlas, Neon, Firebase/Firestore
+- **Cache** (2): ElastiCache Redis, Upstash Redis
+- **Queue & Workflow** (7): AWS SQS, AWS SNS, GCP Pub/Sub, Confluent Cloud (Kafka), RabbitMQ, Inngest, Temporal
+- **Storage** (3): AWS S3, Cloudflare R2, GCP Cloud Storage
 - **Auth** (3): Auth0, Clerk, Supabase Auth
 - **Search** (2): Algolia, Elasticsearch
-- **Monitoring** (2): Datadog, CloudWatch
+- **Monitoring** (3): Datadog, CloudWatch, Sentry
+- **Analytics** (1): PostHog
 - **Networking** (4): AWS API Gateway, AWS ALB, Route53, Cloudflare DNS
 - **DevOps** (5): GitHub Actions, AWS Secrets Manager, Doppler, AWS ECR, Docker Hub
-- **Integrations** (7): Stripe, Resend, SendGrid, AWS SES, Sanity, Contentful, Strapi
+- **Integrations** (8): Stripe, Pusher, Resend, SendGrid, AWS SES, Sanity, Contentful, Strapi
+
+### Provider Breakdown
+- **AWS**: 16 services (compute, storage, networking, monitoring)
+- **GCP**: 4 services (Cloud Run, Pub/Sub, Cloud Storage, Firebase)
+- **Azure**: 2 services (Functions, Container Apps)
+- **Multi-Provider SaaS**: 28+ services (databases, auth, monitoring, integrations)
+- **Open Source**: 2 services (Elasticsearch, RabbitMQ)
 
 ### What's New in Phase 6
 The service library has been expanded to include the "glue" services that real production architectures need:

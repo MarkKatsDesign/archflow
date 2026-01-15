@@ -43,12 +43,40 @@ export type UseCase =
   | 'ai-ml'
   | 'content-site'
   | 'real-time-app'
-  | 'general';
+  | 'general'
+  | 'enterprise'
+  | 'orchestration'
+  | 'event-driven'
+  | 'batch-jobs'
+  | 'api-backend'
+  | 'hobby-project'
+  | 'full-stack-app'
+  | 'workers'
+  | 'global-app'
+  | 'gaming'
+  | 'leaderboards'
+  | 'edge-functions'
+  | 'rate-limiting'
+  | 'iot'
+  | 'streaming'
+  | 'analytics'
+  | 'backup'
+  | 'static-assets'
+  | 'enterprise-sso'
+  | 'b2b-saas'
+  | 'log-search'
+  | 'vector-search'
+  | 'observability'
+  | 'security-analytics'
+  | 'security-monitoring'
+  | 'team-collaboration'
+  | 'container-builds'
+  | 'workflow';
 
 export type ManagedLevel = 'fully' | 'partial' | 'self';
 
 export interface CostModel {
-  type: 'fixed' | 'usage' | 'tiered' | 'free';
+  type: 'fixed' | 'usage' | 'tiered' | 'free' | 'hybrid' | 'modular';
   baseCost?: number;           // Monthly base in USD
   scalingFactor?: number;      // Cost multiplier per scale tier
   freeTierAvailable: boolean;
@@ -61,6 +89,14 @@ export interface CostModel {
   confidence?: 'low' | 'medium' | 'high';  // Confidence level in estimate accuracy
   assumptions?: string;        // Notes about what the estimate assumes
 }
+
+// Pricing Model Definitions:
+// - fixed: Single flat monthly fee regardless of usage
+// - usage: Pay-as-you-go based on consumption (requests, GB, compute time)
+// - tiered: Platform-wide tiers (e.g., Hobby/Pro/Enterprise) with different limits
+// - free: No cost (open source or permanently free services)
+// - hybrid: Combination of tiered base plan + usage-based overages
+// - modular: Pay per component/service you add (e.g., $5/web service + $7/database)
 
 export interface Service {
   id: string;
