@@ -5,12 +5,15 @@ import ReactFlow, {
   MiniMap,
   ReactFlowProvider,
   ConnectionLineType,
+  Panel,
 } from "reactflow";
 import type { ReactFlowInstance, EdgeMouseHandler } from "reactflow";
 import "reactflow/dist/style.css";
 
 import CustomNode from "./CustomNode";
+import AlignmentGuides from "./AlignmentGuides";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
+import { useAlignmentGuides } from "../../hooks/useAlignmentGuides";
 import type { Service } from "../../types/service";
 import type { ServiceNodeData, ServiceNode } from "../../types/architecture";
 
@@ -34,6 +37,18 @@ function ArchitectureCanvasInner() {
 
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
+
+  // Smart alignment guides for smooth drag experience
+  const { guides, isShiftPressed, onNodesChangeWithAlignment } =
+    useAlignmentGuides(nodes);
+
+  // Wrap onNodesChange with alignment logic
+  const handleNodesChange = useCallback(
+    (changes: Parameters<typeof onNodesChange>[0]) => {
+      onNodesChangeWithAlignment(changes, onNodesChange, nodes);
+    },
+    [onNodesChange, onNodesChangeWithAlignment, nodes]
+  );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -121,7 +136,7 @@ function ArchitectureCanvasInner() {
       <ReactFlow
         nodes={nodes}
         edges={styledEdges}
-        onNodesChange={onNodesChange}
+        onNodesChange={handleNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onInit={setReactFlowInstance}
@@ -155,13 +170,23 @@ function ArchitectureCanvasInner() {
           stroke: "#3b82f6",
           strokeDasharray: "5 5",
         }}
-        snapToGrid={true}
-        snapGrid={[15, 15]}
         fitView
         className="bg-linear-to-br from-gray-50 to-blue-50"
       >
         <Background color="#94a3b8" gap={16} size={1} />
         <Controls />
+
+        {/* Smart alignment guides */}
+        <AlignmentGuides guides={guides} />
+
+        {/* Shift key indicator for grid snap mode */}
+        {isShiftPressed && (
+          <Panel position="top-center" className="pointer-events-none">
+            <div className="rounded-md bg-blue-500 px-3 py-1.5 text-xs font-medium text-white shadow-lg">
+              Grid Snap Mode (15px)
+            </div>
+          </Panel>
+        )}
 
         {/* Canvas Overview - Bottom Right, above Smart Suggestions */}
         <MiniMap
