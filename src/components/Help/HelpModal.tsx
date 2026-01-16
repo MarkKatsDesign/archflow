@@ -8,20 +8,27 @@ import {
   DollarSign,
   CheckCircle2,
 } from "lucide-react";
+import { useArchitectureStore } from "../../store/useArchitectureStore";
 
 export function HelpModal() {
   const [isOpen, setIsOpen] = useState(false);
+  const { selectedNodeId, selectedEdgeId } = useArchitectureStore();
+
+  // Hide help button when node or edge detail panel is open
+  const isPanelOpen = selectedNodeId !== null || selectedEdgeId !== null;
 
   return (
     <>
-      {/* Help Button - Top Right */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="absolute top-4 right-4 z-10 p-2 bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all hover:scale-105"
-        title="Help & Guide"
-      >
-        <HelpCircle className="w-5 h-5 text-blue-600" />
-      </button>
+      {/* Help Button - Top Right (hidden when detail panel is open) */}
+      {!isPanelOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="absolute top-4 right-4 z-10 p-2 bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all hover:scale-105"
+          title="Help & Guide"
+        >
+          <HelpCircle className="w-5 h-5 text-blue-600" />
+        </button>
+      )}
 
       {/* Help Modal */}
       {isOpen && (
