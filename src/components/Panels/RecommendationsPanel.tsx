@@ -51,25 +51,25 @@ export function RecommendationsPanel() {
     return (
       <button
         onClick={() => setIsExpanded(true)}
-        className="absolute bottom-4 right-4 z-40 bg-white rounded-xl shadow-lg border border-gray-200 px-4 py-3 hover:shadow-xl transition-all hover:scale-105 group animate-slide-in-up"
+        className="absolute bottom-4 right-4 z-40 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 px-4 py-3 hover:shadow-xl transition-all hover:scale-105 group animate-slide-in-up"
       >
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <Lightbulb className="w-5 h-5 text-blue-600" />
-            <span className="font-semibold text-gray-900">
+            <Lightbulb className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <span className="font-semibold text-gray-900 dark:text-gray-100">
               Smart Suggestions
             </span>
           </div>
           {totalCount > 0 && (
             <div className="flex items-center gap-2">
               {warnings.length > 0 && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">
                   {warnings.length}{" "}
                   {warnings.length === 1 ? "warning" : "warnings"}
                 </span>
               )}
               {recommendations.length > 0 && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300">
                   {recommendations.length}{" "}
                   {recommendations.length === 1 ? "tip" : "tips"}
                 </span>
@@ -77,12 +77,12 @@ export function RecommendationsPanel() {
             </div>
           )}
           {!hasContent && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300">
               <CheckCircle2 className="w-3 h-3 mr-1" />
               All good
             </span>
           )}
-          <ChevronUp className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+          <ChevronUp className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
         </div>
       </button>
     );
@@ -91,23 +91,23 @@ export function RecommendationsPanel() {
   // Expanded state - full panel
   if (!hasContent) {
     return (
-      <div className="absolute bottom-4 right-4 z-40 w-80 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden animate-slide-in-up">
+      <div className="absolute bottom-4 right-4 z-40 w-80 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-hidden animate-slide-in-up">
         <button
           onClick={() => setIsExpanded(false)}
-          className="w-full px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 transition-all text-left"
+          className="w-full px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/40 dark:hover:to-emerald-900/40 transition-all text-left"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-green-600" />
-              <h3 className="font-semibold text-gray-900">
+              <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                 Architecture looks good!
               </h3>
             </div>
-            <ChevronDown className="w-4 h-4 text-gray-600" />
+            <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
           </div>
         </button>
         <div className="px-4 py-3">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             No warnings or critical recommendations at this time.
           </p>
         </div>
@@ -116,28 +116,28 @@ export function RecommendationsPanel() {
   }
 
   return (
-    <div className="absolute bottom-4 right-4 z-40 w-96 bg-white rounded-xl shadow-xl border border-gray-200 max-h-125 overflow-hidden flex flex-col animate-slide-in-up">
+    <div className="absolute bottom-4 right-4 z-40 w-96 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 max-h-125 overflow-hidden flex flex-col animate-slide-in-up">
       {/* Header - Clickable to collapse */}
       <button
         onClick={() => setIsExpanded(false)}
-        className="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all text-left w-full"
+        className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/40 dark:hover:to-indigo-900/40 transition-all text-left w-full"
       >
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <Lightbulb className="w-5 h-5 text-blue-600" />
-              <h3 className="font-semibold text-gray-900">Smart Suggestions</h3>
+              <Lightbulb className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100">Smart Suggestions</h3>
               {totalCount > 0 && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300">
                   {totalCount}
                 </span>
               )}
             </div>
-            <p className="text-xs text-gray-600 mt-1">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
               Based on your current architecture
             </p>
           </div>
-          <ChevronDown className="w-4 h-4 text-gray-600 shrink-0" />
+          <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400 shrink-0" />
         </div>
       </button>
 
@@ -146,7 +146,7 @@ export function RecommendationsPanel() {
         {/* Warnings Section */}
         {warnings.length > 0 && (
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-amber-700">
+            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
               <AlertTriangle className="w-4 h-4" />
               <h4 className="font-medium text-sm">Warnings</h4>
             </div>
@@ -154,9 +154,9 @@ export function RecommendationsPanel() {
               {warnings.map((warning, idx) => (
                 <div
                   key={idx}
-                  className="p-3 bg-amber-50 border border-amber-200 rounded-lg"
+                  className="p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg"
                 >
-                  <p className="text-sm text-amber-900">{warning}</p>
+                  <p className="text-sm text-amber-900 dark:text-amber-200">{warning}</p>
                 </div>
               ))}
             </div>
@@ -166,7 +166,7 @@ export function RecommendationsPanel() {
         {/* Recommendations Section */}
         {recommendations.length > 0 && (
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-green-700">
+            <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
               <Sparkles className="w-4 h-4" />
               <h4 className="font-medium text-sm">
                 Recommended Services ({recommendations.length})
@@ -177,7 +177,7 @@ export function RecommendationsPanel() {
                 <RecommendationCard key={service.id} service={service} />
               ))}
               {recommendations.length > 5 && (
-                <p className="text-xs text-gray-500 text-center pt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center pt-1">
                   +{recommendations.length - 5} more in sidebar
                 </p>
               )}

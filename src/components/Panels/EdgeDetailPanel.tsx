@@ -41,22 +41,22 @@ function EdgeDetailPanelContent({
   };
 
   return (
-    <div className="absolute top-4 right-4 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col animate-slide-in-right">
+    <div className="absolute top-4 right-4 w-80 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden flex flex-col animate-slide-in-right">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between border-l-4 border-l-blue-500 bg-gradient-to-r from-white to-gray-50">
+      <div className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between border-l-4 border-l-blue-500 bg-gradient-to-r from-white to-gray-50 dark:from-slate-900 dark:to-slate-800">
         <div className="flex-1">
-          <h3 className="font-semibold text-gray-900">Connection Properties</h3>
-          <p className="text-sm text-gray-500">
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100">Connection Properties</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {sourceNode?.data.label || "Source"} →{" "}
             {targetNode?.data.label || "Target"}
           </p>
         </div>
         <button
           onClick={() => setSelectedEdgeId(null)}
-          className="p-1 hover:bg-gray-100 rounded transition-colors"
+          className="p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded transition-colors"
           aria-label="Close panel"
         >
-          <X className="w-5 h-5 text-gray-500" />
+          <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </button>
       </div>
 
@@ -64,7 +64,7 @@ function EdgeDetailPanelContent({
       <div className="px-4 py-4 space-y-4">
         {/* Label Input */}
         <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             <Tag className="w-4 h-4" />
             Connection Label
           </label>
@@ -73,23 +73,23 @@ function EdgeDetailPanelContent({
             value={label || ""}
             onChange={(e) => handleLabelChange(e.target.value)}
             placeholder="e.g., Data & Auth, API Call"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Describe the data or communication flow
           </p>
         </div>
 
         {/* Animated Toggle */}
-        <div className="border-t border-gray-200 pt-4">
+        <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
           <label className="flex items-center justify-between cursor-pointer">
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-gray-700" />
+              <Zap className="w-4 h-4 text-gray-700 dark:text-gray-300" />
               <div>
-                <span className="text-sm font-medium text-gray-700 block">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 block">
                   Animated Flow
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   Dashed line with animation
                 </span>
               </div>
@@ -107,8 +107,8 @@ function EdgeDetailPanelContent({
         </div>
 
         {/* Edge Type Selection */}
-        <div className="border-t border-gray-200 pt-4">
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+        <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             <GitBranch className="w-4 h-4" />
             Connection Style
           </label>
@@ -117,8 +117,8 @@ function EdgeDetailPanelContent({
               onClick={() => handleEdgeTypeChange("default")}
               className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
                 edge.type === "default" || !edge.type
-                  ? "bg-blue-50 border-2 border-blue-500 text-blue-700"
-                  : "bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  ? "bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-500 text-blue-700 dark:text-blue-300"
+                  : "bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
               }`}
             >
               <div className="font-medium">Bezier (Curved)</div>
@@ -128,8 +128,8 @@ function EdgeDetailPanelContent({
               onClick={() => handleEdgeTypeChange("smoothstep")}
               className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
                 edge.type === "smoothstep"
-                  ? "bg-blue-50 border-2 border-blue-500 text-blue-700"
-                  : "bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  ? "bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-500 text-blue-700 dark:text-blue-300"
+                  : "bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
               }`}
             >
               <div className="font-medium">Smooth Step</div>
@@ -139,8 +139,8 @@ function EdgeDetailPanelContent({
               onClick={() => handleEdgeTypeChange("straight")}
               className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
                 edge.type === "straight"
-                  ? "bg-blue-50 border-2 border-blue-500 text-blue-700"
-                  : "bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  ? "bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-500 text-blue-700 dark:text-blue-300"
+                  : "bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
               }`}
             >
               <div className="font-medium">Straight</div>
@@ -150,9 +150,9 @@ function EdgeDetailPanelContent({
         </div>
 
         {/* Info Box */}
-        <div className="border-t border-gray-200 pt-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-            <p className="text-xs text-blue-800">
+        <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-md p-3">
+            <p className="text-xs text-blue-800 dark:text-blue-300">
               <strong>Tip:</strong> Use animated connections for active data
               flows (APIs, real-time sync) and static connections for
               configuration or one-time setup.
@@ -161,10 +161,10 @@ function EdgeDetailPanelContent({
         </div>
 
         {/* Delete Button */}
-        <div className="border-t border-gray-200 pt-4">
+        <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
           <button
             onClick={handleDelete}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-md hover:bg-red-100 transition-colors font-medium text-sm"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-md hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors font-medium text-sm"
           >
             <Trash2 className="w-4 h-4" />
             Delete Connection

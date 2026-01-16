@@ -61,10 +61,10 @@ function ServiceItem({ service, viewMode }: ServiceItemProps) {
         onDragStart={(e) => onDragStart(e, service)}
         className={`p-2 rounded-lg border transition-all card-hover ${
           isDisabled
-            ? "bg-gray-100 border-gray-200 opacity-50 cursor-not-allowed"
+            ? "bg-gray-100 dark:bg-slate-800 border-gray-200 dark:border-slate-700 opacity-50 cursor-not-allowed"
             : isRecommended
-            ? "bg-green-50 border-green-200 hover:border-green-400 cursor-move"
-            : "bg-white border-gray-200 hover:border-gray-300 cursor-move"
+            ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800 hover:border-green-400 cursor-move"
+            : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600 cursor-move"
         }`}
         style={{
           borderLeftWidth: "3px",
@@ -75,13 +75,13 @@ function ServiceItem({ service, viewMode }: ServiceItemProps) {
         <div className="flex items-center gap-1.5">
           <span
             className={`text-xs font-medium truncate ${
-              isDisabled ? "text-gray-500" : "text-gray-800"
+              isDisabled ? "text-gray-500 dark:text-gray-400" : "text-gray-800 dark:text-gray-200"
             }`}
           >
             {service.shortName}
           </span>
           {isRecommended && (
-            <Sparkles className="w-3 h-3 text-green-600 shrink-0" />
+            <Sparkles className="w-3 h-3 text-green-600 dark:text-green-400 shrink-0" />
           )}
           {isDisabled && <Ban className="w-3 h-3 text-red-500 shrink-0" />}
         </div>
@@ -96,10 +96,10 @@ function ServiceItem({ service, viewMode }: ServiceItemProps) {
       onDragStart={(e) => onDragStart(e, service)}
       className={`flex items-start gap-3 p-3 rounded-lg border-2 transition-all relative card-hover ${
         isDisabled
-          ? "bg-gray-100 border-gray-300 opacity-50 cursor-not-allowed"
+          ? "bg-gray-100 dark:bg-slate-800 border-gray-300 dark:border-slate-600 opacity-50 cursor-not-allowed"
           : isRecommended
-          ? "bg-green-50 border-green-300 hover:border-green-500 cursor-move"
-          : "bg-white hover:border-gray-400 cursor-move"
+          ? "bg-green-50 dark:bg-green-900/30 border-green-300 dark:border-green-700 hover:border-green-500 cursor-move"
+          : "bg-white dark:bg-slate-800 hover:border-gray-400 dark:hover:border-slate-500 cursor-move"
       }`}
       style={{
         borderColor: isDisabled
@@ -118,19 +118,19 @@ function ServiceItem({ service, viewMode }: ServiceItemProps) {
         <div className="flex items-center gap-1">
           <div
             className={`font-medium text-sm truncate ${
-              isDisabled ? "text-gray-500" : "text-gray-800"
+              isDisabled ? "text-gray-500 dark:text-gray-400" : "text-gray-800 dark:text-gray-200"
             }`}
           >
             {service.shortName}
           </div>
           {isRecommended && (
-            <Sparkles className="w-3 h-3 text-green-600 shrink-0" />
+            <Sparkles className="w-3 h-3 text-green-600 dark:text-green-400 shrink-0" />
           )}
           {isDisabled && <Ban className="w-3 h-3 text-red-500 shrink-0" />}
         </div>
         <div
           className={`text-xs mt-0.5 ${
-            isDisabled ? "text-gray-400" : "text-gray-500"
+            isDisabled ? "text-gray-400" : "text-gray-500 dark:text-gray-400"
           }`}
         >
           {service.provider}
@@ -138,7 +138,7 @@ function ServiceItem({ service, viewMode }: ServiceItemProps) {
         {compatibility.reason && (isRecommended || isDisabled) && (
           <div
             className={`text-xs mt-1 ${
-              isRecommended ? "text-green-600" : "text-red-600"
+              isRecommended ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
             }`}
           >
             {compatibility.reason}
@@ -166,7 +166,7 @@ function ZoneItem({ zone }: ZoneItemProps) {
     <div
       draggable
       onDragStart={onDragStart}
-      className="flex items-start gap-3 p-3 rounded-lg border-2 bg-white cursor-move transition-all card-hover"
+      className="flex items-start gap-3 p-3 rounded-lg border-2 bg-white dark:bg-slate-800 cursor-move transition-all card-hover"
       style={{
         borderColor: zone.color,
         borderStyle: zone.borderStyle,
@@ -180,11 +180,11 @@ function ZoneItem({ zone }: ZoneItemProps) {
         }}
       />
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm text-gray-800 truncate">
+        <div className="font-medium text-sm text-gray-800 dark:text-gray-200 truncate">
           {zone.shortName}
         </div>
-        <div className="text-xs mt-0.5 text-gray-500">{zone.provider}</div>
-        <div className="text-xs mt-1 text-gray-400 line-clamp-2">
+        <div className="text-xs mt-0.5 text-gray-500 dark:text-gray-400">{zone.provider}</div>
+        <div className="text-xs mt-1 text-gray-400 dark:text-gray-500 line-clamp-2">
           {zone.description}
         </div>
       </div>
@@ -248,20 +248,20 @@ export default function ComponentPalette() {
   const isInfrastructureSelected = selectedCategory === "Infrastructure";
 
   return (
-    <div className="w-80 bg-gray-50 border-r border-gray-200 flex flex-col h-full">
+    <div className="w-80 bg-gray-50 dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 flex flex-col h-full transition-colors">
       {/* Header section */}
-      <div className="p-4 border-b border-gray-200 bg-white">
+      <div className="p-4 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
         {/* Title and view toggle */}
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold text-gray-900">Components</h2>
+          <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">Components</h2>
           {!isInfrastructureSelected && (
-            <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-0.5">
+            <div className="flex items-center gap-1 bg-gray-100 dark:bg-slate-800 rounded-lg p-0.5">
               <button
                 onClick={() => setViewMode("list")}
                 className={`p-1.5 rounded-md transition-all ${
                   viewMode === "list"
-                    ? "bg-white shadow-sm text-blue-600"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-blue-400"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 }`}
                 title="List view"
               >
@@ -271,8 +271,8 @@ export default function ComponentPalette() {
                 onClick={() => setViewMode("compact")}
                 className={`p-1.5 rounded-md transition-all ${
                   viewMode === "compact"
-                    ? "bg-white shadow-sm text-blue-600"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-blue-400"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 }`}
                 title="Compact view"
               >
@@ -284,13 +284,13 @@ export default function ComponentPalette() {
 
         {/* Search input */}
         <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
           <input
             type="text"
             placeholder="Search services..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-gray-50 transition-all"
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-gray-50 dark:bg-slate-800 dark:text-gray-200 dark:placeholder-gray-500 transition-all"
           />
         </div>
 
@@ -306,7 +306,7 @@ export default function ComponentPalette() {
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
               selectedCategory === "All"
                 ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700"
             }`}
           >
             All
@@ -317,7 +317,7 @@ export default function ComponentPalette() {
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap inline-flex items-center gap-1 ${
               selectedCategory === "Infrastructure"
                 ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
-                : "bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
+                : "bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/60"
             }`}
           >
             <Layers className="w-3 h-3" />
@@ -330,7 +330,7 @@ export default function ComponentPalette() {
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
                 selectedCategory === category
                   ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700"
               }`}
             >
               {category}
@@ -344,13 +344,13 @@ export default function ComponentPalette() {
         {isInfrastructureSelected ? (
           // Show boundary zones
           <>
-            <div className="text-xs text-gray-600 mb-3 flex items-center gap-2 px-1">
-              <Layers className="w-4 h-4 text-indigo-500" />
+            <div className="text-xs text-gray-600 dark:text-gray-400 mb-3 flex items-center gap-2 px-1">
+              <Layers className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
               <span>Network boundaries for organizing your architecture</span>
             </div>
             <div className="space-y-2">
               {filteredZones.length === 0 ? (
-                <div className="text-center text-gray-500 text-sm mt-8">
+                <div className="text-center text-gray-500 dark:text-gray-400 text-sm mt-8">
                   No zones found
                 </div>
               ) : (
@@ -362,7 +362,7 @@ export default function ComponentPalette() {
           </>
         ) : // Show services
         filteredServices.length === 0 ? (
-          <div className="text-center text-gray-500 text-sm mt-8">
+          <div className="text-center text-gray-500 dark:text-gray-400 text-sm mt-8">
             No services found
           </div>
         ) : viewMode === "compact" ? (
@@ -391,8 +391,8 @@ export default function ComponentPalette() {
       </div>
 
       {/* Footer */}
-      <div className="p-3 border-t border-gray-200 bg-white">
-        <div className="text-xs text-gray-500 text-center">
+      <div className="p-3 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+        <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
           {isInfrastructureSelected
             ? "Drag zones to create network boundaries"
             : "Drag components onto the canvas"}

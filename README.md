@@ -223,9 +223,19 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing, docu
   - Factors in base hourly cost + data processing charges
 
 ### Phase 10: Design & UX Improvements ✅
+- ✅ **Dark Mode Support**:
+  - Full dark mode theme with one-click toggle
+  - System preference detection (auto-detects OS dark mode)
+  - Theme persistence across sessions (localStorage)
+  - Carefully crafted dark color palette:
+    - Slate-based backgrounds (#0f172a, #1e293b)
+    - Proper contrast for accessibility
+    - Service colors adapted for dark backgrounds
+  - All components updated: sidebar, canvas, panels, nodes
 - ✅ **Compact Header Layout**:
   - Streamlined single-line header with tooltip tagline
   - Brand logo icon with gradient accent
+  - Theme toggle button (sun/moon icons)
   - Saves ~30px vertical space for more canvas area
 - ✅ **Enhanced Brand Identity**:
   - New gradient primary buttons (blue to indigo)

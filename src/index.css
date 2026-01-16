@@ -1,10 +1,74 @@
 @import "tailwindcss";
 
+/* ===== CSS CUSTOM PROPERTIES ===== */
+:root {
+  /* Background colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --bg-canvas: linear-gradient(to bottom right, #f8fafc, #f1f5f9, rgba(239, 246, 255, 0.5));
+
+  /* Surface colors (cards, panels) */
+  --surface-primary: #ffffff;
+  --surface-secondary: #f9fafb;
+  --surface-elevated: #ffffff;
+
+  /* Border colors */
+  --border-primary: #e5e7eb;
+  --border-secondary: #d1d5db;
+  --border-subtle: #f3f4f6;
+
+  /* Text colors */
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --text-muted: #9ca3af;
+
+  /* Accent colors */
+  --accent-primary: #3b82f6;
+  --accent-primary-hover: #2563eb;
+
+  /* Canvas */
+  --canvas-grid: #cbd5e1;
+  --canvas-bg: #f8fafc;
+}
+
+.dark {
+  /* Background colors */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --bg-canvas: linear-gradient(to bottom right, #0f172a, #1e293b, #1e3a5f);
+
+  /* Surface colors (cards, panels) */
+  --surface-primary: #1e293b;
+  --surface-secondary: #334155;
+  --surface-elevated: #1e293b;
+
+  /* Border colors */
+  --border-primary: #334155;
+  --border-secondary: #475569;
+  --border-subtle: #1e293b;
+
+  /* Text colors */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* Canvas */
+  --canvas-grid: #475569;
+  --canvas-bg: #0f172a;
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 * {
@@ -96,7 +160,7 @@ body {
 
 .scrollable-panel {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: var(--border-secondary) transparent;
 }
 
 .scrollable-panel::-webkit-scrollbar {
@@ -109,13 +173,13 @@ body {
 }
 
 .scrollable-panel::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
+  background-color: var(--border-secondary);
   border-radius: 3px;
   transition: background-color 0.2s;
 }
 
 .scrollable-panel::-webkit-scrollbar-thumb:hover {
-  background-color: #94a3b8;
+  background-color: var(--text-muted);
 }
 
 /* Horizontal scrollbar for category pills */
@@ -132,12 +196,24 @@ body {
 
 .scroll-shadow {
   background:
-    linear-gradient(white 30%, rgba(255, 255, 255, 0)),
-    linear-gradient(rgba(255, 255, 255, 0), white 70%) 0 100%,
+    linear-gradient(var(--surface-primary) 30%, transparent),
+    linear-gradient(transparent, var(--surface-primary) 70%) 0 100%,
     radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0)),
     radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0)) 0 100%;
   background-repeat: no-repeat;
-  background-color: white;
+  background-color: var(--surface-primary);
+  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+  background-attachment: local, local, scroll, scroll;
+}
+
+.dark .scroll-shadow {
+  background:
+    linear-gradient(var(--surface-primary) 30%, transparent),
+    linear-gradient(transparent, var(--surface-primary) 70%) 0 100%,
+    radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)),
+    radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)) 0 100%;
+  background-repeat: no-repeat;
+  background-color: var(--surface-primary);
   background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
   background-attachment: local, local, scroll, scroll;
 }
@@ -183,21 +259,21 @@ body {
 .react-flow__controls {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1) !important;
   border-radius: 0.5rem !important;
-  border: 1px solid #e5e7eb !important;
+  border: 1px solid var(--border-primary) !important;
   overflow: hidden !important;
 }
 
 .react-flow__controls-button {
   width: 28px !important;
   height: 28px !important;
-  background: white !important;
+  background: var(--surface-primary) !important;
   border: none !important;
-  border-bottom: 1px solid #f3f4f6 !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
   transition: all 0.15s ease !important;
 }
 
 .react-flow__controls-button:hover {
-  background: #f9fafb !important;
+  background: var(--bg-secondary) !important;
 }
 
 .react-flow__controls-button:last-child {
@@ -205,13 +281,23 @@ body {
 }
 
 .react-flow__controls-button svg {
-  fill: #6b7280 !important;
+  fill: var(--text-tertiary) !important;
   max-width: 14px !important;
   max-height: 14px !important;
 }
 
 .react-flow__controls-button:hover svg {
-  fill: #3b82f6 !important;
+  fill: var(--accent-primary) !important;
+}
+
+/* Dark mode canvas background */
+.dark .react-flow__background {
+  background-color: var(--canvas-bg) !important;
+}
+
+/* Dark mode minimap */
+.dark .react-flow__minimap {
+  background-color: var(--surface-primary) !important;
 }
 
 /* ===== GLASSMORPHISM ===== */
@@ -226,6 +312,14 @@ body {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .glass {
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.dark .glass-strong {
+  background: rgba(30, 41, 59, 0.9);
 }
 
 /* ===== BUTTON GRADIENTS ===== */
@@ -251,6 +345,10 @@ body {
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
+.dark .card-hover:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
 /* Service card glow on drag */
 .service-card-dragging {
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5), 0 10px 25px -5px rgba(0, 0, 0, 0.2);
@@ -271,4 +369,49 @@ body {
   background-image:
     radial-gradient(circle at 1px 1px, #e5e7eb 1px, transparent 0);
   background-size: 32px 32px;
+}
+
+.dark .empty-state-pattern {
+  background-image:
+    radial-gradient(circle at 1px 1px, #475569 1px, transparent 0);
+}
+
+/* ===== DARK MODE SPECIFIC ===== */
+
+/* Dark mode transitions */
+.dark-transition {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Dark mode panel styles */
+.dark .panel-surface {
+  background-color: var(--surface-primary);
+  border-color: var(--border-primary);
+}
+
+/* Dark mode input styles */
+.dark input[type="text"],
+.dark input[type="search"] {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+}
+
+.dark input[type="text"]::placeholder,
+.dark input[type="search"]::placeholder {
+  color: var(--text-muted);
+}
+
+.dark input[type="text"]:focus,
+.dark input[type="search"]:focus {
+  border-color: var(--accent-primary);
+}
+
+/* Dark mode for ReactFlow attribution */
+.dark .react-flow__attribution {
+  background: rgba(30, 41, 59, 0.8) !important;
+}
+
+.dark .react-flow__attribution a {
+  color: var(--text-muted) !important;
 }

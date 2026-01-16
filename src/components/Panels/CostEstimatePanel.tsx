@@ -80,37 +80,37 @@ export function CostEstimatePanel() {
   };
 
   return (
-    <div className="absolute bottom-4 left-16 w-80 bg-white rounded-xl shadow-xl border border-gray-200 max-h-[calc(100vh-12rem)] overflow-hidden flex flex-col z-10 animate-slide-in-up">
+    <div className="absolute bottom-4 left-16 w-80 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 max-h-[calc(100vh-12rem)] overflow-hidden flex flex-col z-10 animate-slide-in-up">
       {/* Header - Collapsible */}
       <div
-        className="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50 cursor-pointer hover:from-green-100 hover:to-emerald-100 transition-all"
+        className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 cursor-pointer hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/40 dark:hover:to-emerald-900/40 transition-all"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-green-600" />
-            <h3 className="font-semibold text-gray-900">Cost Estimate</h3>
+            <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Cost Estimate</h3>
           </div>
           <button
             onClick={(e) => {
               e.stopPropagation();
               setIsCollapsed(!isCollapsed);
             }}
-            className="p-1 hover:bg-white/50 rounded transition-colors"
+            className="p-1 hover:bg-white/50 dark:hover:bg-slate-700/50 rounded transition-colors"
             aria-label={isCollapsed ? "Expand" : "Collapse"}
           >
             {isCollapsed ? (
-              <ChevronUp className="w-4 h-4 text-gray-600" />
+              <ChevronUp className="w-4 h-4 text-gray-600 dark:text-gray-400" />
             ) : (
-              <ChevronDown className="w-4 h-4 text-gray-600" />
+              <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
             )}
           </button>
         </div>
         <div className="mt-2">
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {formatCost(costEstimate.totalMin)} -{" "}
             {formatCost(costEstimate.totalMax)}
-            <span className="text-sm font-normal text-gray-600">/month</span>
+            <span className="text-sm font-normal text-gray-600 dark:text-gray-400">/month</span>
           </p>
         </div>
       </div>
@@ -119,12 +119,12 @@ export function CostEstimatePanel() {
       {!isCollapsed && (
         <>
           {/* Scale Selector */}
-          <div className="px-4 py-2 border-b bg-gray-50">
+          <div className="px-4 py-2 border-b dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ScaleIcon className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-600">Scale:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <ScaleIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">Scale:</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {SCALE_LABELS[costEstimate.scale].label}
                 </span>
               </div>
@@ -132,12 +132,12 @@ export function CostEstimatePanel() {
                 <div className="relative">
                   <button
                     onClick={() => setShowScaleSelector(!showScaleSelector)}
-                    className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
+                    className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                   >
                     Change
                   </button>
                   {showScaleSelector && (
-                    <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-10 w-40">
+                    <div className="absolute right-0 top-full mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg py-1 z-10 w-40">
                       {(["startup-mvp", "growth", "enterprise"] as Scale[]).map(
                         (scale) => {
                           const Icon = SCALE_ICONS[scale];
@@ -145,10 +145,10 @@ export function CostEstimatePanel() {
                             <button
                               key={scale}
                               onClick={() => handleScaleChange(scale)}
-                              className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${
+                              className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-slate-700 flex items-center gap-2 ${
                                 costEstimate.scale === scale
-                                  ? "bg-blue-50 text-blue-700"
-                                  : "text-gray-700"
+                                  ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                                  : "text-gray-700 dark:text-gray-300"
                               }`}
                             >
                               <Icon className="w-4 h-4" />
@@ -163,7 +163,7 @@ export function CostEstimatePanel() {
               ) : (
                 <button
                   onClick={() => openWizard()}
-                  className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                 >
                   Complete onboarding
                 </button>
@@ -208,22 +208,22 @@ export function CostEstimatePanel() {
                   {/* Category Header */}
                   <button
                     onClick={() => toggleCategory(categoryBreakdown.category)}
-                    className="w-full px-4 py-2 bg-gray-50 hover:bg-gray-100 border-b border-gray-200 flex items-center justify-between transition-colors"
+                    className="w-full px-4 py-2 bg-gray-50 dark:bg-slate-800/50 hover:bg-gray-100 dark:hover:bg-slate-700/50 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <ChevronRight
-                        className={`w-4 h-4 text-gray-500 transition-transform ${
+                        className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${
                           isExpanded ? "rotate-90" : ""
                         }`}
                       />
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {categoryBreakdown.category}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         ({categoryBreakdown.services.length})
                       </span>
                     </div>
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {formatCost(categoryBreakdown.totalMin)} -{" "}
                       {formatCost(categoryBreakdown.totalMax)}
                     </span>
@@ -235,7 +235,7 @@ export function CostEstimatePanel() {
                       {categoryBreakdown.services.map((serviceCost) => (
                         <div
                           key={serviceCost.service.id}
-                          className="px-4 py-2 pl-8 flex items-center justify-between text-sm hover:bg-gray-50"
+                          className="px-4 py-2 pl-8 flex items-center justify-between text-sm hover:bg-gray-50 dark:hover:bg-slate-800/50"
                         >
                           <div className="flex items-center gap-2 flex-1 min-w-0">
                             <div
@@ -244,16 +244,16 @@ export function CostEstimatePanel() {
                                 backgroundColor: serviceCost.service.color,
                               }}
                             />
-                            <span className="text-gray-700 truncate">
+                            <span className="text-gray-700 dark:text-gray-300 truncate">
                               {serviceCost.service.shortName}
                             </span>
                             {serviceCost.isFreeTier && (
-                              <span className="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
+                              <span className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-1.5 py-0.5 rounded">
                                 Free
                               </span>
                             )}
                           </div>
-                          <span className="text-gray-600 ml-2 whitespace-nowrap">
+                          <span className="text-gray-600 dark:text-gray-400 ml-2 whitespace-nowrap">
                             {formatCost(serviceCost.scaledMin)} -{" "}
                             {formatCost(serviceCost.scaledMax)}
                           </span>
@@ -267,21 +267,21 @@ export function CostEstimatePanel() {
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-3 border-t bg-gray-50">
-            <div className="text-xs text-gray-600 space-y-2">
+          <div className="px-4 py-3 border-t dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50">
+            <div className="text-xs text-gray-600 dark:text-gray-400 space-y-2">
               <p>
                 {costEstimate.servicesWithCosts} of {nodes.length} services
                 counted
               </p>
               {costEstimate.servicesWithoutCosts > 0 && (
-                <p className="text-gray-500">
+                <p className="text-gray-500 dark:text-gray-500">
                   {costEstimate.servicesWithoutCosts} service
                   {costEstimate.servicesWithoutCosts > 1 ? "s" : ""} excluded
                   (no cost data)
                 </p>
               )}
-              <div className="pt-2 border-t border-gray-200">
-                <p className="text-amber-700 bg-amber-50 px-2 py-1.5 rounded flex items-start gap-1.5">
+              <div className="pt-2 border-t border-gray-200 dark:border-slate-700">
+                <p className="text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-1.5 rounded flex items-start gap-1.5">
                   <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
                   <span>
                     Cost estimates are approximate based on typical usage.

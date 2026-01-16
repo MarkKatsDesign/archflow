@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Workflow } from 'lucide-react';
+import { Workflow, Moon, Sun } from 'lucide-react';
 import ComponentPalette from './components/Sidebar/ComponentPalette';
 import ArchitectureCanvas from './components/Canvas/ArchitectureCanvas';
 import { NodeDetailPanel } from './components/Panels/NodeDetailPanel';
@@ -12,10 +12,12 @@ import { OnboardingWizard } from './components/Onboarding/OnboardingWizard';
 import { WizardButton } from './components/Onboarding/WizardButton';
 import { useOnboardingStore } from './store/useOnboardingStore';
 import { useArchitectureStore } from './store/useArchitectureStore';
+import { useThemeStore } from './store/useThemeStore';
 
 function App() {
   const { openWizard } = useOnboardingStore();
   const { nodes } = useArchitectureStore();
+  const { theme, toggleTheme } = useThemeStore();
 
   // Show wizard on first visit
   useEffect(() => {
@@ -31,10 +33,12 @@ function App() {
     }
   }, [openWizard, nodes.length]);
 
+  const isDark = theme === 'dark';
+
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden">
+    <div className={`h-screen w-screen flex flex-col overflow-hidden ${isDark ? 'dark' : ''}`}>
       {/* Compact header with brand identity */}
-      <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+      <header className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between transition-colors">
         <div
           className="flex items-center gap-3 group cursor-default"
           title="Visual System Architecture Designer"
@@ -44,12 +48,26 @@ function App() {
             <Workflow className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
               ArchFlow
             </h1>
           </div>
         </div>
-        <WizardButton />
+        <div className="flex items-center gap-3">
+          {/* Theme toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {isDark ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
+          </button>
+          <WizardButton />
+        </div>
       </header>
 
       <div className="flex-1 flex overflow-hidden">

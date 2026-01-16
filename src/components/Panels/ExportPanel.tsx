@@ -148,17 +148,17 @@ export function ExportPanel() {
       <div className="absolute top-4 left-4 z-10">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all hover:-translate-y-0.5"
+          className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-xl shadow-md border border-gray-200 dark:border-slate-700 hover:shadow-lg transition-all hover:-translate-y-0.5"
         >
           {isEmpty ? (
             <>
-              <Upload className="w-4 h-4 text-green-600" />
-              <span className="font-semibold text-gray-700">Import</span>
+              <Upload className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <span className="font-semibold text-gray-700 dark:text-gray-200">Import</span>
             </>
           ) : (
             <>
-              <Download className="w-4 h-4 text-blue-600" />
-              <span className="font-semibold text-gray-700">Export</span>
+              <Download className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span className="font-semibold text-gray-700 dark:text-gray-200">Export</span>
             </>
           )}
           <ChevronDown
@@ -170,24 +170,24 @@ export function ExportPanel() {
 
         {/* Menu */}
         {isOpen && (
-          <div className="absolute top-14 left-0 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden animate-scale-in">
+          <div className="absolute top-14 left-0 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden animate-scale-in">
             {/* Header */}
-            <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+            <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-indigo-900/30 border-b border-gray-100 dark:border-slate-700">
               {isEmpty ? (
                 <>
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                     Import Architecture
                   </h3>
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                     Load a saved design to get started
                   </p>
                 </>
               ) : (
                 <>
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                     Export Architecture
                   </h3>
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                     Save or share your design
                   </p>
                 </>
@@ -201,16 +201,16 @@ export function ExportPanel() {
                 <>
                   <button
                     onClick={handleImportJSON}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-green-50 transition-colors text-left"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors text-left"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-                      <Upload className="w-4 h-4 text-green-600" />
+                    <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/40 flex items-center justify-center">
+                      <Upload className="w-4 h-4 text-green-600 dark:text-green-400" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-900">
+                      <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
                         Import JSON
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         Load saved architecture
                       </div>
                     </div>
@@ -218,7 +218,7 @@ export function ExportPanel() {
 
                   {/* Helpful message */}
                   <div className="px-3 py-4 mt-2">
-                    <p className="text-xs text-gray-600 text-center">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 text-center">
                       Import a previously saved architecture file, or use the
                       wizard to start fresh
                     </p>
@@ -230,16 +230,16 @@ export function ExportPanel() {
                   {/* JSON Export */}
                   <button
                     onClick={handleExportJSON}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 transition-colors text-left"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-left"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                      <FileJson className="w-4 h-4 text-blue-600" />
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+                      <FileJson className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-900">
+                      <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
                         JSON
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         Save architecture data
                       </div>
                     </div>
@@ -248,37 +248,37 @@ export function ExportPanel() {
                   {/* JSON Import */}
                   <button
                     onClick={handleImportJSON}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-green-50 transition-colors text-left"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors text-left"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-                      <Upload className="w-4 h-4 text-green-600" />
+                    <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/40 flex items-center justify-center">
+                      <Upload className="w-4 h-4 text-green-600 dark:text-green-400" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-900">
+                      <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
                         Import JSON
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         Load saved architecture
                       </div>
                     </div>
                   </button>
 
-                  <div className="border-t my-1"></div>
+                  <div className="border-t dark:border-slate-700 my-1"></div>
 
                   {/* PNG Export */}
                   <button
                     onClick={handleExportPNG}
                     disabled={isExporting}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-purple-50 transition-colors text-left disabled:opacity-50"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors text-left disabled:opacity-50"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
-                      <Image className="w-4 h-4 text-purple-600" />
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center">
+                      <Image className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-900">
+                      <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
                         PNG Image
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         {isExporting ? "Exporting..." : "High-res diagram"}
                       </div>
                     </div>
@@ -287,16 +287,16 @@ export function ExportPanel() {
                   {/* Markdown Export */}
                   <button
                     onClick={handleExportMarkdown}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-orange-50 transition-colors text-left"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors text-left"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                      <FileText className="w-4 h-4 text-orange-600" />
+                    <div className="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center">
+                      <FileText className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-900">
+                      <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
                         Markdown
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         Documentation file
                       </div>
                     </div>
@@ -306,37 +306,37 @@ export function ExportPanel() {
                   <button
                     onClick={handleExportPDF}
                     disabled={isExporting}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 transition-colors text-left disabled:opacity-50"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left disabled:opacity-50"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
-                      <FileType className="w-4 h-4 text-red-600" />
+                    <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/40 flex items-center justify-center">
+                      <FileType className="w-4 h-4 text-red-600 dark:text-red-400" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-900">
+                      <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
                         PDF Document
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         {isExporting ? "Generating..." : "Multi-page report"}
                       </div>
                     </div>
                   </button>
 
-                  <div className="border-t my-1"></div>
+                  <div className="border-t dark:border-slate-700 my-1"></div>
 
                   {/* Terraform Export */}
                   <button
                     onClick={handleExportTerraform}
                     disabled={isExporting}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-50 transition-colors text-left disabled:opacity-50"
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors text-left disabled:opacity-50"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
-                      <FileCode className="w-4 h-4 text-indigo-600" />
+                    <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
+                      <FileCode className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-900">
+                      <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
                         Terraform (IaC)
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         {isExporting
                           ? "Generating..."
                           : "Infrastructure as Code"}
@@ -349,8 +349,8 @@ export function ExportPanel() {
 
             {/* Footer */}
             {!isEmpty && (
-              <div className="px-4 py-2 bg-gray-50 border-t">
-                <p className="text-xs text-gray-500 text-center">
+              <div className="px-4 py-2 bg-gray-50 dark:bg-slate-800/50 border-t dark:border-slate-700">
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                   {serviceNodes.length} services • {edges.length} connections
                 </p>
               </div>

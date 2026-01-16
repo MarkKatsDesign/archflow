@@ -17,6 +17,7 @@ import AlignmentGuides from "./AlignmentGuides";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import { useAlignmentGuides } from "../../hooks/useAlignmentGuides";
 import { useOnboardingStore } from "../../store/useOnboardingStore";
+import { useThemeStore } from "../../store/useThemeStore";
 import type { Service } from "../../types/service";
 import type { BoundaryZone } from "../../types/infrastructure";
 import type {
@@ -37,11 +38,11 @@ function EmptyCanvasState() {
         {/* Illustration */}
         <div className="w-32 h-32 mx-auto mb-6 relative">
           {/* Background pattern */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 empty-state-pattern opacity-50" />
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-800 dark:to-indigo-900/50 empty-state-pattern opacity-50" />
           {/* Icon stack */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="relative">
-              <div className="w-16 h-16 rounded-xl bg-white shadow-lg border border-gray-200 flex items-center justify-center transform -rotate-6">
+              <div className="w-16 h-16 rounded-xl bg-white dark:bg-slate-800 shadow-lg border border-gray-200 dark:border-slate-700 flex items-center justify-center transform -rotate-6">
                 <Layers className="w-8 h-8 text-indigo-400" />
               </div>
               <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-md flex items-center justify-center">
@@ -52,10 +53,10 @@ function EmptyCanvasState() {
         </div>
 
         {/* Text */}
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
           Start Building Your Architecture
         </h3>
-        <p className="text-sm text-gray-500 mb-6 max-w-xs mx-auto">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs mx-auto">
           Drag services from the sidebar or use a template to get started quickly
         </p>
 
@@ -71,7 +72,7 @@ function EmptyCanvasState() {
         </div>
 
         {/* Hint */}
-        <p className="mt-6 text-xs text-gray-400">
+        <p className="mt-6 text-xs text-gray-400 dark:text-gray-500">
           Or drag a component from the left sidebar
         </p>
       </div>
@@ -306,6 +307,8 @@ function ArchitectureCanvasInner() {
   }, []);
 
   const isEmpty = nodes.length === 0;
+  const { theme } = useThemeStore();
+  const isDark = theme === 'dark';
 
   return (
     <div ref={reactFlowWrapper} className="h-full w-full relative canvas-vignette">
@@ -326,15 +329,15 @@ function ArchitectureCanvasInner() {
           type: "default",
           style: {
             strokeWidth: 2,
-            stroke: "#64748b",
+            stroke: isDark ? "#94a3b8" : "#64748b",
           },
           labelStyle: {
-            fill: "#1e293b",
+            fill: isDark ? "#e2e8f0" : "#1e293b",
             fontWeight: 600,
             fontSize: 12,
           },
           labelBgStyle: {
-            fill: "#ffffff",
+            fill: isDark ? "#1e293b" : "#ffffff",
             fillOpacity: 0.9,
           },
           labelBgPadding: [8, 4],
@@ -347,10 +350,13 @@ function ArchitectureCanvasInner() {
           strokeDasharray: "5 5",
         }}
         fitView
-        className="bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50/50"
+        className={isDark
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/50"
+          : "bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50/50"
+        }
       >
         {/* Refined grid - larger spacing, lower opacity */}
-        <Background color="#cbd5e1" gap={24} size={1} />
+        <Background color={isDark ? "#475569" : "#cbd5e1"} gap={24} size={1} />
         <Controls />
 
         {/* Smart alignment guides */}
@@ -373,12 +379,12 @@ function ArchitectureCanvasInner() {
             style={{
               width: 200,
               height: 120,
-              border: "1px solid #e5e7eb",
+              border: isDark ? "1px solid #334155" : "1px solid #e5e7eb",
               borderRadius: "8px",
               boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-              backgroundColor: "white",
+              backgroundColor: isDark ? "#1e293b" : "white",
             }}
-            maskColor="rgba(240, 243, 248, 0.7)"
+            maskColor={isDark ? "rgba(15, 23, 42, 0.7)" : "rgba(240, 243, 248, 0.7)"}
             pannable
             zoomable
             ariaLabel="Canvas Overview"

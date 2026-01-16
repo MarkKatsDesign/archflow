@@ -25,7 +25,7 @@ export function WizardButton() {
   return (
     <button
       onClick={openWizard}
-      className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all border border-gray-300 hover:border-gray-400 hover:shadow-sm"
+      className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all border border-gray-300 dark:border-slate-600 hover:border-gray-400 dark:hover:border-slate-500 hover:shadow-sm"
     >
       <Plus className="w-4 h-4" />
       New Project
