@@ -36,7 +36,9 @@ export function ExportPanel() {
   const serviceNodes = useMemo(() => nodes.filter(isServiceNode), [nodes]);
 
   const handleExportJSON = () => {
-    const categories = [...new Set(serviceNodes.map((n) => n.data.service.category))];
+    const categories = [
+      ...new Set(serviceNodes.map((n) => n.data.service.category)),
+    ];
 
     exportToJSON(serviceNodes, edges, {
       totalServices: serviceNodes.length,

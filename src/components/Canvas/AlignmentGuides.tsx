@@ -12,7 +12,7 @@ export default function AlignmentGuides({ guides }: AlignmentGuidesProps) {
 
   return (
     <svg
-      className="pointer-events-none absolute inset-0 z-[1000] h-full w-full overflow-visible"
+      className="pointer-events-none absolute inset-0 z-1000 h-full w-full overflow-visible"
     >
       <defs>
         {/* Gradient for vertical guide lines */}
