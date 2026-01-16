@@ -1,4 +1,4 @@
-# ArchFlow - Phase 8 Complete
+# ArchFlow - Phase 9 Complete
 
 Visual System Architecture Designer - A drag-and-drop webapp for designing, documenting, and sharing production-ready system architectures.
 
@@ -194,6 +194,34 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing, docu
   - Resource tagging for organization and cost tracking
   - Backup and monitoring configurations
 
+### Phase 9: Network Boundary Groups ✅
+- ✅ **Infrastructure Category** - New sidebar category for network boundaries:
+  - Dedicated "Infrastructure" tab in the component palette
+  - Visual distinction with dashed/solid/dotted borders
+  - Search and filter support for zones
+- ✅ **Boundary Zone Types** (10 zones):
+  - **AWS-specific**: VPC, Public Subnet, Private Subnet, Availability Zone, Security Group, NAT Gateway
+  - **Generic/Cloud-agnostic**: Network Zone, Public Zone, Private Zone, DMZ
+  - Each zone has unique styling (border style, color, transparency)
+- ✅ **Resizable Group Nodes**:
+  - Drag zones from sidebar onto canvas
+  - Resize groups by dragging corner/edge handles
+  - Minimum size constraints (200×150px)
+  - Visual feedback when selected
+- ✅ **Auto-Grouping System**:
+  - Services dropped inside zones automatically become children
+  - Child nodes move with parent group
+  - Position automatically converted to relative coordinates
+  - Nested groups supported (e.g., VPC > Subnet > Service)
+- ✅ **Smart Group Operations**:
+  - Delete group → children are preserved (unparented, not deleted)
+  - Children positions converted back to absolute coordinates
+  - Groups render behind services (proper z-ordering)
+  - Connection handles on all sides for group-to-group edges
+- ✅ **Cost Model for NAT Gateway**:
+  - NAT Gateway includes cost estimate (~$32-100/month)
+  - Factors in base hourly cost + data processing charges
+
 ## Getting Started
 
 ### Use Online (Recommended)
@@ -239,19 +267,24 @@ npm run build
    - Recommended services based on your architecture
    - Warnings about potential issues
    - Suggestions to complete your setup
-9. **Navigate Canvas**:
-   - Pan by dragging the background
-   - Zoom with mouse wheel or controls
-   - Use minimap for overview
-   - Click the canvas background to deselect nodes
-10. **Start New Project**: Click "New Project" in header to run the wizard again
-11. **View Cost Estimates**: Check the bottom-left panel for:
+9. **Add Network Boundaries**: Click "Infrastructure" category to:
+   - Drag VPCs, Subnets, Security Groups onto canvas
+   - Drop services inside zones to auto-group them
+   - Resize zones by selecting and dragging handles
+   - Nest zones (e.g., Subnet inside VPC)
+10. **Navigate Canvas**:
+    - Pan by dragging the background
+    - Zoom with mouse wheel or controls
+    - Use minimap for overview
+    - Click the canvas background to deselect nodes
+11. **Start New Project**: Click "New Project" in header to run the wizard again
+12. **View Cost Estimates**: Check the bottom-left panel for:
     - Total monthly cost based on your selected scale
     - Cost breakdown by category (Frontend, Backend, Database, etc.)
     - Budget status and warnings
     - Individual service costs (expand categories to see details)
-12. **Adjust Scale**: Change scale tier (Startup MVP → Growth → Enterprise) to see cost changes
-13. **Export & Share**: Click the "Export" button (top-left) to:
+13. **Adjust Scale**: Change scale tier (Startup MVP → Growth → Enterprise) to see cost changes
+14. **Export & Share**: Click the "Export" button (top-left) to:
     - **Save Progress**: Export to JSON to save your architecture and reload it later
     - **Share Visually**: Export to PNG for presentations, Slack, or documentation
     - **Document**: Export to Markdown for GitHub READMEs or wikis
@@ -309,7 +342,7 @@ npm run build
 - **Best for**: Indie hackers, MVPs, simple full-stack apps
 - **Pros**: Simplest deployment, all free tiers, auto-deploy
 
-## Available Services (54)
+## Available Services (54) + Infrastructure Zones (10)
 
 ### Multi-Cloud & Platform Coverage
 ArchFlow provides a comprehensive catalog of services across AWS, GCP, Azure, and popular SaaS providers, covering all layers of modern cloud architectures.
@@ -330,12 +363,17 @@ ArchFlow provides a comprehensive catalog of services across AWS, GCP, Azure, an
 - **DevOps** (5): GitHub Actions, AWS Secrets Manager, Doppler, AWS ECR, Docker Hub
 - **Integrations** (8): Stripe, Pusher, Resend, SendGrid, AWS SES, Sanity, Contentful, Strapi
 
+### Infrastructure Zones (Phase 9)
+- **AWS**: VPC, Public Subnet, Private Subnet, Availability Zone, Security Group, NAT Gateway
+- **Generic**: Network Zone, Public Zone, Private Zone, DMZ
+
 ### Provider Breakdown
-- **AWS**: 16 services (compute, storage, networking, monitoring)
+- **AWS**: 16 services + 6 infrastructure zones
 - **GCP**: 4 services (Cloud Run, Pub/Sub, Cloud Storage, Firebase)
 - **Azure**: 2 services (Functions, Container Apps)
 - **Multi-Provider SaaS**: 28+ services (databases, auth, monitoring, integrations)
 - **Open Source**: 2 services (Elasticsearch, RabbitMQ)
+- **Generic Infrastructure**: 4 zones (cloud-agnostic network boundaries)
 
 ### What's New in Phase 6
 The service library has been expanded to include the "glue" services that real production architectures need:
@@ -358,9 +396,9 @@ The service library has been expanded to include the "glue" services that real p
 
 ## Next Steps (Future Phases)
 
-- Phase 9: Group nodes for network boundaries (VPC, Private Subnet, Public Zone)
 - Phase 10: Collaboration features (real-time editing, comments, version history)
 - Phase 11: Multi-cloud support (GCP and Azure Terraform generation)
+- Phase 12: Advanced diagramming (custom icons, annotations, multi-page layouts)
 
 ## Project Structure
 
@@ -369,17 +407,27 @@ src/
 ├── components/
 │   ├── Canvas/
 │   │   ├── ArchitectureCanvas.tsx  # Main React Flow canvas
-│   │   └── CustomNode.tsx          # Service node component
+│   │   ├── CustomNode.tsx          # Service node component
+│   │   ├── GroupNode.tsx           # Network boundary group component
+│   │   └── AlignmentGuides.tsx     # Smart alignment guide overlays
 │   ├── Panels/
-│   │   └── NodeDetailPanel.tsx     # Service detail panel
+│   │   ├── NodeDetailPanel.tsx     # Service detail panel
+│   │   ├── EdgeDetailPanel.tsx     # Connection properties panel
+│   │   └── ExportPanel.tsx         # Export/import menu
 │   └── Sidebar/
 │       └── ComponentPalette.tsx    # Draggable components list
 ├── data/
-│   └── services.ts                 # Service definitions with enhanced metadata
+│   ├── services.ts                 # Service definitions with enhanced metadata
+│   └── infrastructure.ts           # Network boundary zone definitions
+├── hooks/
+│   ├── useAlignmentGuides.ts       # Smart alignment detection
+│   ├── useCompatibility.ts         # Service compatibility checking
+│   └── useCostCalculator.ts        # Real-time cost estimation
 ├── store/
-│   └── useArchitectureStore.ts     # Zustand store with selection state
+│   └── useArchitectureStore.ts     # Zustand store with group operations
 └── types/
-    ├── architecture.ts             # Node/Edge types
+    ├── architecture.ts             # Node/Edge types (ServiceNode, GroupNode, ArchNode)
+    ├── infrastructure.ts           # BoundaryZone types
     └── service.ts                  # Service types with Phase 2 metadata
 ```
 

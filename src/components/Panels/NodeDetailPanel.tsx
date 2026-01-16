@@ -1,5 +1,6 @@
 import { X, ExternalLink, DollarSign, Zap, Wrench, Server, AlertCircle, FileText } from 'lucide-react';
 import { useArchitectureStore } from '../../store/useArchitectureStore';
+import { isServiceNode } from '../../types/architecture';
 import type { Service } from '../../types/service';
 
 const MANAGED_LEVEL_LABELS = {
@@ -72,9 +73,15 @@ export function NodeDetailPanel() {
   const { nodes, selectedNodeId, setSelectedNodeId } = useArchitectureStore();
 
   const selectedNode = nodes.find((node) => node.id === selectedNodeId);
-  const service: Service | undefined = selectedNode?.data?.service;
 
-  if (!selectedNode || !service) {
+  // Only show panel for service nodes (not group nodes)
+  if (!selectedNode || !isServiceNode(selectedNode)) {
+    return null;
+  }
+
+  const service: Service | undefined = selectedNode.data?.service;
+
+  if (!service) {
     return null;
   }
 

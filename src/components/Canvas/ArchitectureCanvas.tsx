@@ -7,19 +7,65 @@ import ReactFlow, {
   ConnectionLineType,
   Panel,
 } from "reactflow";
-import type { ReactFlowInstance, EdgeMouseHandler } from "reactflow";
+import type { ReactFlowInstance, EdgeMouseHandler, Node } from "reactflow";
 import "reactflow/dist/style.css";
 
 import CustomNode from "./CustomNode";
+import GroupNode from "./GroupNode";
 import AlignmentGuides from "./AlignmentGuides";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import { useAlignmentGuides } from "../../hooks/useAlignmentGuides";
 import type { Service } from "../../types/service";
-import type { ServiceNodeData, ServiceNode } from "../../types/architecture";
+import type { BoundaryZone } from "../../types/infrastructure";
+import type {
+  ServiceNodeData,
+  GroupNodeData,
+  ServiceNode,
+  GroupNode as GroupNodeType,
+  ArchNode,
+} from "../../types/architecture";
 
 const nodeTypes = {
   service: CustomNode,
+  group: GroupNode,
 };
+
+// Helper to find the innermost group at a given position
+function findParentGroupAtPosition(
+  nodes: ArchNode[],
+  position: { x: number; y: number }
+): GroupNodeType | null {
+  // Filter to only group nodes
+  const groupNodes = nodes.filter(
+    (node): node is GroupNodeType => node.type === "group"
+  );
+
+  // Find the smallest group that contains the position
+  // (handles nested groups - innermost takes priority)
+  let bestMatch: GroupNodeType | null = null;
+  let smallestArea = Infinity;
+
+  for (const group of groupNodes) {
+    const width = group.style?.width ?? 300;
+    const height = group.style?.height ?? 200;
+
+    const isInside =
+      position.x >= group.position.x &&
+      position.x <= group.position.x + width &&
+      position.y >= group.position.y &&
+      position.y <= group.position.y + height;
+
+    if (isInside) {
+      const area = width * height;
+      if (area < smallestArea) {
+        smallestArea = area;
+        bestMatch = group;
+      }
+    }
+  }
+
+  return bestMatch;
+}
 
 function ArchitectureCanvasInner() {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -61,33 +107,87 @@ function ArchitectureCanvasInner() {
 
       if (!reactFlowWrapper.current || !reactFlowInstance) return;
 
-      const serviceData = event.dataTransfer.getData("application/reactflow");
-      if (!serviceData) return;
-
-      const service: Service = JSON.parse(serviceData);
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
       const position = reactFlowInstance.project({
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
 
-      const newNode: ServiceNode = {
-        id: `${service.id}-${Date.now()}`,
-        type: "service",
-        position,
-        data: {
-          service,
-          label: service.shortName,
-        },
-      };
+      // Check for service data (existing behavior)
+      const serviceData = event.dataTransfer.getData("application/reactflow");
+      if (serviceData) {
+        const service: Service = JSON.parse(serviceData);
 
-      addNode(newNode);
+        // Find if drop position is inside a group node
+        const parentGroup = findParentGroupAtPosition(nodes, position);
+
+        const newNode: ServiceNode = {
+          id: `${service.id}-${Date.now()}`,
+          type: "service",
+          position: parentGroup
+            ? {
+                // Position relative to parent (with padding offset)
+                x: position.x - parentGroup.position.x,
+                y: position.y - parentGroup.position.y,
+              }
+            : position,
+          data: {
+            service,
+            label: service.shortName,
+          },
+          // Parent relationship if dropped inside a group
+          ...(parentGroup && {
+            parentNode: parentGroup.id,
+            extent: "parent" as const,
+            expandParent: true,
+          }),
+        };
+
+        addNode(newNode);
+        return;
+      }
+
+      // Check for boundary zone data (new for Phase 9)
+      const zoneData = event.dataTransfer.getData("application/reactflow-zone");
+      if (zoneData) {
+        const zone: BoundaryZone = JSON.parse(zoneData);
+
+        // Groups can also be nested inside other groups
+        const parentGroup = findParentGroupAtPosition(nodes, position);
+
+        const newNode: GroupNodeType = {
+          id: `${zone.id}-${Date.now()}`,
+          type: "group",
+          position: parentGroup
+            ? {
+                x: position.x - parentGroup.position.x,
+                y: position.y - parentGroup.position.y,
+              }
+            : position,
+          data: {
+            zone,
+            label: zone.shortName,
+          },
+          style: {
+            width: 300,
+            height: 200,
+          },
+          // Nested groups
+          ...(parentGroup && {
+            parentNode: parentGroup.id,
+            extent: "parent" as const,
+            expandParent: true,
+          }),
+        };
+
+        addNode(newNode);
+      }
     },
-    [reactFlowInstance, addNode]
+    [reactFlowInstance, addNode, nodes]
   );
 
   const onNodeClick = useCallback(
-    (_event: React.MouseEvent, node: ServiceNode) => {
+    (_event: React.MouseEvent, node: Node) => {
       setSelectedNodeId(node.id);
     },
     [setSelectedNodeId]
@@ -105,6 +205,16 @@ function ArchitectureCanvasInner() {
     },
     [setSelectedEdgeId, setSelectedNodeId]
   );
+
+  // Sort nodes so groups render behind services (lower zIndex)
+  const sortedNodes = useMemo(() => {
+    return [...nodes].sort((a, b) => {
+      // Groups should come first (rendered behind)
+      const aIsGroup = a.type === "group" ? 0 : 1;
+      const bIsGroup = b.type === "group" ? 0 : 1;
+      return aIsGroup - bIsGroup;
+    });
+  }, [nodes]);
 
   // Apply dynamic styling to edges based on selection
   const styledEdges = useMemo(() => {
@@ -131,10 +241,20 @@ function ArchitectureCanvasInner() {
     });
   }, [edges, selectedEdgeId]);
 
+  // Get node color for minimap (handles both service and group nodes)
+  const getNodeColor = useCallback((node: Node) => {
+    if (node.type === "group") {
+      const data = node.data as GroupNodeData;
+      return data.zone.color;
+    }
+    const data = node.data as ServiceNodeData;
+    return data.service?.color || "#64748b";
+  }, []);
+
   return (
     <div ref={reactFlowWrapper} className="h-full w-full">
       <ReactFlow
-        nodes={nodes}
+        nodes={sortedNodes}
         edges={styledEdges}
         onNodesChange={handleNodesChange}
         onEdgesChange={onEdgesChange}
@@ -190,10 +310,7 @@ function ArchitectureCanvasInner() {
 
         {/* Canvas Overview - Bottom Right, above Smart Suggestions */}
         <MiniMap
-          nodeColor={(node) => {
-            const data = node.data as ServiceNodeData;
-            return data.service.color;
-          }}
+          nodeColor={getNodeColor}
           className="absolute! bottom-24! right-4! z-50!"
           style={{
             width: 200,

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useArchitectureStore } from '../store/useArchitectureStore';
 import { useOnboardingStore } from '../store/useOnboardingStore';
+import { isServiceNode } from '../types/architecture';
 import type { Service, Category } from '../types/service';
 import type { Scale, BudgetRange } from '../types/onboarding';
 
@@ -74,8 +75,8 @@ export function useCostCalculator(): CostEstimate {
   const budgetRange = answers.budgetRange;
 
   return useMemo(() => {
-    // Get all services from canvas
-    const canvasServices = nodes.map((node) => node.data.service);
+    // Get all services from canvas (filter out group nodes)
+    const canvasServices = nodes.filter(isServiceNode).map((node) => node.data.service);
 
     // Separate services with and without cost data
     const servicesWithCosts = canvasServices.filter((s) => s.costModel);

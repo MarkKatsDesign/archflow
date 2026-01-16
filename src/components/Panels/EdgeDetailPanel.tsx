@@ -2,14 +2,14 @@ import { useState } from "react";
 import { X, Tag, Zap, GitBranch, Trash2 } from "lucide-react";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import type { Edge } from "reactflow";
-import type { ServiceNode } from "../../types/architecture";
+import type { ArchNode } from "../../types/architecture";
 
 function EdgeDetailPanelContent({
   edge,
   nodes,
 }: {
   edge: Edge;
-  nodes: ServiceNode[];
+  nodes: ArchNode[];
 }) {
   const { setSelectedEdgeId, updateEdge, deleteEdge } = useArchitectureStore();
 

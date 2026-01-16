@@ -3,6 +3,7 @@ import type { Service } from "../types/service";
 
 // Category color mapping for visual consistency
 export const categoryColors: Record<Category, string> = {
+  [Category.Infrastructure]: "#6366f1", // Indigo - Network boundaries
   [Category.Frontend]: "#3b82f6", // Blue
   [Category.Backend]: "#8b5cf6", // Purple
   [Category.Database]: "#10b981", // Green

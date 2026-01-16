@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import {
   Download,
   FileJson,
@@ -20,6 +20,8 @@ import {
   exportToPDF,
 } from "../../utils/exportUtils";
 import { exportToTerraform } from "../../utils/terraformGenerator";
+import { isServiceNode } from "../../types/architecture";
+import type { ArchNode } from "../../types/architecture";
 
 export function ExportPanel() {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,11 +32,14 @@ export function ExportPanel() {
   const { totalMin, totalMax } = useCostCalculator();
   const { answers } = useOnboardingStore();
 
-  const handleExportJSON = () => {
-    const categories = [...new Set(nodes.map((n) => n.data.service.category))];
+  // Filter to only service nodes (memoized)
+  const serviceNodes = useMemo(() => nodes.filter(isServiceNode), [nodes]);
 
-    exportToJSON(nodes, edges, {
-      totalServices: nodes.length,
+  const handleExportJSON = () => {
+    const categories = [...new Set(serviceNodes.map((n) => n.data.service.category))];
+
+    exportToJSON(serviceNodes, edges, {
+      totalServices: serviceNodes.length,
       categories,
       estimatedCost: { min: totalMin, max: totalMax },
     });
@@ -49,7 +54,8 @@ export function ExportPanel() {
     if (!file) return;
 
     importFromJSON(file, (data) => {
-      setNodes(data.nodes);
+      // Cast imported nodes to ArchNode[] (they're compatible at runtime)
+      setNodes(data.nodes as unknown as ArchNode[]);
       setEdges(data.edges);
       alert(
         `Imported ${data.nodes.length} services and ${data.edges.length} connections`
@@ -82,7 +88,7 @@ export function ExportPanel() {
 
   const handleExportMarkdown = () => {
     const scale = answers?.scale || "Unknown";
-    exportToMarkdown(nodes, edges, {
+    exportToMarkdown(serviceNodes, edges, {
       totalCost: { min: totalMin, max: totalMax },
       scale,
     });
@@ -100,7 +106,7 @@ export function ExportPanel() {
       }
 
       const scale = answers?.scale || "Unknown";
-      await exportToPDF(viewport, nodes, edges, {
+      await exportToPDF(viewport, serviceNodes, edges, {
         totalCost: { min: totalMin, max: totalMax },
         scale,
       });
@@ -114,7 +120,7 @@ export function ExportPanel() {
   const handleExportTerraform = async () => {
     setIsExporting(true);
     try {
-      await exportToTerraform(nodes, edges);
+      await exportToTerraform(serviceNodes, edges);
     } catch (error) {
       console.error("Terraform export failed:", error);
       alert("Failed to export Terraform files. Please try again.");
@@ -123,7 +129,7 @@ export function ExportPanel() {
     }
   };
 
-  const isEmpty = nodes.length === 0;
+  const isEmpty = serviceNodes.length === 0;
 
   return (
     <>
@@ -343,7 +349,7 @@ export function ExportPanel() {
             {!isEmpty && (
               <div className="px-4 py-2 bg-gray-50 border-t">
                 <p className="text-xs text-gray-500 text-center">
-                  {nodes.length} services • {edges.length} connections
+                  {serviceNodes.length} services • {edges.length} connections
                 </p>
               </div>
             )}

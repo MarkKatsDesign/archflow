@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useArchitectureStore } from '../store/useArchitectureStore';
+import { isServiceNode } from '../types/architecture';
 import type { Service } from '../types/service';
 
 export interface CompatibilityStatus {
@@ -19,9 +20,9 @@ const FULL_STACK_PLATFORMS = new Set([
 export function useCompatibility() {
   const { nodes } = useArchitectureStore();
 
-  // Get all services currently on the canvas
+  // Get all services currently on the canvas (filter out group nodes)
   const canvasServices = useMemo(() => {
-    return nodes.map((node) => node.data.service);
+    return nodes.filter(isServiceNode).map((node) => node.data.service);
   }, [nodes]);
 
   const canvasServiceIds = useMemo(() => {
@@ -94,7 +95,7 @@ export function useCompatibility() {
 
     canvasServices.forEach((canvasService) => {
       // Add all compatible services as recommendations
-      canvasService.compatibleWith?.forEach((serviceId) => {
+      canvasService.compatibleWith?.forEach((serviceId: string) => {
         // Only recommend if not already on canvas
         if (!canvasServiceIds.has(serviceId)) {
           recommendations.add(serviceId);
@@ -117,12 +118,12 @@ export function useCompatibility() {
     canvasServices.forEach((service) => {
       // Check if service requires at least one of certain services
       if (service.requiresOneOf && service.requiresOneOf.length > 0) {
-        const hasRequired = service.requiresOneOf.some((reqId) =>
+        const hasRequired = service.requiresOneOf.some((reqId: string) =>
           canvasServiceIds.has(reqId)
         );
 
         // Also check if we have a full-stack platform that can satisfy backend requirements
-        const requiresBackend = service.requiresOneOf.some((reqId) => {
+        const requiresBackend = service.requiresOneOf.some((reqId: string) => {
           const reqService = canvasServices.find((s) => s.id === reqId);
           return reqService?.category === 'Backend';
         });

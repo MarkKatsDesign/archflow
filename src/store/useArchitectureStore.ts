@@ -11,8 +11,9 @@ import type {
   OnNodesChange,
   OnEdgesChange,
   OnConnect,
+  Node,
 } from 'reactflow';
-import type { ServiceNode, ServiceEdge } from '../types/architecture';
+import type { ServiceNode, ServiceEdge, ArchNode } from '../types/architecture';
 import type { ArchitectureTemplate, TemplateNode } from '../types/template';
 import { services } from '../data/services';
 
@@ -53,21 +54,25 @@ function calculateOptimalHandles(
 }
 
 interface ArchitectureStore {
-  nodes: ServiceNode[];
+  nodes: ArchNode[];
   edges: ServiceEdge[];
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
-  addNode: (node: ServiceNode) => void;
+  addNode: (node: ArchNode) => void;
   updateEdge: (edgeId: string, updates: Partial<ServiceEdge>) => void;
   deleteEdge: (edgeId: string) => void;
-  setNodes: (nodes: ServiceNode[]) => void;
+  deleteNode: (nodeId: string) => void;
+  setNodes: (nodes: ArchNode[]) => void;
   setEdges: (edges: ServiceEdge[]) => void;
   setSelectedNodeId: (nodeId: string | null) => void;
   setSelectedEdgeId: (edgeId: string | null) => void;
   applyTemplate: (template: ArchitectureTemplate) => void;
+  // Group operations
+  addNodeToGroup: (nodeId: string, groupId: string) => void;
+  removeNodeFromGroup: (nodeId: string) => void;
 }
 
 export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
@@ -78,7 +83,7 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
 
   onNodesChange: (changes: NodeChange[]) => {
     set({
-      nodes: applyNodeChanges(changes, get().nodes) as ServiceNode[],
+      nodes: applyNodeChanges(changes, get().nodes as Node[]) as ArchNode[],
     });
   },
 
@@ -100,7 +105,7 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
     });
   },
 
-  addNode: (node: ServiceNode) => {
+  addNode: (node: ArchNode) => {
     set({ nodes: [...get().nodes, node] });
   },
 
@@ -119,7 +124,46 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
     });
   },
 
-  setNodes: (nodes: ServiceNode[]) => {
+  deleteNode: (nodeId: string) => {
+    const { nodes, edges } = get();
+    const nodeToDelete = nodes.find((n) => n.id === nodeId);
+
+    if (!nodeToDelete) return;
+
+    // If deleting a group, unparent all children (don't delete them)
+    if (nodeToDelete.type === 'group') {
+      const updatedNodes = nodes.map((n) => {
+        if (n.parentNode === nodeId) {
+          // Convert child position from relative to absolute
+          const absolutePosition = {
+            x: n.position.x + nodeToDelete.position.x,
+            y: n.position.y + nodeToDelete.position.y,
+          };
+          return {
+            ...n,
+            parentNode: undefined,
+            extent: undefined,
+            position: absolutePosition,
+          };
+        }
+        return n;
+      });
+
+      set({
+        nodes: updatedNodes.filter((n) => n.id !== nodeId) as ArchNode[],
+        edges: edges.filter((e) => e.source !== nodeId && e.target !== nodeId),
+        selectedNodeId: null,
+      });
+    } else {
+      set({
+        nodes: nodes.filter((n) => n.id !== nodeId) as ArchNode[],
+        edges: edges.filter((e) => e.source !== nodeId && e.target !== nodeId),
+        selectedNodeId: null,
+      });
+    }
+  },
+
+  setNodes: (nodes: ArchNode[]) => {
     set({ nodes });
   },
 
@@ -176,5 +220,63 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
     });
 
     set({ nodes, edges, selectedNodeId: null });
+  },
+
+  // Add a node to a group
+  addNodeToGroup: (nodeId: string, groupId: string) => {
+    const { nodes } = get();
+    const node = nodes.find((n) => n.id === nodeId);
+    const group = nodes.find((n) => n.id === groupId);
+
+    if (!node || !group || group.type !== 'group') return;
+
+    // Convert position from absolute to relative
+    const relativePosition = {
+      x: node.position.x - group.position.x,
+      y: node.position.y - group.position.y,
+    };
+
+    set({
+      nodes: nodes.map((n) =>
+        n.id === nodeId
+          ? {
+              ...n,
+              parentNode: groupId,
+              extent: 'parent' as const,
+              position: relativePosition,
+            }
+          : n
+      ) as ArchNode[],
+    });
+  },
+
+  // Remove a node from its parent group
+  removeNodeFromGroup: (nodeId: string) => {
+    const { nodes } = get();
+    const node = nodes.find((n) => n.id === nodeId);
+
+    if (!node || !node.parentNode) return;
+
+    const parentGroup = nodes.find((n) => n.id === node.parentNode);
+    if (!parentGroup) return;
+
+    // Convert position from relative to absolute
+    const absolutePosition = {
+      x: node.position.x + parentGroup.position.x,
+      y: node.position.y + parentGroup.position.y,
+    };
+
+    set({
+      nodes: nodes.map((n) =>
+        n.id === nodeId
+          ? {
+              ...n,
+              parentNode: undefined,
+              extent: undefined,
+              position: absolutePosition,
+            }
+          : n
+      ) as ArchNode[],
+    });
   },
 }));

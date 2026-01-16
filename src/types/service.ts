@@ -1,4 +1,5 @@
 export const Category = {
+  Infrastructure: 'Infrastructure', // Network boundaries (VPC, Subnet, etc.)
   Frontend: 'Frontend',
   Backend: 'Backend',
   Database: 'Database',
