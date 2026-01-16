@@ -80,7 +80,7 @@ export function CostEstimatePanel() {
   };
 
   return (
-    <div className="absolute bottom-36 left-4 w-80 bg-white rounded-lg shadow-xl border border-gray-200 max-h-[calc(100vh-12rem)] overflow-hidden flex flex-col z-10">
+    <div className="absolute bottom-4 left-16 w-80 bg-white rounded-lg shadow-xl border border-gray-200 max-h-[calc(100vh-12rem)] overflow-hidden flex flex-col z-10">
       {/* Header - Collapsible */}
       <div
         className="px-4 py-3 border-b bg-linear-to-r from-green-50 to-blue-50 cursor-pointer hover:bg-opacity-80 transition-colors"
