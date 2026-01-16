@@ -9,11 +9,11 @@ export function WizardButton() {
   const isCanvasEmpty = nodes.length === 0;
 
   if (isCanvasEmpty) {
-    // Prominent "Get Started" button when canvas is empty
+    // Prominent "Get Started" button with gradient when canvas is empty
     return (
       <button
         onClick={openWizard}
-        className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
+        className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white btn-gradient-primary shadow-md"
       >
         <Sparkles className="w-4 h-4" />
         Get Started
@@ -25,7 +25,7 @@ export function WizardButton() {
   return (
     <button
       onClick={openWizard}
-      className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors border border-gray-300"
+      className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all border border-gray-300 hover:border-gray-400 hover:shadow-sm"
     >
       <Plus className="w-4 h-4" />
       New Project

@@ -11,7 +11,89 @@ body {
   box-sizing: border-box;
 }
 
-/* Custom scrollbar styling for panels */
+/* ===== ANIMATIONS ===== */
+
+/* Panel slide-in from right */
+@keyframes slideInRight {
+  from {
+    transform: translateX(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Panel slide-in from left */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Panel slide-in from bottom */
+@keyframes slideInUp {
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Fade in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Scale in */
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Animation classes */
+.animate-slide-in-right {
+  animation: slideInRight 0.2s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.2s ease-out;
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.2s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out;
+}
+
+/* ===== CUSTOM SCROLLBARS ===== */
+
 .scrollable-panel {
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
@@ -36,7 +118,18 @@ body {
   background-color: #94a3b8;
 }
 
-/* Scroll shadow indicators */
+/* Horizontal scrollbar for category pills */
+.scrollable-horizontal {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollable-horizontal::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===== SCROLL SHADOWS ===== */
+
 .scroll-shadow {
   background:
     linear-gradient(white 30%, rgba(255, 255, 255, 0)),
@@ -47,4 +140,135 @@ body {
   background-color: white;
   background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
   background-attachment: local, local, scroll, scroll;
+}
+
+/* Horizontal scroll fade indicators */
+.scroll-fade-horizontal {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8px,
+    black calc(100% - 8px),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8px,
+    black calc(100% - 8px),
+    transparent
+  );
+}
+
+/* ===== CANVAS ENHANCEMENTS ===== */
+
+/* Canvas vignette effect */
+.canvas-vignette {
+  position: relative;
+}
+
+.canvas-vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.03) 100%
+  );
+}
+
+/* ReactFlow zoom controls enhancement */
+.react-flow__controls {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0.5rem !important;
+  border: 1px solid #e5e7eb !important;
+  overflow: hidden !important;
+}
+
+.react-flow__controls-button {
+  width: 28px !important;
+  height: 28px !important;
+  background: white !important;
+  border: none !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+  transition: all 0.15s ease !important;
+}
+
+.react-flow__controls-button:hover {
+  background: #f9fafb !important;
+}
+
+.react-flow__controls-button:last-child {
+  border-bottom: none !important;
+}
+
+.react-flow__controls-button svg {
+  fill: #6b7280 !important;
+  max-width: 14px !important;
+  max-height: 14px !important;
+}
+
+.react-flow__controls-button:hover svg {
+  fill: #3b82f6 !important;
+}
+
+/* ===== GLASSMORPHISM ===== */
+
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ===== BUTTON GRADIENTS ===== */
+
+.btn-gradient-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%);
+  transition: all 0.2s ease;
+}
+
+.btn-gradient-primary:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #4338ca 100%);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+/* ===== CARD ENHANCEMENTS ===== */
+
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Service card glow on drag */
+.service-card-dragging {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5), 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== TYPOGRAPHY ===== */
+
+.text-micro {
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ===== EMPTY STATE ===== */
+
+.empty-state-pattern {
+  background-image:
+    radial-gradient(circle at 1px 1px, #e5e7eb 1px, transparent 0);
+  background-size: 32px 32px;
 }

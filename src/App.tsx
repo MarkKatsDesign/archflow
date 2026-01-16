@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Workflow } from 'lucide-react';
 import ComponentPalette from './components/Sidebar/ComponentPalette';
 import ArchitectureCanvas from './components/Canvas/ArchitectureCanvas';
 import { NodeDetailPanel } from './components/Panels/NodeDetailPanel';
@@ -32,10 +33,21 @@ function App() {
 
   return (
     <div className="h-screen w-screen flex flex-col overflow-hidden">
-      <header className="bg-white border-b border-gray-300 px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">ArchFlow</h1>
-          <p className="text-sm text-gray-600">Visual System Architecture Designer</p>
+      {/* Compact header with brand identity */}
+      <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+        <div
+          className="flex items-center gap-3 group cursor-default"
+          title="Visual System Architecture Designer"
+        >
+          {/* Brand logo with gradient */}
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+            <Workflow className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              ArchFlow
+            </h1>
+          </div>
         </div>
         <WizardButton />
       </header>

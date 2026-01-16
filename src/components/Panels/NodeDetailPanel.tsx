@@ -86,10 +86,10 @@ export function NodeDetailPanel() {
   }
 
   return (
-    <div className="absolute top-4 right-4 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col z-10">
+    <div className="absolute top-4 right-4 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col z-10 animate-slide-in-right">
       {/* Header - Fixed */}
       <div
-        className="px-4 py-3 border-b flex items-center justify-between shrink-0"
+        className="px-4 py-3 border-b border-gray-100 flex items-center justify-between shrink-0 bg-gradient-to-r from-white to-gray-50"
         style={{ borderLeftWidth: '4px', borderLeftColor: service.color }}
       >
         <div className="flex-1 min-w-0">
@@ -235,8 +235,8 @@ export function NodeDetailPanel() {
         {/* Use Cases */}
         {service.useCases && service.useCases.length > 0 && (
           <div className="py-2 border-t border-gray-200">
-            <span className="text-sm font-medium text-gray-700 block mb-2">
-              Best For:
+            <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 block mb-2">
+              Best For
             </span>
             <div className="flex flex-wrap gap-2">
               {service.useCases.map((useCase) => (
@@ -294,7 +294,7 @@ export function NodeDetailPanel() {
         {/* Tags */}
         {service.tags && service.tags.length > 0 && (
           <div className="py-2 border-t border-gray-200">
-            <span className="text-sm font-medium text-gray-700 block mb-2">Tags:</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 block mb-2">Tags</span>
             <div className="flex flex-wrap gap-1">
               {service.tags.map((tag) => (
                 <span

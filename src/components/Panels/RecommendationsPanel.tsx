@@ -51,7 +51,7 @@ export function RecommendationsPanel() {
     return (
       <button
         onClick={() => setIsExpanded(true)}
-        className="absolute bottom-4 right-4 z-40 bg-white rounded-lg shadow-lg border border-gray-200 px-4 py-3 hover:shadow-xl transition-all hover:scale-105 group"
+        className="absolute bottom-4 right-4 z-40 bg-white rounded-xl shadow-lg border border-gray-200 px-4 py-3 hover:shadow-xl transition-all hover:scale-105 group animate-slide-in-up"
       >
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -91,10 +91,10 @@ export function RecommendationsPanel() {
   // Expanded state - full panel
   if (!hasContent) {
     return (
-      <div className="absolute bottom-4 right-4 z-40 w-80 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
+      <div className="absolute bottom-4 right-4 z-40 w-80 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden animate-slide-in-up">
         <button
           onClick={() => setIsExpanded(false)}
-          className="w-full px-4 py-3 border-b bg-linear-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 transition-colors text-left"
+          className="w-full px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 transition-all text-left"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -116,11 +116,11 @@ export function RecommendationsPanel() {
   }
 
   return (
-    <div className="absolute bottom-4 right-4 z-40 w-96 bg-white rounded-lg shadow-xl border border-gray-200 max-h-125 overflow-hidden flex flex-col">
+    <div className="absolute bottom-4 right-4 z-40 w-96 bg-white rounded-xl shadow-xl border border-gray-200 max-h-125 overflow-hidden flex flex-col animate-slide-in-up">
       {/* Header - Clickable to collapse */}
       <button
         onClick={() => setIsExpanded(false)}
-        className="px-4 py-3 border-b bg-linear-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 transition-colors text-left w-full"
+        className="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all text-left w-full"
       >
         <div className="flex items-center justify-between">
           <div>

@@ -13,17 +13,20 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
 
   // Create subtle gradient based on service color
   const gradientStyle = {
-    background: `linear-gradient(135deg, white 0%, ${service.color}08 100%)`,
+    background: `linear-gradient(145deg, white 0%, ${service.color}10 100%)`,
     borderColor: service.color,
+    boxShadow: selected
+      ? `0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 2px ${service.color}40`
+      : '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
   };
 
   return (
     <div
       className={`
-        px-4 py-3 rounded-lg min-w-40 max-w-50
-        border-2 transition-all duration-300
-        hover:scale-105 hover:shadow-2xl
-        ${selected ? 'shadow-2xl ring-2 ring-blue-400 scale-105' : 'shadow-lg'}
+        px-4 py-3 rounded-xl min-w-40 max-w-50
+        border-2 transition-all duration-200 ease-out
+        hover:-translate-y-1 hover:shadow-xl
+        ${selected ? 'scale-105 ring-2 ring-blue-400/50' : ''}
       `}
       style={gradientStyle}
     >

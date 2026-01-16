@@ -148,7 +148,7 @@ export function ExportPanel() {
       <div className="absolute top-4 left-4 z-10">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all hover:scale-105"
+          className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all hover:-translate-y-0.5"
         >
           {isEmpty ? (
             <>
@@ -170,9 +170,9 @@ export function ExportPanel() {
 
         {/* Menu */}
         {isOpen && (
-          <div className="absolute top-14 left-0 w-64 bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden">
+          <div className="absolute top-14 left-0 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden animate-scale-in">
             {/* Header */}
-            <div className="px-4 py-3 bg-linear-to-r from-blue-50 to-purple-50 border-b">
+            <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
               {isEmpty ? (
                 <>
                   <h3 className="font-semibold text-gray-900">

@@ -9,12 +9,14 @@ import ReactFlow, {
 } from "reactflow";
 import type { ReactFlowInstance, EdgeMouseHandler, Node } from "reactflow";
 import "reactflow/dist/style.css";
+import { MousePointer2, ArrowRight, Layers } from "lucide-react";
 
 import CustomNode from "./CustomNode";
 import GroupNode from "./GroupNode";
 import AlignmentGuides from "./AlignmentGuides";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import { useAlignmentGuides } from "../../hooks/useAlignmentGuides";
+import { useOnboardingStore } from "../../store/useOnboardingStore";
 import type { Service } from "../../types/service";
 import type { BoundaryZone } from "../../types/infrastructure";
 import type {
@@ -24,6 +26,58 @@ import type {
   GroupNode as GroupNodeType,
   ArchNode,
 } from "../../types/architecture";
+
+// Empty state component
+function EmptyCanvasState() {
+  const { openWizard } = useOnboardingStore();
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+      <div className="text-center pointer-events-auto animate-fade-in">
+        {/* Illustration */}
+        <div className="w-32 h-32 mx-auto mb-6 relative">
+          {/* Background pattern */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 empty-state-pattern opacity-50" />
+          {/* Icon stack */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="relative">
+              <div className="w-16 h-16 rounded-xl bg-white shadow-lg border border-gray-200 flex items-center justify-center transform -rotate-6">
+                <Layers className="w-8 h-8 text-indigo-400" />
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-md flex items-center justify-center">
+                <MousePointer2 className="w-4 h-4 text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Text */}
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          Start Building Your Architecture
+        </h3>
+        <p className="text-sm text-gray-500 mb-6 max-w-xs mx-auto">
+          Drag services from the sidebar or use a template to get started quickly
+        </p>
+
+        {/* CTAs */}
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={openWizard}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium btn-gradient-primary text-white shadow-md"
+          >
+            Use Template
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Hint */}
+        <p className="mt-6 text-xs text-gray-400">
+          Or drag a component from the left sidebar
+        </p>
+      </div>
+    </div>
+  );
+}
 
 const nodeTypes = {
   service: CustomNode,
@@ -251,8 +305,10 @@ function ArchitectureCanvasInner() {
     return data.service?.color || "#64748b";
   }, []);
 
+  const isEmpty = nodes.length === 0;
+
   return (
-    <div ref={reactFlowWrapper} className="h-full w-full">
+    <div ref={reactFlowWrapper} className="h-full w-full relative canvas-vignette">
       <ReactFlow
         nodes={sortedNodes}
         edges={styledEdges}
@@ -291,9 +347,10 @@ function ArchitectureCanvasInner() {
           strokeDasharray: "5 5",
         }}
         fitView
-        className="bg-linear-to-br from-gray-50 to-blue-50"
+        className="bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50/50"
       >
-        <Background color="#94a3b8" gap={16} size={1} />
+        {/* Refined grid - larger spacing, lower opacity */}
+        <Background color="#cbd5e1" gap={24} size={1} />
         <Controls />
 
         {/* Smart alignment guides */}
@@ -302,30 +359,35 @@ function ArchitectureCanvasInner() {
         {/* Shift key indicator for grid snap mode */}
         {isShiftPressed && (
           <Panel position="top-center" className="pointer-events-none">
-            <div className="rounded-md bg-blue-500 px-3 py-1.5 text-xs font-medium text-white shadow-lg">
+            <div className="rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 px-4 py-2 text-xs font-medium text-white shadow-lg">
               Grid Snap Mode (15px)
             </div>
           </Panel>
         )}
 
         {/* Canvas Overview - Bottom Right, above Smart Suggestions */}
-        <MiniMap
-          nodeColor={getNodeColor}
-          className="absolute! bottom-24! right-4! z-50!"
-          style={{
-            width: 200,
-            height: 120,
-            border: "2px solid #d1d5db",
-            borderRadius: "8px",
-            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-            backgroundColor: "white",
-          }}
-          maskColor="rgba(240, 243, 248, 0.7)"
-          pannable
-          zoomable
-          ariaLabel="Canvas Overview"
-        />
+        {!isEmpty && (
+          <MiniMap
+            nodeColor={getNodeColor}
+            className="absolute! bottom-24! right-4! z-50!"
+            style={{
+              width: 200,
+              height: 120,
+              border: "1px solid #e5e7eb",
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+              backgroundColor: "white",
+            }}
+            maskColor="rgba(240, 243, 248, 0.7)"
+            pannable
+            zoomable
+            ariaLabel="Canvas Overview"
+          />
+        )}
       </ReactFlow>
+
+      {/* Empty state overlay */}
+      {isEmpty && <EmptyCanvasState />}
     </div>
   );
 }
