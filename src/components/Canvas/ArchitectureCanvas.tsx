@@ -345,7 +345,9 @@ function ArchitectureCanvasInner() {
           },
           labelBgPadding: [8, 4],
           labelBgBorderRadius: 4,
+          interactionWidth: 20,
         }}
+        elevateEdgesOnSelect
         connectionLineType={ConnectionLineType.Bezier}
         connectionLineStyle={{
           strokeWidth: 2,

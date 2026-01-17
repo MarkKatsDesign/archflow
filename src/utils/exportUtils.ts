@@ -65,29 +65,76 @@ export const importFromJSON = (
 // PNG EXPORT
 // ========================================
 
-export const exportToPNG = async (element: HTMLElement): Promise<void> => {
-  try {
-    const dataUrl = await toPng(element, {
-      quality: 1,
-      pixelRatio: 2,
-      backgroundColor: "#f9fafb",
-      filter: (node) => {
-        // Exclude controls, minimap, and other UI elements
-        const exclusions = [
-          "react-flow__minimap",
-          "react-flow__controls",
-          "react-flow__panel",
-        ];
-        return !exclusions.some((classname) =>
-          (node as HTMLElement)?.classList?.contains(classname)
-        );
-      },
-    });
+// Helper function to prepare DOM for export (hide handles, fix animated edges)
+function prepareForExport(element: HTMLElement): () => void {
+  const restoreFunctions: (() => void)[] = [];
 
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = `architecture-${Date.now()}.png`;
-    link.click();
+  // Hide connection handles
+  const handles = element.querySelectorAll(".react-flow__handle");
+  handles.forEach((handle) => {
+    const el = handle as HTMLElement;
+    const originalDisplay = el.style.display;
+    el.style.display = "none";
+    restoreFunctions.push(() => {
+      el.style.display = originalDisplay;
+    });
+  });
+
+  // Fix animated edges - add inline stroke-dasharray
+  const animatedEdges = element.querySelectorAll(".react-flow__edge.animated");
+  animatedEdges.forEach((edgeGroup) => {
+    const path = edgeGroup.querySelector("path");
+    if (path) {
+      const originalDasharray = path.style.strokeDasharray;
+      path.style.strokeDasharray = "5 5";
+      restoreFunctions.push(() => {
+        path.style.strokeDasharray = originalDasharray;
+      });
+    }
+  });
+
+  // Return a function to restore all changes
+  return () => {
+    restoreFunctions.forEach((restore) => restore());
+  };
+}
+
+export const exportToPNG = async (
+  element: HTMLElement,
+  isDarkMode: boolean = false
+): Promise<void> => {
+  try {
+    const backgroundColor = isDarkMode ? "#0f172a" : "#f9fafb";
+
+    // Prepare DOM for export and get restore function
+    const restore = prepareForExport(element);
+
+    try {
+      const dataUrl = await toPng(element, {
+        quality: 1,
+        pixelRatio: 2,
+        backgroundColor,
+        filter: (node) => {
+          // Exclude controls, minimap, and other UI elements
+          const exclusions = [
+            "react-flow__minimap",
+            "react-flow__controls",
+            "react-flow__panel",
+          ];
+          return !exclusions.some((classname) =>
+            (node as HTMLElement)?.classList?.contains(classname)
+          );
+        },
+      });
+
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = `architecture-${Date.now()}.png`;
+      link.click();
+    } finally {
+      // Always restore DOM even if export fails
+      restore();
+    }
   } catch (error) {
     console.error("Failed to export PNG:", error);
     alert("Failed to export image");
@@ -205,33 +252,44 @@ export const exportToPDF = async (
   element: HTMLElement,
   nodes: Node<ServiceNodeData>[],
   edges: Edge[],
-  metadata?: { totalCost?: { min: number; max: number }; scale?: string }
+  metadata?: { totalCost?: { min: number; max: number }; scale?: string },
+  isDarkMode: boolean = false
 ): Promise<void> => {
   try {
     const pdf = new jsPDF("landscape", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
+    const backgroundColor = isDarkMode ? "#0f172a" : "#f9fafb";
 
     // Page 1: Architecture Diagram
     pdf.setFontSize(20);
     pdf.text("Architecture Diagram", pageWidth / 2, 15, { align: "center" });
 
-    // Capture canvas as image
-    const dataUrl = await toPng(element, {
-      quality: 1,
-      pixelRatio: 2,
-      backgroundColor: "#f9fafb",
-      filter: (node) => {
-        const exclusions = [
-          "react-flow__minimap",
-          "react-flow__controls",
-          "react-flow__panel",
-        ];
-        return !exclusions.some((classname) =>
-          (node as HTMLElement)?.classList?.contains(classname)
-        );
-      },
-    });
+    // Prepare DOM for export and get restore function
+    const restore = prepareForExport(element);
+
+    let dataUrl: string;
+    try {
+      // Capture canvas as image
+      dataUrl = await toPng(element, {
+        quality: 1,
+        pixelRatio: 2,
+        backgroundColor,
+        filter: (node) => {
+          const exclusions = [
+            "react-flow__minimap",
+            "react-flow__controls",
+            "react-flow__panel",
+          ];
+          return !exclusions.some((classname) =>
+            (node as HTMLElement)?.classList?.contains(classname)
+          );
+        },
+      });
+    } finally {
+      // Always restore DOM even if capture fails
+      restore();
+    }
 
     // Add image to PDF
     const imgWidth = pageWidth - 20;

@@ -418,3 +418,19 @@ body {
 .dark .react-flow__attribution a {
   color: var(--text-muted) !important;
 }
+
+/* ===== GROUP NODE - ALLOW EDGE SELECTION THROUGH ===== */
+/* Make the React Flow node wrapper for group nodes pass-through for pointer events */
+.react-flow__node-group {
+  pointer-events: none !important;
+}
+
+/* Re-enable pointer events for clickable parts of group nodes */
+.react-flow__node-group .group-clickable {
+  pointer-events: auto !important;
+}
+
+/* Also ensure the node resizer handles are clickable */
+.react-flow__node-group .react-flow__resize-control {
+  pointer-events: auto !important;
+}

@@ -12,6 +12,7 @@ import {
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import { useCostCalculator } from "../../hooks/useCostCalculator";
 import { useOnboardingStore } from "../../store/useOnboardingStore";
+import { useThemeStore } from "../../store/useThemeStore";
 import {
   exportToJSON,
   importFromJSON,
@@ -31,6 +32,8 @@ export function ExportPanel() {
   const { nodes, edges, setNodes, setEdges } = useArchitectureStore();
   const { totalMin, totalMax } = useCostCalculator();
   const { answers } = useOnboardingStore();
+  const { theme } = useThemeStore();
+  const isDarkMode = theme === "dark";
 
   // Filter to only service nodes (memoized)
   const serviceNodes = useMemo(() => nodes.filter(isServiceNode), [nodes]);
@@ -79,7 +82,7 @@ export function ExportPanel() {
         return;
       }
 
-      await exportToPNG(viewport);
+      await exportToPNG(viewport, isDarkMode);
     } catch (error) {
       console.error("PNG export failed:", error);
       alert("Failed to export PNG. Please try again.");
@@ -108,10 +111,16 @@ export function ExportPanel() {
       }
 
       const scale = answers?.scale || "Unknown";
-      await exportToPDF(viewport, serviceNodes, edges, {
-        totalCost: { min: totalMin, max: totalMax },
-        scale,
-      });
+      await exportToPDF(
+        viewport,
+        serviceNodes,
+        edges,
+        {
+          totalCost: { min: totalMin, max: totalMax },
+          scale,
+        },
+        isDarkMode
+      );
     } catch (error) {
       console.error("PDF export failed:", error);
     } finally {
