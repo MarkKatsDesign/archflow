@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Workflow, Moon, Sun } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
+import { Logo } from './components/Logo';
 import ComponentPalette from './components/Sidebar/ComponentPalette';
 import ArchitectureCanvas from './components/Canvas/ArchitectureCanvas';
 import { NodeDetailPanel } from './components/Panels/NodeDetailPanel';
@@ -43,9 +44,9 @@ function App() {
           className="flex items-center gap-3 group cursor-default"
           title="Visual System Architecture Designer"
         >
-          {/* Brand logo with gradient */}
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-            <Workflow className="w-5 h-5 text-white" />
+          {/* Brand logo with waves */}
+          <div className="shadow-md group-hover:shadow-lg transition-shadow rounded-full">
+            <Logo size={36} />
           </div>
           <div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
