@@ -74,9 +74,9 @@ export function CostEstimatePanel() {
 
   // Budget status colors
   const budgetColorClasses = {
-    ok: "bg-green-50 text-green-700 border-green-200",
-    warning: "bg-amber-50 text-amber-700 border-amber-200",
-    exceeded: "bg-red-50 text-red-700 border-red-200",
+    ok: "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800",
+    warning: "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800",
+    exceeded: "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800",
   };
 
   return (

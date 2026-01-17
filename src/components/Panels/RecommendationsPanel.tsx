@@ -210,7 +210,7 @@ function RecommendationCard({ service }: RecommendationCardProps) {
     <div
       draggable
       onDragStart={(e) => onDragStart(e, service)}
-      className="p-3 bg-green-50 border border-green-200 rounded-lg hover:border-green-400 cursor-move transition-all hover:shadow-md"
+      className="p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg hover:border-green-400 dark:hover:border-green-600 cursor-move transition-all hover:shadow-md"
     >
       <div className="flex items-start gap-3">
         <div
@@ -218,17 +218,17 @@ function RecommendationCard({ service }: RecommendationCardProps) {
           style={{ backgroundColor: service.color }}
         />
         <div className="flex-1 min-w-0">
-          <div className="font-medium text-sm text-gray-900 truncate">
+          <div className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
             {service.shortName}
           </div>
-          <div className="text-xs text-gray-600 mt-0.5">
+          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
             {service.provider} • {service.category}
           </div>
-          <p className="text-xs text-gray-700 mt-1 line-clamp-2">
+          <p className="text-xs text-gray-700 dark:text-gray-300 mt-1 line-clamp-2">
             {service.description}
           </p>
           {service.costModel?.freeTierAvailable && (
-            <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 bg-green-100 rounded text-xs text-green-700">
+            <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 bg-green-100 dark:bg-green-900/50 rounded text-xs text-green-700 dark:text-green-300">
               <Sparkles className="w-3 h-3" />
               Free tier available
             </div>
