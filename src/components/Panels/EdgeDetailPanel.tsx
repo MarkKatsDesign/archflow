@@ -43,7 +43,7 @@ function EdgeDetailPanelContent({
   return (
     <div className="absolute top-4 right-4 w-80 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden flex flex-col animate-slide-in-right">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between border-l-4 border-l-blue-500 bg-gradient-to-r from-white to-gray-50 dark:from-slate-900 dark:to-slate-800">
+      <div className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between border-l-4 border-l-blue-500 bg-linear-to-r from-white to-gray-50 dark:from-slate-900 dark:to-slate-800">
         <div className="flex-1">
           <h3 className="font-semibold text-gray-900 dark:text-gray-100">Connection Properties</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400">

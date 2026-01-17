@@ -83,13 +83,15 @@ export function CostEstimatePanel() {
     <div className="absolute bottom-4 left-16 w-80 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 max-h-[calc(100vh-12rem)] overflow-hidden flex flex-col z-10 animate-slide-in-up">
       {/* Header - Collapsible */}
       <div
-        className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 cursor-pointer hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/40 dark:hover:to-emerald-900/40 transition-all"
+        className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 cursor-pointer hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/40 dark:hover:to-emerald-900/40 transition-all"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Cost Estimate</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+              Cost Estimate
+            </h3>
           </div>
           <button
             onClick={(e) => {
@@ -110,7 +112,9 @@ export function CostEstimatePanel() {
           <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {formatCost(costEstimate.totalMin)} -{" "}
             {formatCost(costEstimate.totalMax)}
-            <span className="text-sm font-normal text-gray-600 dark:text-gray-400">/month</span>
+            <span className="text-sm font-normal text-gray-600 dark:text-gray-400">
+              /month
+            </span>
           </p>
         </div>
       </div>
@@ -123,7 +127,9 @@ export function CostEstimatePanel() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ScaleIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                <span className="text-sm text-gray-600 dark:text-gray-400">Scale:</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Scale:
+                </span>
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {SCALE_LABELS[costEstimate.scale].label}
                 </span>

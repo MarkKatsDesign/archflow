@@ -49,7 +49,7 @@ function App() {
             <Logo size={36} />
           </div>
           <div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
+            <h1 className="text-xl font-bold bg-linear-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
               ArchFlow
             </h1>
           </div>

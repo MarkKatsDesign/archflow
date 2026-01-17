@@ -94,7 +94,7 @@ export function RecommendationsPanel() {
       <div className="absolute bottom-4 right-4 z-40 w-80 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-hidden animate-slide-in-up">
         <button
           onClick={() => setIsExpanded(false)}
-          className="w-full px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/40 dark:hover:to-emerald-900/40 transition-all text-left"
+          className="w-full px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/40 dark:hover:to-emerald-900/40 transition-all text-left"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -120,13 +120,15 @@ export function RecommendationsPanel() {
       {/* Header - Clickable to collapse */}
       <button
         onClick={() => setIsExpanded(false)}
-        className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/40 dark:hover:to-indigo-900/40 transition-all text-left w-full"
+        className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/40 dark:hover:to-indigo-900/40 transition-all text-left w-full"
       >
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
               <Lightbulb className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">Smart Suggestions</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                Smart Suggestions
+              </h3>
               {totalCount > 0 && (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300">
                   {totalCount}
@@ -156,7 +158,9 @@ export function RecommendationsPanel() {
                   key={idx}
                   className="p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg"
                 >
-                  <p className="text-sm text-amber-900 dark:text-amber-200">{warning}</p>
+                  <p className="text-sm text-amber-900 dark:text-amber-200">
+                    {warning}
+                  </p>
                 </div>
               ))}
             </div>

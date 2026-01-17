@@ -305,7 +305,7 @@ export default function ComponentPalette() {
             onClick={() => setSelectedCategory("All")}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
               selectedCategory === "All"
-                ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
+                ? "bg-linear-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
                 : "bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700"
             }`}
           >
@@ -316,7 +316,7 @@ export default function ComponentPalette() {
             onClick={() => setSelectedCategory("Infrastructure")}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap inline-flex items-center gap-1 ${
               selectedCategory === "Infrastructure"
-                ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
+                ? "bg-linear-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
                 : "bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/60"
             }`}
           >
@@ -329,7 +329,7 @@ export default function ComponentPalette() {
               onClick={() => setSelectedCategory(category)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
                 selectedCategory === category
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
+                  ? "bg-linear-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
                   : "bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700"
               }`}
             >

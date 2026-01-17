@@ -38,14 +38,14 @@ function EmptyCanvasState() {
         {/* Illustration */}
         <div className="w-32 h-32 mx-auto mb-6 relative">
           {/* Background pattern */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-800 dark:to-indigo-900/50 empty-state-pattern opacity-50" />
+          <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-blue-50 to-indigo-100 dark:from-slate-800 dark:to-indigo-900/50 empty-state-pattern opacity-50" />
           {/* Icon stack */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="relative">
               <div className="w-16 h-16 rounded-xl bg-white dark:bg-slate-800 shadow-lg border border-gray-200 dark:border-slate-700 flex items-center justify-center transform -rotate-6">
                 <Layers className="w-8 h-8 text-indigo-400" />
               </div>
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-md flex items-center justify-center">
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 shadow-md flex items-center justify-center">
                 <MousePointer2 className="w-4 h-4 text-white" />
               </div>
             </div>
@@ -57,7 +57,8 @@ function EmptyCanvasState() {
           Start Building Your Architecture
         </h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs mx-auto">
-          Drag services from the sidebar or use a template to get started quickly
+          Drag services from the sidebar or use a template to get started
+          quickly
         </p>
 
         {/* CTAs */}
@@ -308,10 +309,13 @@ function ArchitectureCanvasInner() {
 
   const isEmpty = nodes.length === 0;
   const { theme } = useThemeStore();
-  const isDark = theme === 'dark';
+  const isDark = theme === "dark";
 
   return (
-    <div ref={reactFlowWrapper} className="h-full w-full relative canvas-vignette">
+    <div
+      ref={reactFlowWrapper}
+      className="h-full w-full relative canvas-vignette"
+    >
       <ReactFlow
         nodes={sortedNodes}
         edges={styledEdges}
@@ -350,9 +354,10 @@ function ArchitectureCanvasInner() {
           strokeDasharray: "5 5",
         }}
         fitView
-        className={isDark
-          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/50"
-          : "bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50/50"
+        className={
+          isDark
+            ? "bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950/50"
+            : "bg-linear-to-br from-slate-50 via-gray-50 to-blue-50/50"
         }
       >
         {/* Refined grid - larger spacing, lower opacity */}
@@ -365,7 +370,7 @@ function ArchitectureCanvasInner() {
         {/* Shift key indicator for grid snap mode */}
         {isShiftPressed && (
           <Panel position="top-center" className="pointer-events-none">
-            <div className="rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 px-4 py-2 text-xs font-medium text-white shadow-lg">
+            <div className="rounded-lg bg-linear-to-r from-blue-500 to-indigo-500 px-4 py-2 text-xs font-medium text-white shadow-lg">
               Grid Snap Mode (15px)
             </div>
           </Panel>
@@ -384,7 +389,9 @@ function ArchitectureCanvasInner() {
               boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
               backgroundColor: isDark ? "#1e293b" : "white",
             }}
-            maskColor={isDark ? "rgba(15, 23, 42, 0.7)" : "rgba(240, 243, 248, 0.7)"}
+            maskColor={
+              isDark ? "rgba(15, 23, 42, 0.7)" : "rgba(240, 243, 248, 0.7)"
+            }
             pannable
             zoomable
             ariaLabel="Canvas Overview"

@@ -172,7 +172,7 @@ export function ExportPanel() {
         {isOpen && (
           <div className="absolute top-14 left-0 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden animate-scale-in">
             {/* Header */}
-            <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-indigo-900/30 border-b border-gray-100 dark:border-slate-700">
+            <div className="px-4 py-3 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-indigo-900/30 border-b border-gray-100 dark:border-slate-700">
               {isEmpty ? (
                 <>
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100">

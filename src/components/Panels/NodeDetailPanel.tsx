@@ -1,52 +1,61 @@
-import { X, ExternalLink, DollarSign, Zap, Wrench, Server, AlertCircle, FileText } from 'lucide-react';
-import { useArchitectureStore } from '../../store/useArchitectureStore';
-import { isServiceNode } from '../../types/architecture';
-import type { Service } from '../../types/service';
+import {
+  X,
+  ExternalLink,
+  DollarSign,
+  Zap,
+  Wrench,
+  Server,
+  AlertCircle,
+  FileText,
+} from "lucide-react";
+import { useArchitectureStore } from "../../store/useArchitectureStore";
+import { isServiceNode } from "../../types/architecture";
+import type { Service } from "../../types/service";
 
 const MANAGED_LEVEL_LABELS = {
-  fully: 'Fully Managed',
-  partial: 'Partially Managed',
-  self: 'Self-Hosted',
+  fully: "Fully Managed",
+  partial: "Partially Managed",
+  self: "Self-Hosted",
 };
 
 const USE_CASE_LABELS: Record<string, string> = {
-  'saas-mvp': 'SaaS MVP',
-  'ecommerce': 'E-commerce',
-  'data-pipeline': 'Data Pipeline',
-  'mobile-backend': 'Mobile Backend',
-  'microservices': 'Microservices',
-  'ai-ml': 'AI/ML',
-  'content-site': 'Content Site',
-  'real-time-app': 'Real-time App',
-  'general': 'General Purpose',
-  'enterprise': 'Enterprise',
-  'orchestration': 'Orchestration',
-  'event-driven': 'Event-Driven',
-  'batch-jobs': 'Batch Jobs',
-  'api-backend': 'API Backend',
-  'hobby-project': 'Hobby Project',
-  'full-stack-app': 'Full-Stack App',
-  'workers': 'Workers',
-  'global-app': 'Global App',
-  'gaming': 'Gaming',
-  'leaderboards': 'Leaderboards',
-  'edge-functions': 'Edge Functions',
-  'rate-limiting': 'Rate Limiting',
-  'iot': 'IoT',
-  'streaming': 'Streaming',
-  'analytics': 'Analytics',
-  'backup': 'Backup',
-  'static-assets': 'Static Assets',
-  'enterprise-sso': 'Enterprise SSO',
-  'b2b-saas': 'B2B SaaS',
-  'log-search': 'Log Search',
-  'vector-search': 'Vector Search',
-  'observability': 'Observability',
-  'security-analytics': 'Security Analytics',
-  'security-monitoring': 'Security Monitoring',
-  'team-collaboration': 'Team Collaboration',
-  'container-builds': 'Container Builds',
-  'workflow': 'Workflow',
+  "saas-mvp": "SaaS MVP",
+  ecommerce: "E-commerce",
+  "data-pipeline": "Data Pipeline",
+  "mobile-backend": "Mobile Backend",
+  microservices: "Microservices",
+  "ai-ml": "AI/ML",
+  "content-site": "Content Site",
+  "real-time-app": "Real-time App",
+  general: "General Purpose",
+  enterprise: "Enterprise",
+  orchestration: "Orchestration",
+  "event-driven": "Event-Driven",
+  "batch-jobs": "Batch Jobs",
+  "api-backend": "API Backend",
+  "hobby-project": "Hobby Project",
+  "full-stack-app": "Full-Stack App",
+  workers: "Workers",
+  "global-app": "Global App",
+  gaming: "Gaming",
+  leaderboards: "Leaderboards",
+  "edge-functions": "Edge Functions",
+  "rate-limiting": "Rate Limiting",
+  iot: "IoT",
+  streaming: "Streaming",
+  analytics: "Analytics",
+  backup: "Backup",
+  "static-assets": "Static Assets",
+  "enterprise-sso": "Enterprise SSO",
+  "b2b-saas": "B2B SaaS",
+  "log-search": "Log Search",
+  "vector-search": "Vector Search",
+  observability: "Observability",
+  "security-analytics": "Security Analytics",
+  "security-monitoring": "Security Monitoring",
+  "team-collaboration": "Team Collaboration",
+  "container-builds": "Container Builds",
+  workflow: "Workflow",
 };
 
 function RatingStars({ rating, label }: { rating?: number; label: string }) {
@@ -60,7 +69,9 @@ function RatingStars({ rating, label }: { rating?: number; label: string }) {
           <div
             key={star}
             className={`w-3 h-3 rounded-sm ${
-              star <= rating ? 'bg-blue-500 dark:bg-blue-400' : 'bg-gray-300 dark:bg-slate-600'
+              star <= rating
+                ? "bg-blue-500 dark:bg-blue-400"
+                : "bg-gray-300 dark:bg-slate-600"
             }`}
           />
         ))}
@@ -89,12 +100,16 @@ export function NodeDetailPanel() {
     <div className="absolute top-4 right-4 w-96 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col z-10 animate-slide-in-right">
       {/* Header - Fixed */}
       <div
-        className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between shrink-0 bg-gradient-to-r from-white to-gray-50 dark:from-slate-900 dark:to-slate-800"
-        style={{ borderLeftWidth: '4px', borderLeftColor: service.color }}
+        className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between shrink-0 bg-linear-to-r from-white to-gray-50 dark:from-slate-900 dark:to-slate-800"
+        style={{ borderLeftWidth: "4px", borderLeftColor: service.color }}
       >
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">{service.name}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{service.category}</p>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+            {service.name}
+          </h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {service.category}
+          </p>
         </div>
         <button
           onClick={() => setSelectedNodeId(null)}
@@ -109,7 +124,9 @@ export function NodeDetailPanel() {
       <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-4 scrollable-panel scroll-shadow">
         {/* Description */}
         <div>
-          <p className="text-sm text-gray-700 dark:text-gray-300">{service.description}</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            {service.description}
+          </p>
         </div>
 
         {/* Provider Badge + Documentation Link */}
@@ -136,7 +153,9 @@ export function NodeDetailPanel() {
           <div className="py-2 border-t border-gray-200 dark:border-slate-700">
             <div className="flex items-center gap-2 mb-2">
               <AlertCircle className="w-4 h-4 text-amber-500 dark:text-amber-400" />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Requires One Of:</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Requires One Of:
+              </span>
             </div>
             <div className="ml-6 flex flex-wrap gap-1">
               {service.requiresOneOf.map((reqId) => (
@@ -174,13 +193,19 @@ export function NodeDetailPanel() {
           <div className="py-2 border-t border-gray-200 dark:border-slate-700">
             <div className="flex items-center gap-2 mb-2">
               <DollarSign className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Cost Estimate</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Cost Estimate
+              </span>
               {service.costModel.confidence && (
-                <span className={`text-xs px-1.5 py-0.5 rounded ${
-                  service.costModel.confidence === 'high' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
-                  service.costModel.confidence === 'medium' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
-                  'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-400'
-                }`}>
+                <span
+                  className={`text-xs px-1.5 py-0.5 rounded ${
+                    service.costModel.confidence === "high"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                      : service.costModel.confidence === "medium"
+                        ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
+                        : "bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-400"
+                  }`}
+                >
                   {service.costModel.confidence}
                 </span>
               )}
@@ -188,11 +213,15 @@ export function NodeDetailPanel() {
             <div className="ml-6 space-y-1">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Type:</span>
-                <span className="font-medium text-gray-900 dark:text-gray-100 capitalize">{service.costModel.type}</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100 capitalize">
+                  {service.costModel.type}
+                </span>
               </div>
               {service.costModel.estimatedMonthlyCost && (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Monthly:</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Monthly:
+                  </span>
                   <span className="font-medium text-gray-900 dark:text-gray-100">
                     ${service.costModel.estimatedMonthlyCost.min} - $
                     {service.costModel.estimatedMonthlyCost.max}
@@ -256,7 +285,9 @@ export function NodeDetailPanel() {
           <div className="py-2 border-t border-gray-200 dark:border-slate-700">
             <div className="flex items-center gap-2 mb-2">
               <Wrench className="w-4 h-4 text-green-600 dark:text-green-400" />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Compatible With:</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Compatible With:
+              </span>
             </div>
             <div className="ml-6 flex flex-wrap gap-1">
               {service.compatibleWith.map((compatId) => (
@@ -276,7 +307,9 @@ export function NodeDetailPanel() {
           <div className="py-2 border-t border-gray-200 dark:border-slate-700">
             <div className="flex items-center gap-2 mb-2">
               <X className="w-4 h-4 text-red-600 dark:text-red-400" />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Incompatible With:</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Incompatible With:
+              </span>
             </div>
             <div className="ml-6 flex flex-wrap gap-1">
               {service.incompatibleWith.map((incompatId) => (
@@ -294,7 +327,9 @@ export function NodeDetailPanel() {
         {/* Tags */}
         {service.tags && service.tags.length > 0 && (
           <div className="py-2 border-t border-gray-200 dark:border-slate-700">
-            <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 block mb-2">Tags</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 block mb-2">
+              Tags
+            </span>
             <div className="flex flex-wrap gap-1">
               {service.tags.map((tag) => (
                 <span
@@ -307,7 +342,6 @@ export function NodeDetailPanel() {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
