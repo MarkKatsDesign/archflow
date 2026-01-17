@@ -549,7 +549,7 @@ export const services: Service[] = [
       pricingUrl: "https://render.com/pricing",
       confidence: "high",
       assumptions:
-        "Pricing has two main layers: 1) Workspace Plan (Hobby $0, Professional $19/user, Organization $29/user)[citation:1]. 2) Compute/Service Cost: Each Web Service, Database (Postgres, Key Value), or Cron Job incurs separate, prorated charges based on its instance type. Free tier is for Static Sites and specific 'Free' instance types for other services, which have limits. Bandwidth overages cost $0.10/GB (Americas/Europe) or $0.20/GB (other regions).",
+        "Pricing has two main layers: 1) Workspace Plan (Hobby $0, Professional $19/user, Organization $29/user). 2) Compute/Service Cost: Each Web Service, Database (Postgres, Key Value), or Cron Job incurs separate, prorated charges based on its instance type. Free tier is for Static Sites and specific 'Free' instance types for other services, which have limits. Bandwidth overages cost $0.10/GB (Americas/Europe) or $0.20/GB (other regions).",
     },
     scalability: 4,
     complexity: 2,
