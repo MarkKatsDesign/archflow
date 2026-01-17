@@ -36,9 +36,6 @@ function App() {
 
   const isDark = theme === 'dark';
 
-  // DEBUG: Log theme state on every render
-  console.log('[Theme Debug]', { theme, isDark, appliedClass: isDark ? 'dark' : '(none)' });
-
   return (
     <div className={`h-screen w-screen flex flex-col overflow-hidden ${isDark ? 'dark' : ''}`}>
       {/* Compact header with brand identity */}
@@ -89,12 +86,6 @@ function App() {
 
       {/* Onboarding Wizard */}
       <OnboardingWizard />
-
-      {/* DEBUG: Theme indicator - REMOVE AFTER DEBUGGING */}
-      <div className="fixed bottom-2 left-2 z-50 px-3 py-1.5 rounded-lg text-xs font-mono shadow-lg border"
-           style={{ backgroundColor: isDark ? '#1e293b' : '#ffffff', color: isDark ? '#e2e8f0' : '#1e293b', borderColor: isDark ? '#475569' : '#e2e8f0' }}>
-        Theme: <strong>{theme}</strong> | isDark: <strong>{String(isDark)}</strong> | Class: <strong>{isDark ? 'dark' : '(none)'}</strong>
-      </div>
     </div>
   );
 }
