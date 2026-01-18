@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Handle, Position, NodeResizer } from "reactflow";
+import { NodeResizer } from "reactflow";
 import type { NodeProps } from "reactflow";
 import type { GroupNodeData } from "../../types/architecture";
 
@@ -71,63 +71,6 @@ function GroupNode({ data, selected }: NodeProps<GroupNodeData>) {
           </span>
         </div>
 
-        {/* Connection handles on all sides */}
-        <Handle
-          type="target"
-          position={Position.Top}
-          id="top"
-          className="w-3! h-3! border-2! border-white! transition-transform hover:scale-125"
-          style={{ background: zone.color }}
-        />
-        <Handle
-          type="source"
-          position={Position.Top}
-          id="top-source"
-          className="w-3! h-3! border-2! border-white! transition-transform hover:scale-125"
-          style={{ background: zone.color, left: "60%" }}
-        />
-        <Handle
-          type="target"
-          position={Position.Bottom}
-          id="bottom"
-          className="w-3! h-3! border-2! border-white! transition-transform hover:scale-125"
-          style={{ background: zone.color }}
-        />
-        <Handle
-          type="source"
-          position={Position.Bottom}
-          id="bottom-source"
-          className="w-3! h-3! border-2! border-white! transition-transform hover:scale-125"
-          style={{ background: zone.color, left: "60%" }}
-        />
-        <Handle
-          type="target"
-          position={Position.Left}
-          id="left"
-          className="w-3! h-3! border-2! border-white! transition-transform hover:scale-125"
-          style={{ background: zone.color }}
-        />
-        <Handle
-          type="source"
-          position={Position.Left}
-          id="left-source"
-          className="w-3! h-3! border-2! border-white! transition-transform hover:scale-125"
-          style={{ background: zone.color, top: "60%" }}
-        />
-        <Handle
-          type="target"
-          position={Position.Right}
-          id="right"
-          className="w-3! h-3! border-2! border-white! transition-transform hover:scale-125"
-          style={{ background: zone.color }}
-        />
-        <Handle
-          type="source"
-          position={Position.Right}
-          id="right-source"
-          className="w-3! h-3! border-2! border-white! transition-transform hover:scale-125"
-          style={{ background: zone.color, top: "60%" }}
-        />
       </div>
     </>
   );

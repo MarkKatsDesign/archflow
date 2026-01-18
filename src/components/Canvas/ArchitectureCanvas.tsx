@@ -348,6 +348,7 @@ function ArchitectureCanvasInner() {
           interactionWidth: 20,
         }}
         elevateEdgesOnSelect
+        connectionRadius={30}
         connectionLineType={ConnectionLineType.Bezier}
         connectionLineStyle={{
           strokeWidth: 2,
