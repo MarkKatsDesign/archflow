@@ -1,0 +1,1013 @@
+{
+  "version": "1.0.0",
+  "exportDate": "2026-01-18T07:58:38.272Z",
+  "nodes": [
+    {
+      "id": "vpc-1768709382435",
+      "type": "group",
+      "position": {
+        "x": 592.88,
+        "y": 366.86
+      },
+      "data": {
+        "zone": {
+          "id": "vpc",
+          "name": "Virtual Private Cloud",
+          "shortName": "VPC",
+          "type": "vpc",
+          "provider": "AWS",
+          "description": "Isolated virtual network for AWS resources with full control over IP addressing, subnets, and routing",
+          "color": "#6366f1",
+          "borderStyle": "solid",
+          "backgroundColor": "rgba(99, 102, 241, 0.06)"
+        },
+        "label": "VPC"
+      },
+      "style": {
+        "width": 870,
+        "height": 770
+      }
+    },
+    {
+      "id": "public-subnet-1768709382435",
+      "type": "group",
+      "position": {
+        "x": 50,
+        "y": 40
+      },
+      "parentNode": "vpc-1768709382435",
+      "extent": "parent",
+      "data": {
+        "zone": {
+          "id": "public-subnet",
+          "name": "Public Subnet",
+          "shortName": "Public Subnet",
+          "type": "public-subnet",
+          "provider": "AWS",
+          "description": "Subnet with route to Internet Gateway for public-facing resources",
+          "color": "#22c55e",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(34, 197, 94, 0.08)"
+        },
+        "label": "Public Subnet"
+      },
+      "style": {
+        "width": 560,
+        "height": 200
+      }
+    },
+    {
+      "id": "private-subnet-1768709382435",
+      "type": "group",
+      "position": {
+        "x": 50,
+        "y": 260
+      },
+      "parentNode": "vpc-1768709382435",
+      "extent": "parent",
+      "data": {
+        "zone": {
+          "id": "private-subnet",
+          "name": "Private Subnet",
+          "shortName": "Private Subnet",
+          "type": "private-subnet",
+          "provider": "AWS",
+          "description": "Subnet without direct internet access for internal resources",
+          "color": "#3b82f6",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(59, 130, 246, 0.08)"
+        },
+        "label": "Private Subnet"
+      },
+      "style": {
+        "width": 770,
+        "height": 470
+      }
+    },
+    {
+      "id": "network-zone-1768709764771",
+      "type": "group",
+      "position": {
+        "x": 1065.56,
+        "y": 387.30
+      },
+      "data": {
+        "zone": {
+          "id": "network-zone",
+          "name": "Network Zone",
+          "shortName": "CDN & Storage",
+          "type": "network-zone",
+          "provider": "Cloudflare",
+          "description": "Generic network boundary for organizing services",
+          "color": "#8b5cf6",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(139, 92, 246, 0.06)"
+        },
+        "label": "CDN & Storage"
+      },
+      "style": {
+        "width": 480,
+        "height": 220
+      }
+    },
+    {
+      "id": "network-zone-1768709631579",
+      "type": "group",
+      "position": {
+        "x": 1012.90,
+        "y": 1203.02
+      },
+      "data": {
+        "zone": {
+          "id": "network-zone",
+          "name": "Network Zone",
+          "shortName": "Databases",
+          "type": "network-zone",
+          "provider": "SaaS",
+          "description": "Generic network boundary for organizing services",
+          "color": "#10b981",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(16, 185, 129, 0.06)"
+        },
+        "label": "Databases"
+      },
+      "style": {
+        "width": 260,
+        "height": 360
+      }
+    },
+    {
+      "id": "network-zone-1768709799453",
+      "type": "group",
+      "position": {
+        "x": 1219.21,
+        "y": 657.96
+      },
+      "data": {
+        "zone": {
+          "id": "network-zone",
+          "name": "Network Zone",
+          "shortName": "Integrations",
+          "type": "network-zone",
+          "provider": "SaaS",
+          "description": "Generic network boundary for organizing services",
+          "color": "#22c55e",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(34, 197, 94, 0.06)"
+        },
+        "label": "Integrations"
+      },
+      "style": {
+        "width": 500,
+        "height": 340
+      }
+    },
+    {
+      "id": "network-zone-1768712838138",
+      "type": "group",
+      "position": {
+        "x": 654.91,
+        "y": -156.02
+      },
+      "data": {
+        "zone": {
+          "id": "network-zone",
+          "name": "Network Zone",
+          "shortName": "Monitoring",
+          "type": "network-zone",
+          "provider": "SaaS",
+          "description": "Generic network boundary for organizing services",
+          "color": "#14b8a6",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(20, 184, 166, 0.06)"
+        },
+        "label": "Monitoring"
+      },
+      "style": {
+        "width": 480,
+        "height": 200
+      }
+    },
+    {
+      "id": "vercel-1768711814344",
+      "type": "service",
+      "position": {
+        "x": 1100.115874602485,
+        "y": 169
+      },
+      "data": {
+        "service": {
+          "id": "vercel",
+          "name": "Vercel",
+          "shortName": "Vercel",
+          "category": "Frontend",
+          "provider": "Vercel",
+          "description": "Full-stack platform for frontend with serverless functions, edge runtime, and automatic CI/CD",
+          "color": "#3b82f6",
+          "compatibleWith": ["supabase", "planetscale", "postgres-rds", "mongodb-atlas", "aws-s3", "cloudflare-r2", "auth0", "clerk", "algolia", "stripe", "resend"],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 50 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://vercel.com/pricing",
+            "confidence": "medium",
+            "assumptions": "Hobby plan is free forever for personal projects. Pro plan starts at $20/mo + additional usage; estimate assumes low-to-moderate usage."
+          },
+          "scalability": 5,
+          "complexity": 1,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "content-site", "ecommerce"],
+          "documentation": "https://vercel.com/docs",
+          "tags": ["serverless", "hosting", "ci-cd", "edge", "full-stack", "api-routes"]
+        },
+        "label": "Vercel"
+      },
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "cloudflare-cdn-1768711838310",
+      "type": "service",
+      "position": { "x": 51.78846335264234, "y": 76.3269056563999 },
+      "data": {
+        "service": {
+          "id": "cloudflare-cdn",
+          "name": "Cloudflare CDN",
+          "shortName": "CF CDN",
+          "category": "CDN",
+          "provider": "Cloudflare",
+          "description": "Global content delivery network with 330+ data centers, unmetered DDoS protection, and edge caching",
+          "color": "#6366f1",
+          "compatibleWith": ["vercel", "netlify", "cloudflare-pages", "aws-s3", "cloudflare-r2"],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 200 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://www.cloudflare.com/en-au/application-services/products/cdn/#pricing",
+            "confidence": "medium",
+            "assumptions": "CDN included in all plans. Free tier available. Pro at $20/mo (annual), Business at $200/mo (annual). CDN usage does not incur per-GB fees; higher tiers add security and performance features."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "ecommerce", "content-site", "general"],
+          "documentation": "https://developers.cloudflare.com/cache/",
+          "tags": ["cdn", "cache", "ddos-protection", "edge"]
+        },
+        "label": "CF CDN"
+      },
+      "parentNode": "network-zone-1768709764771",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "cloudflare-r2-1768711855372",
+      "type": "service",
+      "position": { "x": 271.0928117793003, "y": 76.3269056563999 },
+      "data": {
+        "service": {
+          "id": "cloudflare-r2",
+          "name": "Cloudflare R2",
+          "shortName": "R2",
+          "category": "Storage",
+          "provider": "Cloudflare",
+          "description": "S3-compatible object storage with zero egress fees and simple per-GB and per-request pricing",
+          "color": "#06b6d4",
+          "compatibleWith": ["cloudflare-workers", "cloudflare-pages", "vercel", "netlify", "aws-lambda", "gcp-cloud-run"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 50 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://developers.cloudflare.com/r2/pricing",
+            "confidence": "high",
+            "assumptions": "Pricing includes $0.015/GB-month for Standard storage and $0.01/GB-month for Infrequent Access."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": ["static-assets", "edge-functions", "saas-mvp", "content-site", "data-pipeline", "backup"],
+          "documentation": "https://developers.cloudflare.com/r2",
+          "tags": ["storage", "object-storage", "s3-compatible", "cloudflare", "zero-egress"]
+        },
+        "label": "R2"
+      },
+      "parentNode": "network-zone-1768709764771",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "aws-api-gateway-1768711925970",
+      "type": "service",
+      "position": { "x": 45.09, "y": 45.29 },
+      "data": {
+        "service": {
+          "id": "aws-api-gateway",
+          "name": "AWS API Gateway",
+          "shortName": "API Gateway",
+          "category": "Networking",
+          "provider": "AWS",
+          "description": "Fully managed service for building, deploying, and securing REST, HTTP, and WebSocket APIs at scale",
+          "color": "#0ea5e9",
+          "compatibleWith": ["aws-lambda", "aws-ecs", "dynamodb", "postgres-rds"],
+          "requiresOneOf": ["aws-lambda", "aws-ecs"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 500 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/api-gateway/pricing/",
+            "confidence": "high",
+            "assumptions": "Free tier includes 1M REST calls, 1M HTTP calls, 1M WebSocket messages per month for 12 months."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "mobile-backend", "microservices", "general"],
+          "documentation": "https://docs.aws.amazon.com/apigateway/",
+          "tags": ["api", "gateway", "serverless", "rest", "websocket"]
+        },
+        "label": "API Gateway"
+      },
+      "parentNode": "public-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 168,
+      "height": 100
+    },
+    {
+      "id": "aws-alb-1768712011122",
+      "type": "service",
+      "position": { "x": 337.41, "y": 45.29 },
+      "data": {
+        "service": {
+          "id": "aws-alb",
+          "name": "AWS Application Load Balancer",
+          "shortName": "ALB",
+          "category": "Networking",
+          "provider": "AWS",
+          "description": "Layer 7 load balancer for HTTP/HTTPS traffic with advanced routing, SSL termination, and health checks",
+          "color": "#0ea5e9",
+          "compatibleWith": ["aws-ecs", "postgres-rds", "redis-elasticache"],
+          "requiresOneOf": ["aws-ecs"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 20, "max": 250 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/elasticloadbalancing/pricing/",
+            "confidence": "high",
+            "assumptions": "ALB pricing includes $0.0225 per ALB-hour plus $0.008 per LCU-hour."
+          },
+          "scalability": 5,
+          "complexity": 4,
+          "managedLevel": "fully",
+          "useCases": ["ecommerce", "microservices", "general"],
+          "documentation": "https://docs.aws.amazon.com/elasticloadbalancing/",
+          "tags": ["load-balancer", "networking", "ssl", "routing"]
+        },
+        "label": "ALB"
+      },
+      "parentNode": "public-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 168,
+      "height": 100
+    },
+    {
+      "id": "aws-lambda-1768712047163",
+      "type": "service",
+      "position": { "x": 53.09, "y": 43.55 },
+      "data": {
+        "service": {
+          "id": "aws-lambda",
+          "name": "AWS Lambda",
+          "shortName": "Lambda",
+          "category": "Backend",
+          "provider": "AWS",
+          "description": "Serverless compute service that runs code in response to events",
+          "color": "#8b5cf6",
+          "compatibleWith": ["aws-s3", "dynamodb", "aws-sqs", "aws-sns", "postgres-rds", "redis-elasticache"],
+          "incompatibleWith": ["gcp-cloud-run"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 150 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/lambda/pricing/",
+            "confidence": "medium",
+            "assumptions": "Free tier includes 1M requests and 400k GB-seconds per month."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "mobile-backend", "data-pipeline", "general"],
+          "documentation": "https://docs.aws.amazon.com/lambda/",
+          "tags": ["serverless", "compute", "event-driven"]
+        },
+        "label": "Lambda"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "aws-fargate-1768712064268",
+      "type": "service",
+      "position": { "x": 337.41, "y": 43.55 },
+      "data": {
+        "service": {
+          "id": "aws-fargate",
+          "name": "AWS Fargate",
+          "shortName": "Fargate",
+          "category": "Backend",
+          "provider": "AWS",
+          "description": "Serverless compute engine for containers, billed per vCPU-second, GB-second, and storage",
+          "color": "#8b5cf6",
+          "compatibleWith": ["postgres-rds", "dynamodb", "redis-elasticache", "aws-s3", "aws-sqs", "aws-sns", "cloudflare-r2"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": false,
+            "estimatedMonthlyCost": { "min": 10, "max": 600 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/fargate/pricing/",
+            "confidence": "high",
+            "assumptions": "Pricing is based on vCPU-seconds, GB-seconds, and additional ephemeral storage beyond the included 20GB."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": ["microservices", "event-driven", "batch-jobs", "saas-mvp"],
+          "documentation": "https://docs.aws.amazon.com/ecs/",
+          "tags": ["containers", "serverless", "fargate", "compute"]
+        },
+        "label": "Fargate"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "aws-fargate-1768714328077",
+      "type": "service",
+      "position": { "x": 557.10, "y": 43.55 },
+      "data": {
+        "service": {
+          "id": "aws-fargate",
+          "name": "AWS Fargate",
+          "shortName": "Fargate",
+          "category": "Backend",
+          "provider": "AWS",
+          "description": "Serverless compute engine for containers, billed per vCPU-second, GB-second, and storage",
+          "color": "#8b5cf6",
+          "compatibleWith": ["postgres-rds", "dynamodb", "redis-elasticache", "aws-s3", "aws-sqs", "aws-sns", "cloudflare-r2"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": false,
+            "estimatedMonthlyCost": { "min": 10, "max": 600 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/fargate/pricing/",
+            "confidence": "high",
+            "assumptions": "Pricing is based on vCPU-seconds, GB-seconds."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": ["microservices", "event-driven", "batch-jobs", "saas-mvp"],
+          "documentation": "https://docs.aws.amazon.com/ecs/",
+          "tags": ["containers", "serverless", "fargate", "compute"]
+        },
+        "label": "Fargate"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "aws-sqs-1768712150198",
+      "type": "service",
+      "position": { "x": 337.41, "y": 186.5 },
+      "data": {
+        "service": {
+          "id": "aws-sqs",
+          "name": "AWS SQS",
+          "shortName": "SQS",
+          "category": "Queue",
+          "provider": "AWS",
+          "description": "Fully managed message queue service for decoupling and scaling microservices",
+          "color": "#ec4899",
+          "compatibleWith": ["aws-lambda", "aws-ecs", "aws-sns"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 50 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/sqs/pricing/",
+            "confidence": "high",
+            "assumptions": "Free tier includes 1M requests per month."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": ["microservices", "data-pipeline", "saas-mvp", "general"],
+          "documentation": "https://docs.aws.amazon.com/sqs/",
+          "tags": ["queue", "messaging", "async", "decoupling"]
+        },
+        "label": "SQS"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "redis-elasticache-1768712128769",
+      "type": "service",
+      "position": { "x": 61.09, "y": 271.49 },
+      "data": {
+        "service": {
+          "id": "redis-elasticache",
+          "name": "AWS ElastiCache Redis",
+          "shortName": "ElastiCache",
+          "category": "Cache",
+          "provider": "AWS",
+          "description": "Fully managed Redis-compatible in-memory cache with support for serverless, on-demand nodes, clustering, and data tiering",
+          "color": "#f59e0b",
+          "compatibleWith": ["aws-lambda", "aws-ecs", "postgres-rds"],
+          "requiresOneOf": ["aws-lambda", "aws-ecs"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 10, "max": 1500 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/elasticache/pricing/",
+            "confidence": "high",
+            "assumptions": "Free Tier includes 750 hrs of cache.t3.micro."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "ecommerce", "real-time-app", "gaming", "leaderboards"],
+          "documentation": "https://docs.aws.amazon.com/elasticache/",
+          "tags": ["cache", "redis", "in-memory", "managed", "serverless"]
+        },
+        "label": "ElastiCache"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "aws-secrets-manager-1768712182351",
+      "type": "service",
+      "position": { "x": 345.41, "y": 319.43 },
+      "data": {
+        "service": {
+          "id": "aws-secrets-manager",
+          "name": "AWS Secrets Manager",
+          "shortName": "Secrets Manager",
+          "category": "DevOps",
+          "provider": "AWS",
+          "description": "Securely store, rotate, and manage API keys, database credentials, and other secrets",
+          "color": "#64748b",
+          "compatibleWith": ["aws-lambda", "aws-ecs", "postgres-rds"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 1, "max": 200 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/secrets-manager/pricing",
+            "confidence": "high",
+            "assumptions": "Pricing is $0.40 per secret per month."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "ecommerce", "microservices", "general"],
+          "documentation": "https://docs.aws.amazon.com/secretsmanager/",
+          "tags": ["security", "secrets", "encryption", "rotation"]
+        },
+        "label": "Secrets Manager"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "clerk-1768712351601",
+      "type": "service",
+      "position": { "x": 1332.242519970223, "y": 35.139559203700486 },
+      "data": {
+        "service": {
+          "id": "clerk",
+          "name": "Clerk",
+          "shortName": "Clerk",
+          "category": "Auth",
+          "provider": "SaaS",
+          "description": "User management and authentication with pre-built UI components, MFA, organizations, and enterprise SSO",
+          "color": "#f97316",
+          "compatibleWith": ["vercel", "netlify"],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 350 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://clerk.com/pricing",
+            "confidence": "high",
+            "assumptions": "Free tier includes 10,000 MAUs."
+          },
+          "scalability": 4,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "content-site", "b2b-saas", "mobile-backend"],
+          "documentation": "https://clerk.com/docs",
+          "tags": ["auth", "user-management", "ui-components", "mfa", "sso"]
+        },
+        "label": "Clerk"
+      },
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "neon-1768712471283",
+      "type": "service",
+      "position": { "x": 44.883944752741854, "y": 66.84754789267595 },
+      "data": {
+        "service": {
+          "id": "neon",
+          "name": "Neon",
+          "shortName": "Neon",
+          "category": "Database",
+          "provider": "SaaS",
+          "description": "Serverless Postgres with instant branching, autoscaling, scale-to-zero, and bottomless storage",
+          "color": "#10b981",
+          "compatibleWith": ["vercel", "netlify", "cloudflare-pages", "aws-lambda", "railway", "render"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 200 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://neon.tech/pricing",
+            "confidence": "high",
+            "assumptions": "Free plan includes 100 CU-hours per project, 0.5 GB storage."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "edge-functions", "hobby-project", "full-stack-app"],
+          "documentation": "https://neon.com/docs/introduction",
+          "tags": ["postgres", "serverless", "branching", "autoscaling", "database"]
+        },
+        "label": "Neon"
+      },
+      "parentNode": "network-zone-1768709631579",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "mongodb-atlas-1768712488713",
+      "type": "service",
+      "position": { "x": 44.883944752741854, "y": 209.84946019345034 },
+      "data": {
+        "service": {
+          "id": "mongodb-atlas",
+          "name": "MongoDB Atlas",
+          "shortName": "MongoDB",
+          "category": "Database",
+          "provider": "SaaS",
+          "description": "Fully managed multi-cloud MongoDB database with automatic scaling, backups, vector search, and global distribution",
+          "color": "#10b981",
+          "compatibleWith": ["vercel", "netlify", "aws-lambda", "gcp-cloud-run", "railway", "render"],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 2000 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://www.mongodb.com/pricing",
+            "confidence": "high",
+            "assumptions": "Free (M0) tier includes 512MB storage."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "mobile-backend", "ecommerce", "real-time-app", "general"],
+          "documentation": "https://www.mongodb.com/docs/atlas/",
+          "tags": ["nosql", "document-db", "managed", "serverless", "vector-search"]
+        },
+        "label": "MongoDB"
+      },
+      "parentNode": "network-zone-1768709631579",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "stripe-1768712642903",
+      "type": "service",
+      "position": { "x": 51.78846335264234, "y": 41.776897587991016 },
+      "data": {
+        "service": {
+          "id": "stripe",
+          "name": "Stripe",
+          "shortName": "Stripe",
+          "category": "Integrations",
+          "provider": "SaaS",
+          "description": "Complete payment platform with APIs for online payments, subscriptions, invoicing, and financial services",
+          "color": "#22c55e",
+          "compatibleWith": ["vercel", "aws-lambda", "aws-ecs", "supabase"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 300 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://stripe.com/pricing",
+            "confidence": "high",
+            "assumptions": "2.9% + 30¢ for domestic cards."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "ecommerce"],
+          "documentation": "https://docs.stripe.com/",
+          "tags": ["payments", "subscriptions", "checkout", "billing"]
+        },
+        "label": "Stripe"
+      },
+      "parentNode": "network-zone-1768709799453",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 170,
+      "height": 100
+    },
+    {
+      "id": "resend-1768712655216",
+      "type": "service",
+      "position": { "x": 271.0928117793003, "y": 41.776897587991016 },
+      "data": {
+        "service": {
+          "id": "resend",
+          "name": "Resend",
+          "shortName": "Resend",
+          "category": "Integrations",
+          "provider": "SaaS",
+          "description": "Modern email API for developers with templates, analytics, multi-region delivery, and reliable infrastructure",
+          "color": "#22c55e",
+          "compatibleWith": ["vercel", "aws-lambda", "supabase"],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 1200 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://resend.com/pricing",
+            "confidence": "high",
+            "assumptions": "Free tier includes 3,000 emails/month."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "ecommerce", "general"],
+          "documentation": "https://resend.com/docs/introduction",
+          "tags": ["email", "transactional", "notifications"]
+        },
+        "label": "Resend"
+      },
+      "parentNode": "network-zone-1768709799453",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 170,
+      "height": 100
+    },
+    {
+      "id": "pusher-1768712665162",
+      "type": "service",
+      "position": { "x": 51.78846335264234, "y": 185.29388376626667 },
+      "data": {
+        "service": {
+          "id": "pusher",
+          "name": "Pusher Channels",
+          "shortName": "Pusher",
+          "category": "Integrations",
+          "provider": "SaaS",
+          "description": "Real-time WebSocket communication platform for building live features like chat, notifications, collaboration, and multiplayer experiences",
+          "color": "#22c55e",
+          "compatibleWith": ["vercel", "netlify", "aws-lambda", "aws-ecs", "gcp-cloud-run", "railway", "render"],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 500 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://pusher.com/channels/pricing",
+            "confidence": "high",
+            "assumptions": "Free Sandbox plan includes 200k messages/day."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": ["real-time-app", "saas-mvp", "gaming", "mobile-backend", "full-stack-app"],
+          "documentation": "https://pusher.com/docs/",
+          "tags": ["websockets", "real-time", "pub-sub", "notifications", "chat"]
+        },
+        "label": "Pusher"
+      },
+      "parentNode": "network-zone-1768709799453",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 170,
+      "height": 100
+    },
+    {
+      "id": "inngest-1768712782979",
+      "type": "service",
+      "position": { "x": 271.0928117793003, "y": 185.29388376626667 },
+      "data": {
+        "service": {
+          "id": "inngest",
+          "name": "Inngest",
+          "shortName": "Inngest",
+          "category": "Queue",
+          "provider": "SaaS",
+          "description": "Event-driven durable workflow engine with automatic retries, scheduling, fan-out patterns, and visual debugging",
+          "color": "#ec4899",
+          "compatibleWith": ["vercel", "netlify", "cloudflare-pages", "aws-lambda", "railway", "render"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 200 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://www.inngest.com/pricing",
+            "confidence": "high",
+            "assumptions": "Hobby plan includes 50k executions/month."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "event-driven", "batch-jobs", "workflow", "microservices"],
+          "documentation": "https://www.inngest.com/docs",
+          "tags": ["workflow", "queue", "durable-execution", "event-driven", "serverless", "background-jobs"]
+        },
+        "label": "Inngest"
+      },
+      "parentNode": "network-zone-1768709799453",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "sentry-1768712920941",
+      "type": "service",
+      "position": { "x": 51.78846335264234, "y": 53.97634717094115 },
+      "data": {
+        "service": {
+          "id": "sentry",
+          "name": "Sentry",
+          "shortName": "Sentry",
+          "category": "Monitoring",
+          "provider": "SaaS",
+          "description": "Application monitoring and error tracking with real-time alerts, performance monitoring, release tracking, and detailed stack traces",
+          "color": "#14b8a6",
+          "compatibleWith": ["vercel", "netlify", "aws-lambda", "aws-ecs", "gcp-cloud-run", "railway", "render", "flyio"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 200 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://sentry.io/pricing/",
+            "confidence": "high",
+            "assumptions": "Developer plan includes 5k errors."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "ecommerce", "mobile-backend", "microservices", "general"],
+          "documentation": "https://docs.sentry.io/",
+          "tags": ["error-tracking", "monitoring", "apm", "debugging", "alerts"]
+        },
+        "label": "Sentry"
+      },
+      "parentNode": "network-zone-1768712838138",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 166,
+      "height": 100
+    },
+    {
+      "id": "posthog-1768712944441",
+      "type": "service",
+      "position": { "x": 271.0928117793003, "y": 53.97634717094115 },
+      "data": {
+        "service": {
+          "id": "posthog",
+          "name": "PostHog",
+          "shortName": "PostHog",
+          "category": "Analytics",
+          "provider": "SaaS",
+          "description": "Open-source product analytics platform with event tracking, session replay, feature flags, A/B testing, surveys, data pipelines, and AI tooling",
+          "color": "#84cc16",
+          "compatibleWith": ["vercel", "netlify", "aws-lambda", "gcp-cloud-run", "railway", "render"],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": { "min": 0, "max": 300 },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://posthog.com/pricing",
+            "confidence": "high",
+            "assumptions": "Free tier includes 1M analytics events."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": ["saas-mvp", "ecommerce", "mobile-backend", "full-stack-app", "general"],
+          "documentation": "https://posthog.com/docs",
+          "tags": ["analytics", "product-analytics", "session-replay", "feature-flags", "ab-testing", "open-source", "surveys", "pipelines", "ai"]
+        },
+        "label": "PostHog"
+      },
+      "parentNode": "network-zone-1768712838138",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    }
+  ],
+  "edges": [
+    { "source": "vercel-1768711814344", "sourceHandle": "bottom", "target": "cloudflare-cdn-1768711838310", "targetHandle": "top", "animated": false, "id": "reactflow__edge-vercel-1768711814344bottom-cloudflare-cdn-1768711838310top", "label": "Static Assets" },
+    { "source": "vercel-1768711814344", "sourceHandle": "right", "target": "clerk-1768712351601", "targetHandle": "left", "animated": false, "id": "reactflow__edge-vercel-1768711814344right-clerk-1768712351601left", "label": "Auth Token" },
+    { "source": "vercel-1768711814344", "sourceHandle": "left", "target": "aws-api-gateway-1768711925970", "targetHandle": "top", "animated": false, "id": "reactflow__edge-vercel-1768711814344left-aws-api-gateway-1768711925970top", "label": "API Calls" },
+    { "source": "vercel-1768711814344", "sourceHandle": "bottom", "target": "pusher-1768712665162", "targetHandle": "left", "animated": true, "id": "reactflow__edge-vercel-1768711814344bottom-pusher-1768712665162left", "label": "WebSocket" },
+    { "source": "aws-api-gateway-1768711925970", "sourceHandle": "bottom", "target": "aws-lambda-1768712047163", "targetHandle": "top", "animated": false, "id": "reactflow__edge-aws-api-gateway-1768711925970bottom-aws-lambda-1768712047163top", "label": "Serverless Fn" },
+    { "source": "aws-api-gateway-1768711925970", "sourceHandle": "right", "target": "aws-alb-1768712011122", "targetHandle": "left", "animated": false, "id": "reactflow__edge-aws-api-gateway-1768711925970right-aws-alb-1768712011122left", "label": "Microservices" },
+    { "source": "aws-alb-1768712011122", "sourceHandle": "bottom", "target": "aws-fargate-1768712064268", "targetHandle": "top", "animated": false, "id": "reactflow__edge-aws-alb-1768712011122bottom-aws-fargate-1768712064268top", "label": "HTTP/HTTPS" },
+    { "source": "aws-alb-1768712011122", "sourceHandle": "bottom", "target": "aws-fargate-1768714328077", "targetHandle": "top", "animated": false, "id": "reactflow__edge-aws-alb-1768712011122bottom-aws-fargate-1768714328077top", "label": "HTTP/HTTPS" },
+    { "source": "aws-lambda-1768712047163", "sourceHandle": "left", "target": "neon-1768712471283", "targetHandle": "right", "animated": false, "id": "reactflow__edge-aws-lambda-1768712047163left-neon-1768712471283right", "label": "SQL Queries" },
+    { "source": "aws-lambda-1768712047163", "sourceHandle": "bottom", "target": "redis-elasticache-1768712128769", "targetHandle": "top", "animated": false, "id": "reactflow__edge-aws-lambda-1768712047163bottom-redis-elasticache-1768712128769top", "label": "Cache" },
+    { "source": "aws-lambda-1768712047163", "sourceHandle": "right", "target": "aws-sqs-1768712150198", "targetHandle": "left", "animated": true, "id": "reactflow__edge-aws-lambda-1768712047163right-aws-sqs-1768712150198left", "label": "Queue Jobs" },
+    { "source": "aws-lambda-1768712047163", "sourceHandle": "right", "target": "aws-secrets-manager-1768712182351", "targetHandle": "left", "animated": false, "id": "reactflow__edge-aws-lambda-1768712047163right-aws-secrets-manager-1768712182351left", "label": "Credentials" },
+    { "source": "aws-lambda-1768712047163", "sourceHandle": "bottom", "target": "stripe-1768712642903", "targetHandle": "bottom", "animated": false, "id": "reactflow__edge-aws-lambda-1768712047163bottom-stripe-1768712642903bottom", "label": "Payments API" },
+    { "source": "aws-lambda-1768712047163", "sourceHandle": "right", "target": "sentry-1768712920941", "targetHandle": "left", "animated": true, "id": "reactflow__edge-aws-lambda-1768712047163right-sentry-1768712920941left", "label": "Error Logs" },
+    { "source": "sentry-1768712920941", "sourceHandle": "bottom", "target": "vercel-1768711814344", "targetHandle": "top", "animated": true, "id": "reactflow__edge-sentry-1768712920941bottom-vercel-1768711814344top", "label": "Error Tracking" },
+    { "source": "posthog-1768712944441", "sourceHandle": "bottom", "target": "vercel-1768711814344", "targetHandle": "top", "animated": true, "id": "reactflow__edge-posthog-1768712944441bottom-vercel-1768711814344top", "label": "Analytics Events" },
+    { "source": "aws-lambda-1768712047163", "sourceHandle": "right", "target": "posthog-1768712944441", "targetHandle": "left", "animated": true, "id": "reactflow__edge-aws-lambda-1768712047163right-posthog-1768712944441left", "label": "Backend Events" },
+    { "source": "aws-fargate-1768712064268", "sourceHandle": "bottom", "target": "neon-1768712471283", "targetHandle": "bottom", "animated": false, "id": "reactflow__edge-aws-fargate-1768712064268bottom-neon-1768712471283bottom", "label": "SQL Queries" },
+    { "source": "aws-fargate-1768712064268", "sourceHandle": "left", "target": "mongodb-atlas-1768712488713", "targetHandle": "right", "animated": false, "id": "reactflow__edge-aws-fargate-1768712064268left-mongodb-atlas-1768712488713right", "label": "NoSQL Queries" },
+    { "source": "aws-fargate-1768712064268", "sourceHandle": "left", "target": "redis-elasticache-1768712128769", "targetHandle": "right", "animated": false, "id": "reactflow__edge-aws-fargate-1768712064268left-redis-elasticache-1768712128769right", "label": "Cache" },
+    { "source": "aws-fargate-1768712064268", "sourceHandle": "right", "target": "aws-secrets-manager-1768712182351", "targetHandle": "right", "animated": false, "id": "reactflow__edge-aws-fargate-1768712064268right-aws-secrets-manager-1768712182351right", "label": "Credentials", "type": "smoothstep" },
+    { "source": "aws-fargate-1768712064268", "sourceHandle": "top", "target": "cloudflare-r2-1768711855372", "targetHandle": "bottom", "animated": false, "id": "reactflow__edge-aws-fargate-1768712064268top-cloudflare-r2-1768711855372bottom", "label": "Upload Files" },
+    { "source": "aws-fargate-1768712064268", "sourceHandle": "bottom", "target": "stripe-1768712642903", "targetHandle": "bottom", "animated": false, "id": "reactflow__edge-aws-fargate-1768712064268bottom-stripe-1768712642903bottom", "label": "Subscriptions", "type": "smoothstep" },
+    { "source": "sentry-1768712920941", "sourceHandle": "left", "target": "aws-fargate-1768712064268", "targetHandle": "left", "animated": true, "id": "reactflow__edge-sentry-1768712920941left-aws-fargate-1768712064268left", "label": "Exceptions" },
+    { "source": "aws-fargate-1768714328077", "sourceHandle": "bottom", "target": "mongodb-atlas-1768712488713", "targetHandle": "bottom", "animated": false, "id": "reactflow__edge-aws-fargate-1768714328077bottom-mongodb-atlas-1768712488713bottom", "label": "Document Store", "type": "smoothstep" },
+    { "source": "aws-fargate-1768714328077", "sourceHandle": "right", "target": "redis-elasticache-1768712128769", "targetHandle": "bottom", "animated": false, "id": "reactflow__edge-aws-fargate-1768714328077right-redis-elasticache-1768712128769bottom", "label": "Session Store" },
+    { "source": "cloudflare-r2-1768711855372", "sourceHandle": "bottom", "target": "aws-fargate-1768714328077", "targetHandle": "top", "animated": false, "id": "reactflow__edge-cloudflare-r2-1768711855372bottom-aws-fargate-1768714328077top", "label": "Media Storage" },
+    { "source": "aws-fargate-1768714328077", "sourceHandle": "top", "target": "sentry-1768712920941", "targetHandle": "bottom", "animated": true, "id": "reactflow__edge-aws-fargate-1768714328077top-sentry-1768712920941bottom", "label": "Exceptions" },
+    { "source": "clerk-1768712351601", "sourceHandle": "left", "target": "neon-1768712471283", "targetHandle": "top", "animated": false, "id": "reactflow__edge-clerk-1768712351601left-neon-1768712471283top", "label": "User Data" },
+    { "source": "aws-fargate-1768714328077", "sourceHandle": "bottom", "target": "aws-secrets-manager-1768712182351", "targetHandle": "right", "animated": false, "id": "reactflow__edge-aws-fargate-1768714328077bottom-aws-secrets-manager-1768712182351right", "label": "Credentials" },
+    { "source": "aws-sqs-1768712150198", "sourceHandle": "bottom", "target": "inngest-1768712782979", "targetHandle": "bottom", "animated": true, "id": "reactflow__edge-aws-sqs-1768712150198bottom-inngest-1768712782979bottom", "label": "Workflow Trigger", "type": "smoothstep" },
+    { "source": "resend-1768712655216", "sourceHandle": "bottom", "target": "inngest-1768712782979", "targetHandle": "top", "animated": true, "id": "reactflow__edge-resend-1768712655216bottom-inngest-1768712782979top", "label": "Send Email" },
+    { "source": "inngest-1768712782979", "sourceHandle": "left", "target": "cloudflare-r2-1768711855372", "targetHandle": "left", "animated": true, "id": "reactflow__edge-inngest-1768712782979left-cloudflare-r2-1768711855372left", "label": "File Processing", "type": "smoothstep" }
+  ],
+  "metadata": {
+    "totalServices": 20,
+    "categories": ["Frontend", "CDN", "Storage", "Networking", "Backend", "Cache", "Queue", "DevOps", "Auth", "Database", "Integrations", "Monitoring", "Analytics"],
+    "estimatedCost": { "min": 51, "max": 9400 }
+  }
+}

@@ -43,7 +43,8 @@ export function ExportPanel() {
       ...new Set(serviceNodes.map((n) => n.data.service.category)),
     ];
 
-    exportToJSON(serviceNodes, edges, {
+    // Export all nodes (including groups) so parent relationships are preserved
+    exportToJSON(nodes, edges, {
       totalServices: serviceNodes.length,
       categories,
       estimatedCost: { min: totalMin, max: totalMax },

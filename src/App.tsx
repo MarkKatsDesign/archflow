@@ -9,6 +9,7 @@ import { EdgeDetailPanel } from './components/Panels/EdgeDetailPanel';
 import { RecommendationsPanel } from './components/Panels/RecommendationsPanel';
 import { CostEstimatePanel } from './components/Panels/CostEstimatePanel';
 import { ExportPanel } from './components/Panels/ExportPanel';
+import { AutoLayoutPanel } from './components/Panels/AutoLayoutPanel';
 import { HelpModal } from './components/Help/HelpModal';
 import { OnboardingWizard } from './components/Onboarding/OnboardingWizard';
 import { WizardButton } from './components/Onboarding/WizardButton';
@@ -77,6 +78,7 @@ function App() {
         <div className="flex-1 relative">
           <ArchitectureCanvas />
           <ExportPanel />
+          <AutoLayoutPanel />
           <NodeDetailPanel />
           <GroupNodeDetailPanel />
           <EdgeDetailPanel />

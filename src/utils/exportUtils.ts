@@ -1,7 +1,7 @@
 import { toPng } from "html-to-image";
 import { jsPDF } from "jspdf";
 import type { Node, Edge } from "reactflow";
-import type { ServiceNodeData } from "../types/architecture";
+import type { ServiceNodeData, ArchNode } from "../types/architecture";
 
 // ========================================
 // JSON EXPORT/IMPORT
@@ -10,7 +10,7 @@ import type { ServiceNodeData } from "../types/architecture";
 export interface ArchitectureExport {
   version: string;
   exportDate: string;
-  nodes: Node<ServiceNodeData>[];
+  nodes: ArchNode[];
   edges: Edge[];
   metadata?: {
     totalServices: number;
@@ -20,7 +20,7 @@ export interface ArchitectureExport {
 }
 
 export const exportToJSON = (
-  nodes: Node<ServiceNodeData>[],
+  nodes: ArchNode[],
   edges: Edge[],
   metadata?: ArchitectureExport["metadata"]
 ): void => {

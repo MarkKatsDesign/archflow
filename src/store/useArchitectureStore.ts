@@ -18,6 +18,56 @@ import type { ArchitectureTemplate, TemplateNode } from '../types/template';
 import { services } from '../data/services';
 
 /**
+ * Sort nodes so that parent nodes appear before their children.
+ * React Flow requires this ordering to properly resolve parent relationships.
+ */
+function sortNodesParentsFirst(nodes: ArchNode[]): ArchNode[] {
+  const nodeMap = new Map(nodes.map((n) => [n.id, n]));
+  const sorted: ArchNode[] = [];
+  const visited = new Set<string>();
+
+  // Get depth of a node (how many ancestors it has)
+  function getDepth(nodeId: string): number {
+    const node = nodeMap.get(nodeId);
+    if (!node || !node.parentNode) return 0;
+    return 1 + getDepth(node.parentNode);
+  }
+
+  // Sort by depth (parents first), then by type (groups before services)
+  const sortedByDepth = [...nodes].sort((a, b) => {
+    const depthA = getDepth(a.id);
+    const depthB = getDepth(b.id);
+    if (depthA !== depthB) return depthA - depthB;
+    // Groups should come before services at the same depth
+    const typeA = a.type === 'group' ? 0 : 1;
+    const typeB = b.type === 'group' ? 0 : 1;
+    return typeA - typeB;
+  });
+
+  // Add nodes ensuring parents are added before children
+  function addNode(node: ArchNode) {
+    if (visited.has(node.id)) return;
+
+    // If this node has a parent, ensure parent is added first
+    if (node.parentNode) {
+      const parent = nodeMap.get(node.parentNode);
+      if (parent && !visited.has(parent.id)) {
+        addNode(parent);
+      }
+    }
+
+    visited.add(node.id);
+    sorted.push(node);
+  }
+
+  for (const node of sortedByDepth) {
+    addNode(node);
+  }
+
+  return sorted;
+}
+
+/**
  * Calculates the optimal source and target handles based on node positions.
  * Returns handles that create the most direct and visually appealing connection.
  */
@@ -166,7 +216,8 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
   },
 
   setNodes: (nodes: ArchNode[]) => {
-    set({ nodes });
+    // Sort nodes so parents come before children (React Flow requirement)
+    set({ nodes: sortNodesParentsFirst(nodes) });
   },
 
   setEdges: (edges: ServiceEdge[]) => {
