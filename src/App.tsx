@@ -4,6 +4,7 @@ import { Logo } from './components/Logo';
 import ComponentPalette from './components/Sidebar/ComponentPalette';
 import ArchitectureCanvas from './components/Canvas/ArchitectureCanvas';
 import { NodeDetailPanel } from './components/Panels/NodeDetailPanel';
+import { GroupNodeDetailPanel } from './components/Panels/GroupNodeDetailPanel';
 import { EdgeDetailPanel } from './components/Panels/EdgeDetailPanel';
 import { RecommendationsPanel } from './components/Panels/RecommendationsPanel';
 import { CostEstimatePanel } from './components/Panels/CostEstimatePanel';
@@ -77,6 +78,7 @@ function App() {
           <ArchitectureCanvas />
           <ExportPanel />
           <NodeDetailPanel />
+          <GroupNodeDetailPanel />
           <EdgeDetailPanel />
           <RecommendationsPanel />
           <CostEstimatePanel />

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   X,
   ExternalLink,
@@ -7,6 +8,8 @@ import {
   Server,
   AlertCircle,
   FileText,
+  Pencil,
+  Check,
 } from "lucide-react";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import { isServiceNode } from "../../types/architecture";
@@ -81,9 +84,19 @@ function RatingStars({ rating, label }: { rating?: number; label: string }) {
 }
 
 export function NodeDetailPanel() {
-  const { nodes, selectedNodeId, setSelectedNodeId } = useArchitectureStore();
+  const { nodes, selectedNodeId, setSelectedNodeId, updateNodeLabel } = useArchitectureStore();
+  const [isEditingLabel, setIsEditingLabel] = useState(false);
+  const [editedLabel, setEditedLabel] = useState("");
 
   const selectedNode = nodes.find((node) => node.id === selectedNodeId);
+
+  // Reset editing state when selected node changes
+  useEffect(() => {
+    setIsEditingLabel(false);
+    if (selectedNode) {
+      setEditedLabel(selectedNode.data?.label || "");
+    }
+  }, [selectedNodeId, selectedNode]);
 
   // Only show panel for service nodes (not group nodes)
   if (!selectedNode || !isServiceNode(selectedNode)) {
@@ -95,6 +108,24 @@ export function NodeDetailPanel() {
   if (!service) {
     return null;
   }
+
+  const currentLabel = selectedNode.data?.label || service.shortName;
+
+  const handleSaveLabel = () => {
+    if (editedLabel.trim()) {
+      updateNodeLabel(selectedNode.id, editedLabel.trim());
+    }
+    setIsEditingLabel(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSaveLabel();
+    } else if (e.key === "Escape") {
+      setEditedLabel(currentLabel);
+      setIsEditingLabel(false);
+    }
+  };
 
   return (
     <div className="absolute top-4 right-4 w-96 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col z-10 animate-slide-in-right">
@@ -122,6 +153,49 @@ export function NodeDetailPanel() {
 
       {/* Content - Scrollable (min-h-0 is critical for flex scroll to work) */}
       <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-4 scrollable-panel scroll-shadow">
+        {/* Display Label (Editable) */}
+        <div className="pb-3 border-b border-gray-200 dark:border-slate-700">
+          <label className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 block mb-2">
+            Display Label
+          </label>
+          {isEditingLabel ? (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={editedLabel}
+                onChange={(e) => setEditedLabel(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onBlur={handleSaveLabel}
+                autoFocus
+                className="flex-1 px-3 py-1.5 text-sm rounded-lg border border-blue-300 dark:border-blue-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleSaveLabel}
+                className="p-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+                title="Save"
+              >
+                <Check className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                {currentLabel}
+              </span>
+              <button
+                onClick={() => {
+                  setEditedLabel(currentLabel);
+                  setIsEditingLabel(true);
+                }}
+                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-500 dark:text-gray-400 transition-colors"
+                title="Edit label"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Description */}
         <div>
           <p className="text-sm text-gray-700 dark:text-gray-300">

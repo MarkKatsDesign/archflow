@@ -73,6 +73,8 @@ interface ArchitectureStore {
   // Group operations
   addNodeToGroup: (nodeId: string, groupId: string) => void;
   removeNodeFromGroup: (nodeId: string) => void;
+  // Label editing
+  updateNodeLabel: (nodeId: string, label: string) => void;
 }
 
 export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
@@ -276,6 +278,23 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
               position: absolutePosition,
             }
           : n
+      ) as ArchNode[],
+    });
+  },
+
+  // Update a node's display label
+  updateNodeLabel: (nodeId: string, label: string) => {
+    set({
+      nodes: get().nodes.map((node) =>
+        node.id === nodeId
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                label,
+              },
+            }
+          : node
       ) as ArchNode[],
     });
   },
