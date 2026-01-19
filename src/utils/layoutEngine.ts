@@ -1,5 +1,5 @@
 import ELK from 'elkjs/lib/elk.bundled.js';
-import type { ElkNode, ElkExtendedEdge, LayoutOptions as ElkLayoutOptions } from 'elkjs';
+import type { ElkNode, ElkExtendedEdge } from 'elkjs';
 import type { ArchNode, ServiceEdge, GroupNode } from '../types/architecture';
 
 export interface LayoutOptions {
@@ -16,12 +16,16 @@ const DEFAULT_OPTIONS: LayoutOptions = {
   algorithm: 'layered',
 };
 
-// Default node dimensions (from CustomNode and GroupNode)
-const DEFAULT_SERVICE_WIDTH = 120;
-const DEFAULT_SERVICE_HEIGHT = 80;
-const DEFAULT_GROUP_WIDTH = 300;
-const DEFAULT_GROUP_HEIGHT = 200;
-const GROUP_PADDING = 50;
+// Default node dimensions
+const DEFAULT_SERVICE_WIDTH = 160;
+const DEFAULT_SERVICE_HEIGHT = 100;
+// Padding inside groups
+const GROUP_PADDING_TOP = 45; // Extra top padding for group label
+const GROUP_PADDING_SIDES = 20;
+const GROUP_PADDING_BOTTOM = 20;
+// Minimum group dimensions
+const MIN_GROUP_WIDTH = 200;
+const MIN_GROUP_HEIGHT = 150;
 
 /**
  * Map direction to ELK's direction property
@@ -36,19 +40,19 @@ function getElkDirection(direction: LayoutOptions['direction']): string {
 }
 
 /**
- * Get node dimensions
+ * Get node dimensions - uses actual node dimensions when available
  */
 function getNodeDimensions(node: ArchNode): { width: number; height: number } {
   if (node.type === 'group') {
     const groupNode = node as GroupNode;
     return {
-      width: groupNode.style?.width ?? DEFAULT_GROUP_WIDTH,
-      height: groupNode.style?.height ?? DEFAULT_GROUP_HEIGHT,
+      width: groupNode.style?.width ?? 300,
+      height: groupNode.style?.height ?? 200,
     };
   }
   return {
-    width: DEFAULT_SERVICE_WIDTH,
-    height: DEFAULT_SERVICE_HEIGHT,
+    width: (node as { width?: number }).width ?? DEFAULT_SERVICE_WIDTH,
+    height: (node as { height?: number }).height ?? DEFAULT_SERVICE_HEIGHT,
   };
 }
 
@@ -76,18 +80,17 @@ function getAbsolutePosition(
 }
 
 /**
- * Build ELK graph from React Flow nodes and edges
+ * Build a simple ELK graph - let ELK handle sizing
  */
 function buildElkGraph(
   nodes: ArchNode[],
   edges: ServiceEdge[],
   options: LayoutOptions
 ): ElkNode {
-  // Separate top-level nodes from nested nodes
   const topLevelNodes = nodes.filter((n) => !n.parentNode);
   const childNodesByParent = new Map<string, ArchNode[]>();
 
-  // Group children by their parent
+  // Group children by parent
   for (const node of nodes) {
     if (node.parentNode) {
       const children = childNodesByParent.get(node.parentNode) || [];
@@ -96,10 +99,10 @@ function buildElkGraph(
     }
   }
 
-  // Convert a node to ELK format (recursively handles children)
+  // Convert node to ELK format
   function convertNode(node: ArchNode): ElkNode {
-    const dims = getNodeDimensions(node);
     const children = childNodesByParent.get(node.id) || [];
+    const dims = getNodeDimensions(node);
 
     const elkNode: ElkNode = {
       id: node.id,
@@ -107,276 +110,360 @@ function buildElkGraph(
       height: dims.height,
     };
 
-    // If this node has children, add them and configure as compound node
     if (children.length > 0) {
       elkNode.children = children.map(convertNode);
+
+      // Find edges within this group
+      const childIds = new Set(children.map(c => c.id));
+      const internalEdges: ElkExtendedEdge[] = edges
+        .filter(e => childIds.has(e.source) && childIds.has(e.target))
+        .map(e => ({
+          id: e.id || `edge-${e.source}-${e.target}`,
+          sources: [e.source],
+          targets: [e.target],
+        }));
+
+      if (internalEdges.length > 0) {
+        elkNode.edges = internalEdges;
+      }
+
       elkNode.layoutOptions = {
         'elk.algorithm': 'layered',
         'elk.direction': getElkDirection(options.direction),
         'elk.spacing.nodeNode': String(options.nodeSpacing),
         'elk.layered.spacing.nodeNodeBetweenLayers': String(options.layerSpacing),
-        'elk.padding': `[top=${GROUP_PADDING},left=${GROUP_PADDING},bottom=${GROUP_PADDING},right=${GROUP_PADDING}]`,
+        'elk.padding': `[top=${GROUP_PADDING_TOP},left=${GROUP_PADDING_SIDES},bottom=${GROUP_PADDING_BOTTOM},right=${GROUP_PADDING_SIDES}]`,
       };
     }
 
     return elkNode;
   }
 
-  // Build top-level ELK graph
-  const elkLayoutOptions: ElkLayoutOptions = {
-    'elk.algorithm': 'layered',
-    'elk.direction': getElkDirection(options.direction),
-    'elk.spacing.nodeNode': String(options.nodeSpacing),
-    'elk.layered.spacing.nodeNodeBetweenLayers': String(options.layerSpacing),
-    'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
-    'elk.layered.crossingMinimization.strategy': 'LAYER_SWEEP',
-    'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-  };
+  // Create top-level edges between different top-level nodes/groups
+  const topLevelIds = new Set(topLevelNodes.map(n => n.id));
 
-  // Convert edges to ELK format
-  // ELK requires edges to be defined at the level of their common ancestor
-  const elkEdges: ElkExtendedEdge[] = edges.map((edge, idx) => ({
-    id: edge.id || `edge-${idx}`,
-    sources: [edge.source],
-    targets: [edge.target],
-  }));
+  function getTopLevelAncestor(nodeId: string): string {
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node || !node.parentNode) return nodeId;
+    return getTopLevelAncestor(node.parentNode);
+  }
+
+  const topLevelEdgeMap = new Map<string, ElkExtendedEdge>();
+  for (const edge of edges) {
+    const sourceTop = getTopLevelAncestor(edge.source);
+    const targetTop = getTopLevelAncestor(edge.target);
+    if (sourceTop !== targetTop && topLevelIds.has(sourceTop) && topLevelIds.has(targetTop)) {
+      const key = `${sourceTop}->${targetTop}`;
+      if (!topLevelEdgeMap.has(key)) {
+        topLevelEdgeMap.set(key, {
+          id: `top-${key}`,
+          sources: [sourceTop],
+          targets: [targetTop],
+        });
+      }
+    }
+  }
 
   return {
     id: 'root',
-    layoutOptions: elkLayoutOptions,
+    layoutOptions: {
+      'elk.algorithm': 'layered',
+      'elk.direction': getElkDirection(options.direction),
+      'elk.spacing.nodeNode': String(options.nodeSpacing * 1.5),
+      'elk.layered.spacing.nodeNodeBetweenLayers': String(options.layerSpacing),
+      'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+    },
     children: topLevelNodes.map(convertNode),
-    edges: elkEdges,
+    edges: Array.from(topLevelEdgeMap.values()),
   };
 }
 
 /**
- * Apply ELK positions back to React Flow nodes
+ * Extract positions from ELK layout result
  */
-function applyElkPositions(
-  elkGraph: ElkNode,
-  originalNodes: ArchNode[]
-): ArchNode[] {
-  const positionMap = new Map<string, { x: number; y: number; width?: number; height?: number }>();
+function extractElkPositions(
+  elkGraph: ElkNode
+): Map<string, { x: number; y: number; width: number; height: number }> {
+  const positions = new Map<string, { x: number; y: number; width: number; height: number }>();
 
-  // Recursively extract positions from ELK graph
-  function extractPositions(elkNode: ElkNode, parentX = 0, parentY = 0) {
-    if (elkNode.id !== 'root') {
-      positionMap.set(elkNode.id, {
-        x: (elkNode.x ?? 0) + parentX,
-        y: (elkNode.y ?? 0) + parentY,
-        width: elkNode.width,
-        height: elkNode.height,
+  function extract(node: ElkNode, offsetX = 0, offsetY = 0) {
+    if (node.id !== 'root') {
+      positions.set(node.id, {
+        x: (node.x ?? 0) + offsetX,
+        y: (node.y ?? 0) + offsetY,
+        width: node.width ?? 0,
+        height: node.height ?? 0,
       });
     }
 
-    const offsetX = elkNode.id === 'root' ? 0 : (elkNode.x ?? 0) + parentX;
-    const offsetY = elkNode.id === 'root' ? 0 : (elkNode.y ?? 0) + parentY;
+    const newOffsetX = node.id === 'root' ? 0 : (node.x ?? 0) + offsetX;
+    const newOffsetY = node.id === 'root' ? 0 : (node.y ?? 0) + offsetY;
 
-    for (const child of elkNode.children || []) {
-      extractPositions(child, offsetX, offsetY);
+    for (const child of node.children || []) {
+      extract(child, newOffsetX, newOffsetY);
     }
   }
 
-  extractPositions(elkGraph);
+  extract(elkGraph);
+  return positions;
+}
 
-  // Apply positions to nodes
-  return originalNodes.map((node): ArchNode => {
-    const elkPos = positionMap.get(node.id);
-    if (!elkPos) return node;
+/**
+ * Calculate group sizes to fit their children (post-layout adjustment)
+ * This ensures all children are properly contained within their parent groups.
+ */
+function fitGroupsToChildren(
+  nodes: ArchNode[],
+  positions: Map<string, { x: number; y: number; width: number; height: number }>
+): Map<string, { width: number; height: number }> {
+  const groupSizes = new Map<string, { width: number; height: number }>();
+  const childNodesByParent = new Map<string, ArchNode[]>();
 
-    // For nodes with parents, convert absolute position to relative
+  // Group children by parent
+  for (const node of nodes) {
     if (node.parentNode) {
-      const parentPos = positionMap.get(node.parentNode);
-      if (parentPos) {
-        return {
-          ...node,
-          position: {
-            x: elkPos.x - parentPos.x,
-            y: elkPos.y - parentPos.y,
-          },
-        };
-      }
+      const children = childNodesByParent.get(node.parentNode) || [];
+      children.push(node);
+      childNodesByParent.set(node.parentNode, children);
+    }
+  }
+
+  // Get all groups sorted by depth (deepest first)
+  const groups = nodes.filter(n => n.type === 'group');
+
+  function getDepth(nodeId: string): number {
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node || !node.parentNode) return 0;
+    return 1 + getDepth(node.parentNode);
+  }
+
+  const sortedGroups = [...groups].sort((a, b) => getDepth(b.id) - getDepth(a.id));
+
+  for (const group of sortedGroups) {
+    const children = childNodesByParent.get(group.id) || [];
+    const groupPos = positions.get(group.id);
+
+    if (!groupPos) continue;
+
+    if (children.length === 0) {
+      groupSizes.set(group.id, {
+        width: MIN_GROUP_WIDTH,
+        height: MIN_GROUP_HEIGHT,
+      });
+      continue;
     }
 
-    // For group nodes, also update the size if ELK computed a new one
-    if (node.type === 'group' && elkPos.width && elkPos.height) {
+    // Calculate bounding box of all children (relative to group)
+    let minX = Infinity, minY = Infinity;
+    let maxX = -Infinity, maxY = -Infinity;
+
+    for (const child of children) {
+      const childPos = positions.get(child.id);
+      if (!childPos) continue;
+
+      // Position relative to group
+      const relX = childPos.x - groupPos.x;
+      const relY = childPos.y - groupPos.y;
+
+      // Get child size (use computed size for nested groups)
+      let childWidth: number, childHeight: number;
+      if (child.type === 'group' && groupSizes.has(child.id)) {
+        const childSize = groupSizes.get(child.id)!;
+        childWidth = childSize.width;
+        childHeight = childSize.height;
+      } else {
+        childWidth = childPos.width || DEFAULT_SERVICE_WIDTH;
+        childHeight = childPos.height || DEFAULT_SERVICE_HEIGHT;
+      }
+
+      minX = Math.min(minX, relX);
+      minY = Math.min(minY, relY);
+      maxX = Math.max(maxX, relX + childWidth);
+      maxY = Math.max(maxY, relY + childHeight);
+    }
+
+    // Calculate required size with padding
+    const requiredWidth = maxX + GROUP_PADDING_SIDES;
+    const requiredHeight = maxY + GROUP_PADDING_BOTTOM;
+
+    const finalWidth = Math.max(requiredWidth, MIN_GROUP_WIDTH);
+    const finalHeight = Math.max(requiredHeight, MIN_GROUP_HEIGHT);
+
+    groupSizes.set(group.id, {
+      width: finalWidth,
+      height: finalHeight,
+    });
+  }
+
+  return groupSizes;
+}
+
+/**
+ * Apply layout results to nodes
+ */
+function applyLayout(
+  originalNodes: ArchNode[],
+  positions: Map<string, { x: number; y: number; width: number; height: number }>,
+  groupSizes: Map<string, { width: number; height: number }>
+): ArchNode[] {
+  return originalNodes.map((node): ArchNode => {
+    const pos = positions.get(node.id);
+    if (!pos) return node;
+
+    // Calculate position (relative for nested nodes)
+    let newPosition: { x: number; y: number };
+    if (node.parentNode) {
+      const parentPos = positions.get(node.parentNode);
+      if (parentPos) {
+        newPosition = {
+          x: pos.x - parentPos.x,
+          y: pos.y - parentPos.y,
+        };
+      } else {
+        newPosition = { x: pos.x, y: pos.y };
+      }
+    } else {
+      newPosition = { x: pos.x, y: pos.y };
+    }
+
+    // For groups, apply the fitted size
+    if (node.type === 'group') {
+      const size = groupSizes.get(node.id) || { width: MIN_GROUP_WIDTH, height: MIN_GROUP_HEIGHT };
+
       return {
         ...node,
-        position: { x: elkPos.x, y: elkPos.y },
+        position: newPosition,
         style: {
           ...node.style,
-          width: elkPos.width,
-          height: elkPos.height,
+          width: size.width,
+          height: size.height,
         },
       };
     }
 
     return {
       ...node,
-      position: { x: elkPos.x, y: elkPos.y },
+      position: newPosition,
     };
   });
 }
 
 /**
- * Calculate optimal edge handles based on relative node positions
- */
-function calculateOptimalHandle(
-  sourcePos: { x: number; y: number },
-  targetPos: { x: number; y: number },
-  sourceDims: { width: number; height: number },
-  targetDims: { width: number; height: number }
-): { sourceHandle: string; targetHandle: string } {
-  // Calculate center points
-  const sourceCenter = {
-    x: sourcePos.x + sourceDims.width / 2,
-    y: sourcePos.y + sourceDims.height / 2,
-  };
-  const targetCenter = {
-    x: targetPos.x + targetDims.width / 2,
-    y: targetPos.y + targetDims.height / 2,
-  };
-
-  const dx = targetCenter.x - sourceCenter.x;
-  const dy = targetCenter.y - sourceCenter.y;
-  const absDx = Math.abs(dx);
-  const absDy = Math.abs(dy);
-
-  // Prefer vertical connections when vertical distance is greater
-  if (absDy > absDx) {
-    if (dy > 0) {
-      return { sourceHandle: 'bottom', targetHandle: 'top' };
-    } else {
-      return { sourceHandle: 'top', targetHandle: 'bottom' };
-    }
-  } else {
-    if (dx > 0) {
-      return { sourceHandle: 'right', targetHandle: 'left' };
-    } else {
-      return { sourceHandle: 'left', targetHandle: 'right' };
-    }
-  }
-}
-
-/**
- * Sort nodes so that parent nodes appear before their children.
- * React Flow requires this ordering to properly resolve parent relationships.
+ * Sort nodes so parents appear before children (React Flow requirement)
  */
 function sortNodesForReactFlow(nodes: ArchNode[]): ArchNode[] {
-  const nodeMap = new Map(nodes.map((n) => [n.id, n]));
+  const nodeMap = new Map(nodes.map(n => [n.id, n]));
   const sorted: ArchNode[] = [];
   const visited = new Set<string>();
 
-  // Get depth of a node (how many ancestors it has)
   function getDepth(nodeId: string): number {
     const node = nodeMap.get(nodeId);
     if (!node || !node.parentNode) return 0;
     return 1 + getDepth(node.parentNode);
   }
 
-  // Sort by depth (parents first), then by type (groups before services)
-  const sortedByDepth = [...nodes].sort((a, b) => {
-    const depthA = getDepth(a.id);
-    const depthB = getDepth(b.id);
-    if (depthA !== depthB) return depthA - depthB;
-    // Groups should come before services at the same depth
-    const typeA = a.type === 'group' ? 0 : 1;
-    const typeB = b.type === 'group' ? 0 : 1;
-    return typeA - typeB;
+  const byDepth = [...nodes].sort((a, b) => {
+    const depthDiff = getDepth(a.id) - getDepth(b.id);
+    if (depthDiff !== 0) return depthDiff;
+    return (a.type === 'group' ? 0 : 1) - (b.type === 'group' ? 0 : 1);
   });
 
-  // Add nodes ensuring parents are added before children
   function addNode(node: ArchNode) {
     if (visited.has(node.id)) return;
-
-    // If this node has a parent, ensure parent is added first
     if (node.parentNode) {
       const parent = nodeMap.get(node.parentNode);
-      if (parent && !visited.has(parent.id)) {
-        addNode(parent);
-      }
+      if (parent && !visited.has(parent.id)) addNode(parent);
     }
-
     visited.add(node.id);
     sorted.push(node);
   }
 
-  for (const node of sortedByDepth) {
-    addNode(node);
-  }
-
+  for (const node of byDepth) addNode(node);
   return sorted;
 }
 
 /**
- * Recalculate edge handles after layout to minimize crossings
+ * Calculate optimal edge handles based on node positions
  */
 function recalculateEdgeHandles(
   nodes: ArchNode[],
   edges: ServiceEdge[]
 ): ServiceEdge[] {
   return edges.map((edge): ServiceEdge => {
-    const sourceNode = nodes.find((n) => n.id === edge.source);
-    const targetNode = nodes.find((n) => n.id === edge.target);
-
+    const sourceNode = nodes.find(n => n.id === edge.source);
+    const targetNode = nodes.find(n => n.id === edge.target);
     if (!sourceNode || !targetNode) return edge;
 
-    // Get absolute positions for handle calculation
-    const sourceAbsPos = getAbsolutePosition(sourceNode, nodes);
-    const targetAbsPos = getAbsolutePosition(targetNode, nodes);
+    const sourcePos = getAbsolutePosition(sourceNode, nodes);
+    const targetPos = getAbsolutePosition(targetNode, nodes);
     const sourceDims = getNodeDimensions(sourceNode);
     const targetDims = getNodeDimensions(targetNode);
 
-    const { sourceHandle, targetHandle } = calculateOptimalHandle(
-      sourceAbsPos,
-      targetAbsPos,
-      sourceDims,
-      targetDims
-    );
+    const sourceCenterX = sourcePos.x + sourceDims.width / 2;
+    const sourceCenterY = sourcePos.y + sourceDims.height / 2;
+    const targetCenterX = targetPos.x + targetDims.width / 2;
+    const targetCenterY = targetPos.y + targetDims.height / 2;
 
-    return {
-      ...edge,
-      sourceHandle,
-      targetHandle,
-    };
+    const dx = targetCenterX - sourceCenterX;
+    const dy = targetCenterY - sourceCenterY;
+
+    let sourceHandle: string, targetHandle: string;
+    if (Math.abs(dy) > Math.abs(dx)) {
+      if (dy > 0) {
+        sourceHandle = 'bottom';
+        targetHandle = 'top';
+      } else {
+        sourceHandle = 'top';
+        targetHandle = 'bottom';
+      }
+    } else {
+      if (dx > 0) {
+        sourceHandle = 'right';
+        targetHandle = 'left';
+      } else {
+        sourceHandle = 'left';
+        targetHandle = 'right';
+      }
+    }
+
+    return { ...edge, sourceHandle, targetHandle };
   });
 }
 
 /**
- * Main function to apply auto layout to nodes and edges
+ * Main function to apply auto layout
  */
 export async function applyAutoLayout(
   nodes: ArchNode[],
   edges: ServiceEdge[],
   options: Partial<LayoutOptions> = {}
 ): Promise<{ nodes: ArchNode[]; edges: ServiceEdge[] }> {
-  const mergedOptions: LayoutOptions = { ...DEFAULT_OPTIONS, ...options };
+  const opts: LayoutOptions = { ...DEFAULT_OPTIONS, ...options };
 
-  // Handle empty or single node case
-  if (nodes.length === 0) {
+  if (nodes.length <= 1) {
     return { nodes, edges };
   }
 
-  if (nodes.length === 1) {
-    return { nodes, edges };
-  }
+  // Step 1: Build ELK graph
+  const elkGraph = buildElkGraph(nodes, edges, opts);
 
-  // Create ELK instance
+  // Step 2: Run ELK layout
   const elk = new ELK();
-
-  // Build ELK graph
-  const elkGraph = buildElkGraph(nodes, edges, mergedOptions);
-
-  // Run layout
   const layoutedGraph = await elk.layout(elkGraph);
 
-  // Apply new positions to nodes
-  const layoutedNodes = applyElkPositions(layoutedGraph, nodes);
+  // Step 3: Extract positions from ELK result
+  const positions = extractElkPositions(layoutedGraph);
 
-  // Sort nodes so parents come before children (React Flow requirement)
+  // Step 4: Fit groups to their children (post-layout adjustment)
+  const groupSizes = fitGroupsToChildren(nodes, positions);
+
+  // Step 5: Apply layout to nodes
+  const layoutedNodes = applyLayout(nodes, positions, groupSizes);
+
+  // Step 6: Sort for React Flow
   const sortedNodes = sortNodesForReactFlow(layoutedNodes);
 
-  // Recalculate optimal edge handles
+  // Step 7: Recalculate edge handles
   const layoutedEdges = recalculateEdgeHandles(sortedNodes, edges);
 
   return {
