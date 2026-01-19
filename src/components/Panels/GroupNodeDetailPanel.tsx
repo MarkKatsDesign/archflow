@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { X, Pencil, Check, Trash2 } from "lucide-react";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import { isGroupNode } from "../../types/architecture";
@@ -9,16 +9,16 @@ export function GroupNodeDetailPanel() {
     useArchitectureStore();
   const [isEditingLabel, setIsEditingLabel] = useState(false);
   const [editedLabel, setEditedLabel] = useState("");
+  const [prevNodeId, setPrevNodeId] = useState<string | null | undefined>(null);
 
   const selectedNode = nodes.find((node) => node.id === selectedNodeId);
 
-  // Reset editing state when selected node changes
-  useEffect(() => {
+  // Reset editing state when selected node changes (during render, not in effect)
+  if (selectedNodeId !== prevNodeId) {
+    setPrevNodeId(selectedNodeId);
     setIsEditingLabel(false);
-    if (selectedNode) {
-      setEditedLabel(selectedNode.data?.label || "");
-    }
-  }, [selectedNodeId, selectedNode]);
+    setEditedLabel(selectedNode?.data?.label || "");
+  }
 
   // Only show panel for group nodes
   if (!selectedNode || !isGroupNode(selectedNode)) {
