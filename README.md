@@ -223,6 +223,14 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing, docu
   - Factors in base hourly cost + data processing charges
 
 ### Phase 10: Design & UX Improvements ✅
+- ✅ **Auto Layout** - Intelligent automatic arrangement of nodes:
+  - One-click layout organization using ELK (Eclipse Layout Kernel)
+  - Four direction options: Top-to-Bottom, Left-to-Right, Bottom-to-Top, Right-to-Left
+  - Configurable node spacing and layer spacing
+  - Smart boundary zone sizing - groups automatically resize to fit their children
+  - Nested group support - properly handles VPCs containing Subnets containing services
+  - Cross-group edge optimization - positions related zones near each other
+  - Automatic edge handle recalculation for optimal connection routing
 - ✅ **Dark Mode Support**:
   - Full dark mode theme with one-click toggle
   - System preference detection (auto-detects OS dark mode)
@@ -329,14 +337,19 @@ npm run build
     - Zoom with mouse wheel or controls
     - Use minimap for overview
     - Click the canvas background to deselect nodes
-11. **Start New Project**: Click "New Project" in header to run the wizard again
-12. **View Cost Estimates**: Check the bottom-left panel for:
+11. **Auto Layout**: Click "Auto Layout" button (top-left) to:
+    - Automatically arrange all nodes in a clean hierarchy
+    - Choose direction (Top-Bottom, Left-Right, etc.)
+    - Adjust node and layer spacing with sliders
+    - Boundary zones automatically resize to fit their contents
+12. **Start New Project**: Click "New Project" in header to run the wizard again
+13. **View Cost Estimates**: Check the bottom-left panel for:
     - Total monthly cost based on your selected scale
     - Cost breakdown by category (Frontend, Backend, Database, etc.)
     - Budget status and warnings
     - Individual service costs (expand categories to see details)
-13. **Adjust Scale**: Change scale tier (Startup MVP → Growth → Enterprise) to see cost changes
-14. **Export & Share**: Click the "Export" button (top-left) to:
+14. **Adjust Scale**: Change scale tier (Startup MVP → Growth → Enterprise) to see cost changes
+15. **Export & Share**: Click the "Export" button (top-left) to:
     - **Save Progress**: Export to JSON to save your architecture and reload it later
     - **Share Visually**: Export to PNG for presentations, Slack, or documentation
     - **Document**: Export to Markdown for GitHub READMEs or wikis
@@ -393,6 +406,16 @@ npm run build
 - **Complexity**: Very Low (1/5)
 - **Best for**: Indie hackers, MVPs, simple full-stack apps
 - **Pros**: Simplest deployment, all free tiers, auto-deploy
+
+### Example Complex Architecture (Import Ready)
+Want to see what ArchFlow can handle? Import the example architecture from `docs/architecture-1768735131289.json`:
+- **Full SaaS Architecture**: Complete production-ready setup with VPC, subnets, and multiple service zones
+- **Network Boundaries**: Demonstrates nested boundary zones (VPC → Public/Private Subnets)
+- **Multiple Zones**: CDN & Storage, Databases, Integrations, Monitoring sections
+- **20+ Services**: Shows real-world complexity with proper service connections
+- **Auto Layout Ready**: Import and click "Auto Layout" to see intelligent arrangement in action
+
+To import: Click Export → Import JSON → Select the file from the `docs` folder.
 
 ## Available Services (54) + Infrastructure Zones (10)
 
