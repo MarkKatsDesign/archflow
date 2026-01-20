@@ -7,9 +7,10 @@ import {
   ArrowLeft,
   ArrowRight,
   Loader2,
+  Route,
 } from 'lucide-react';
 import { useArchitectureStore } from '../../store/useArchitectureStore';
-import { applyAutoLayout, type LayoutOptions } from '../../utils/layoutEngine';
+import { applyAutoLayout, optimizeEdges, type LayoutOptions } from '../../utils/layoutEngine';
 
 type Direction = LayoutOptions['direction'];
 
@@ -23,6 +24,7 @@ const directions: { value: Direction; icon: typeof ArrowDown; label: string }[] 
 export function AutoLayoutPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLayouting, setIsLayouting] = useState(false);
+  const [isOptimizing, setIsOptimizing] = useState(false);
   const [direction, setDirection] = useState<Direction>('TB');
   const [nodeSpacing, setNodeSpacing] = useState(80);
   const [layerSpacing, setLayerSpacing] = useState(100);
@@ -48,6 +50,20 @@ export function AutoLayoutPanel() {
       console.error('Auto layout failed:', error);
     } finally {
       setIsLayouting(false);
+    }
+  };
+
+  const handleOptimizeEdges = () => {
+    if (edges.length === 0) return;
+
+    setIsOptimizing(true);
+    try {
+      const optimizedEdges = optimizeEdges(nodes, edges);
+      setEdges(optimizedEdges);
+    } catch (error) {
+      console.error('Edge optimization failed:', error);
+    } finally {
+      setIsOptimizing(false);
     }
   };
 
@@ -163,6 +179,40 @@ export function AutoLayoutPanel() {
                 </>
               )}
             </button>
+
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200 dark:border-slate-600" />
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-white dark:bg-slate-800 px-2 text-gray-500 dark:text-gray-400">
+                  or
+                </span>
+              </div>
+            </div>
+
+            {/* Optimize Edges Button */}
+            <button
+              onClick={handleOptimizeEdges}
+              disabled={isOptimizing || edges.length === 0}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 rounded-lg font-medium shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isOptimizing ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Optimizing...
+                </>
+              ) : (
+                <>
+                  <Route className="w-4 h-4" />
+                  Optimize Edges
+                </>
+              )}
+            </button>
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              Reroute edges to avoid overlapping nodes
+            </p>
           </div>
 
           {/* Footer */}

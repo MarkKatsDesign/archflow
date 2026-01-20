@@ -14,6 +14,7 @@ import { MousePointer2, ArrowRight, Layers } from "lucide-react";
 import CustomNode from "./CustomNode";
 import GroupNode from "./GroupNode";
 import AlignmentGuides from "./AlignmentGuides";
+import EditableBezierEdge from "./EditableBezierEdge";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import { useAlignmentGuides } from "../../hooks/useAlignmentGuides";
 import { useOnboardingStore } from "../../store/useOnboardingStore";
@@ -84,6 +85,10 @@ function EmptyCanvasState() {
 const nodeTypes = {
   service: CustomNode,
   group: GroupNode,
+};
+
+const edgeTypes = {
+  editableBezier: EditableBezierEdge,
 };
 
 // Helper to find the innermost group at a given position
@@ -328,6 +333,7 @@ function ArchitectureCanvasInner() {
         onEdgeClick={onEdgeClick}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         defaultEdgeOptions={{
           type: "default",
           style: {

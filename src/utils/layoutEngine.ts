@@ -384,50 +384,325 @@ function sortNodesForReactFlow(nodes: ArchNode[]): ArchNode[] {
 
 /**
  * Calculate optimal edge handles based on node positions
+ * Uses organic handle positioning for better edge distribution
  */
 function recalculateEdgeHandles(
   nodes: ArchNode[],
   edges: ServiceEdge[]
 ): ServiceEdge[] {
-  return edges.map((edge): ServiceEdge => {
-    const sourceNode = nodes.find(n => n.id === edge.source);
-    const targetNode = nodes.find(n => n.id === edge.target);
-    if (!sourceNode || !targetNode) return edge;
+  // Delegate to optimizeEdges which has the full organic positioning algorithm
+  return optimizeEdges(nodes, edges);
+}
 
-    const sourcePos = getAbsolutePosition(sourceNode, nodes);
-    const targetPos = getAbsolutePosition(targetNode, nodes);
-    const sourceDims = getNodeDimensions(sourceNode);
-    const targetDims = getNodeDimensions(targetNode);
+/**
+ * Check if a line segment intersects with a rectangle (node bounding box)
+ */
+function lineIntersectsRect(
+  x1: number, y1: number,
+  x2: number, y2: number,
+  rect: { x: number; y: number; width: number; height: number },
+  padding = 10
+): boolean {
+  const left = rect.x - padding;
+  const right = rect.x + rect.width + padding;
+  const top = rect.y - padding;
+  const bottom = rect.y + rect.height + padding;
 
-    const sourceCenterX = sourcePos.x + sourceDims.width / 2;
-    const sourceCenterY = sourcePos.y + sourceDims.height / 2;
-    const targetCenterX = targetPos.x + targetDims.width / 2;
-    const targetCenterY = targetPos.y + targetDims.height / 2;
+  // Check if line is completely outside the rectangle
+  if ((x1 < left && x2 < left) || (x1 > right && x2 > right)) return false;
+  if ((y1 < top && y2 < top) || (y1 > bottom && y2 > bottom)) return false;
 
-    const dx = targetCenterX - sourceCenterX;
-    const dy = targetCenterY - sourceCenterY;
+  // Check each edge of the rectangle
+  const rectEdges = [
+    { x1: left, y1: top, x2: right, y2: top },     // top
+    { x1: left, y1: bottom, x2: right, y2: bottom }, // bottom
+    { x1: left, y1: top, x2: left, y2: bottom },   // left
+    { x1: right, y1: top, x2: right, y2: bottom }, // right
+  ];
 
-    let sourceHandle: string, targetHandle: string;
-    if (Math.abs(dy) > Math.abs(dx)) {
-      if (dy > 0) {
-        sourceHandle = 'bottom';
-        targetHandle = 'top';
-      } else {
-        sourceHandle = 'top';
-        targetHandle = 'bottom';
-      }
+  for (const edge of rectEdges) {
+    if (linesIntersect(x1, y1, x2, y2, edge.x1, edge.y1, edge.x2, edge.y2)) {
+      return true;
+    }
+  }
+
+  // Check if line is completely inside rectangle
+  if (x1 >= left && x1 <= right && y1 >= top && y1 <= bottom) return true;
+  if (x2 >= left && x2 <= right && y2 >= top && y2 <= bottom) return true;
+
+  return false;
+}
+
+/**
+ * Check if two line segments intersect
+ */
+function linesIntersect(
+  x1: number, y1: number, x2: number, y2: number,
+  x3: number, y3: number, x4: number, y4: number
+): boolean {
+  const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+  if (Math.abs(denom) < 0.0001) return false; // Parallel lines
+
+  const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+  const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
+
+  return ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1;
+}
+
+// Number of handles per side (must match CustomNode.tsx)
+const HANDLES_PER_SIDE = 10;
+
+// Handle side types
+type HandleSide = 'top' | 'bottom' | 'left' | 'right';
+
+// Full handle ID (e.g., "top-0", "right-2")
+type HandleId = string;
+
+/**
+ * Get handle position on a node for a specific handle ID
+ * Handles are distributed along each side
+ */
+function getMultiHandlePosition(
+  node: { x: number; y: number; width: number; height: number },
+  handleId: HandleId
+): { x: number; y: number } {
+  const [side, indexStr] = handleId.split('-');
+  const index = parseInt(indexStr, 10);
+  const offset = (index + 1) / (HANDLES_PER_SIDE + 1);
+
+  switch (side) {
+    case 'top':
+      return { x: node.x + node.width * offset, y: node.y };
+    case 'bottom':
+      return { x: node.x + node.width * offset, y: node.y + node.height };
+    case 'left':
+      return { x: node.x, y: node.y + node.height * offset };
+    case 'right':
+      return { x: node.x + node.width, y: node.y + node.height * offset };
+    default:
+      return { x: node.x + node.width / 2, y: node.y + node.height / 2 };
+  }
+}
+
+/**
+ * Determine the best side for connecting based on relative positions
+ */
+function getBestSide(
+  sourceRect: { x: number; y: number; width: number; height: number },
+  targetRect: { x: number; y: number; width: number; height: number }
+): { sourceSide: HandleSide; targetSide: HandleSide } {
+  const dx = (targetRect.x + targetRect.width / 2) - (sourceRect.x + sourceRect.width / 2);
+  const dy = (targetRect.y + targetRect.height / 2) - (sourceRect.y + sourceRect.height / 2);
+
+  // Determine primary direction
+  if (Math.abs(dy) > Math.abs(dx)) {
+    // Vertical connection
+    if (dy > 0) {
+      return { sourceSide: 'bottom', targetSide: 'top' };
     } else {
-      if (dx > 0) {
-        sourceHandle = 'right';
-        targetHandle = 'left';
+      return { sourceSide: 'top', targetSide: 'bottom' };
+    }
+  } else {
+    // Horizontal connection
+    if (dx > 0) {
+      return { sourceSide: 'right', targetSide: 'left' };
+    } else {
+      return { sourceSide: 'left', targetSide: 'right' };
+    }
+  }
+}
+
+/**
+ * Get the sort key for ordering edges on a side
+ * For horizontal sides (top/bottom): sort by target's X position
+ * For vertical sides (left/right): sort by target's Y position
+ */
+function getEdgeSortKey(
+  side: HandleSide,
+  otherEndRect: { x: number; y: number; width: number; height: number }
+): number {
+  if (side === 'top' || side === 'bottom') {
+    // Horizontal side: sort by X position of the other end
+    return otherEndRect.x + otherEndRect.width / 2;
+  } else {
+    // Vertical side: sort by Y position of the other end
+    return otherEndRect.y + otherEndRect.height / 2;
+  }
+}
+
+/**
+ * Optimize edge routing with organic handle positioning
+ * - Prevents edge crossings by ordering handles based on target positions
+ * - Distributes edges evenly across the available handle slots
+ */
+export function optimizeEdges(
+  nodes: ArchNode[],
+  edges: ServiceEdge[]
+): ServiceEdge[] {
+  // Build a map of node rectangles with absolute positions
+  const nodeRects = new Map<string, { x: number; y: number; width: number; height: number }>();
+
+  for (const node of nodes) {
+    const pos = getAbsolutePosition(node, nodes);
+    const dims = getNodeDimensions(node);
+    nodeRects.set(node.id, {
+      x: pos.x,
+      y: pos.y,
+      width: dims.width,
+      height: dims.height,
+    });
+  }
+
+  // First pass: determine best sides for each edge
+  interface EdgeInfo {
+    edge: ServiceEdge;
+    sourceRect: { x: number; y: number; width: number; height: number };
+    targetRect: { x: number; y: number; width: number; height: number };
+    sourceSide: HandleSide;
+    targetSide: HandleSide;
+  }
+
+  const edgeInfos: EdgeInfo[] = [];
+
+  for (const edge of edges) {
+    const sourceRect = nodeRects.get(edge.source);
+    const targetRect = nodeRects.get(edge.target);
+
+    if (!sourceRect || !targetRect) continue;
+
+    const { sourceSide, targetSide } = getBestSide(sourceRect, targetRect);
+
+    edgeInfos.push({
+      edge,
+      sourceRect,
+      targetRect,
+      sourceSide,
+      targetSide,
+    });
+  }
+
+  // Group edges by source node + side
+  const sourceGroups = new Map<string, EdgeInfo[]>();
+  for (const info of edgeInfos) {
+    const key = `${info.edge.source}:${info.sourceSide}`;
+    if (!sourceGroups.has(key)) {
+      sourceGroups.set(key, []);
+    }
+    sourceGroups.get(key)!.push(info);
+  }
+
+  // Group edges by target node + side
+  const targetGroups = new Map<string, EdgeInfo[]>();
+  for (const info of edgeInfos) {
+    const key = `${info.edge.target}:${info.targetSide}`;
+    if (!targetGroups.has(key)) {
+      targetGroups.set(key, []);
+    }
+    targetGroups.get(key)!.push(info);
+  }
+
+  // Calculate source handle indices based on target positions
+  const sourceHandleMap = new Map<string, number>(); // edge.id -> source handle index
+
+  for (const [, group] of sourceGroups) {
+    // Sort edges by target position to prevent crossings
+    const sorted = [...group].sort((a, b) => {
+      const keyA = getEdgeSortKey(a.sourceSide, a.targetRect);
+      const keyB = getEdgeSortKey(b.sourceSide, b.targetRect);
+      return keyA - keyB;
+    });
+
+    // Distribute handles evenly across the available slots
+    const count = sorted.length;
+    sorted.forEach((info, idx) => {
+      // Map index to handle slot, spreading evenly across available handles
+      // For 3 edges with 10 handles: use slots 2, 4, 7 (roughly evenly spaced)
+      let handleIndex: number;
+      if (count === 1) {
+        handleIndex = Math.floor(HANDLES_PER_SIDE / 2); // Center
       } else {
-        sourceHandle = 'left';
-        targetHandle = 'right';
+        // Spread across handles, leaving some margin at edges
+        const margin = 1; // Leave 1 handle margin on each end
+        const availableSlots = HANDLES_PER_SIDE - 2 * margin;
+        handleIndex = margin + Math.round((idx / (count - 1)) * (availableSlots - 1));
+      }
+      sourceHandleMap.set(info.edge.id, handleIndex);
+    });
+  }
+
+  // Calculate target handle indices based on source positions
+  const targetHandleMap = new Map<string, number>(); // edge.id -> target handle index
+
+  for (const [, group] of targetGroups) {
+    // Sort edges by source position to prevent crossings
+    const sorted = [...group].sort((a, b) => {
+      const keyA = getEdgeSortKey(a.targetSide, a.sourceRect);
+      const keyB = getEdgeSortKey(b.targetSide, b.sourceRect);
+      return keyA - keyB;
+    });
+
+    // Distribute handles evenly
+    const count = sorted.length;
+    sorted.forEach((info, idx) => {
+      let handleIndex: number;
+      if (count === 1) {
+        handleIndex = Math.floor(HANDLES_PER_SIDE / 2);
+      } else {
+        const margin = 1;
+        const availableSlots = HANDLES_PER_SIDE - 2 * margin;
+        handleIndex = margin + Math.round((idx / (count - 1)) * (availableSlots - 1));
+      }
+      targetHandleMap.set(info.edge.id, handleIndex);
+    });
+  }
+
+  // Build optimized edges
+  const optimizedEdges: ServiceEdge[] = [];
+
+  for (const info of edgeInfos) {
+    const { edge, sourceRect, targetRect, sourceSide, targetSide } = info;
+
+    const sourceIndex = sourceHandleMap.get(edge.id) ?? Math.floor(HANDLES_PER_SIDE / 2);
+    const targetIndex = targetHandleMap.get(edge.id) ?? Math.floor(HANDLES_PER_SIDE / 2);
+
+    const sourceHandle = `${sourceSide}-${sourceIndex}`;
+    const targetHandle = `${targetSide}-${targetIndex}`;
+
+    // Check for collisions with other nodes
+    const sourcePos = getMultiHandlePosition(sourceRect, sourceHandle);
+    const targetPos = getMultiHandlePosition(targetRect, targetHandle);
+
+    const otherNodes = Array.from(nodeRects.entries())
+      .filter(([id]) => id !== edge.source && id !== edge.target)
+      .map(([, rect]) => rect);
+
+    let hasCollision = false;
+    for (const node of otherNodes) {
+      if (lineIntersectsRect(sourcePos.x, sourcePos.y, targetPos.x, targetPos.y, node)) {
+        hasCollision = true;
+        break;
       }
     }
 
-    return { ...edge, sourceHandle, targetHandle };
-  });
+    // Use smoothstep for edges with collisions (routes around better)
+    const edgeType = hasCollision ? 'smoothstep' : (edge.type || 'default');
+
+    optimizedEdges.push({
+      ...edge,
+      sourceHandle,
+      targetHandle,
+      type: edgeType,
+    });
+  }
+
+  // Handle edges that couldn't be processed (missing nodes)
+  for (const edge of edges) {
+    if (!optimizedEdges.find(e => e.id === edge.id)) {
+      optimizedEdges.push(edge);
+    }
+  }
+
+  return optimizedEdges;
 }
 
 /**

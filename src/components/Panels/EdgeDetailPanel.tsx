@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Tag, Zap, GitBranch, Trash2 } from "lucide-react";
+import { X, Tag, Zap, GitBranch, Trash2, Pencil } from "lucide-react";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import type { Edge } from "reactflow";
 import type { ArchNode } from "../../types/architecture";
@@ -125,6 +125,20 @@ function EdgeDetailPanelContent({
               <div className="text-xs opacity-75">Smooth curved lines</div>
             </button>
             <button
+              onClick={() => handleEdgeTypeChange("editableBezier")}
+              className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
+                edge.type === "editableBezier"
+                  ? "bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-500 text-blue-700 dark:text-blue-300"
+                  : "bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+              }`}
+            >
+              <div className="flex items-center gap-2 font-medium">
+                <Pencil className="w-3 h-3" />
+                Editable Bezier
+              </div>
+              <div className="text-xs opacity-75">Drag control points to adjust curve</div>
+            </button>
+            <button
               onClick={() => handleEdgeTypeChange("smoothstep")}
               className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
                 edge.type === "smoothstep"
@@ -153,9 +167,7 @@ function EdgeDetailPanelContent({
         <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
           <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-md p-3">
             <p className="text-xs text-blue-800 dark:text-blue-300">
-              <strong>Tip:</strong> Use animated connections for active data
-              flows (APIs, real-time sync) and static connections for
-              configuration or one-time setup.
+              <strong>Tip:</strong> Use <strong>Editable Bezier</strong> to manually adjust curves by dragging control points. Use animated connections for active data flows.
             </p>
           </div>
         </div>

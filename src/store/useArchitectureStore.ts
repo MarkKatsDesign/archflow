@@ -70,11 +70,12 @@ function sortNodesParentsFirst(nodes: ArchNode[]): ArchNode[] {
 /**
  * Calculates the optimal source and target handles based on node positions.
  * Returns handles that create the most direct and visually appealing connection.
+ * Uses multi-handle naming convention (e.g., "bottom-4", "top-4")
  */
 function calculateOptimalHandles(
   sourceNode: TemplateNode,
   targetNode: TemplateNode
-): { sourceHandle: 'top' | 'bottom' | 'left' | 'right'; targetHandle: 'top' | 'bottom' | 'left' | 'right' } {
+): { sourceHandle: string; targetHandle: string } {
   const dx = targetNode.position.x - sourceNode.position.x;
   const dy = targetNode.position.y - sourceNode.position.y;
 
@@ -82,23 +83,26 @@ function calculateOptimalHandles(
   const absDx = Math.abs(dx);
   const absDy = Math.abs(dy);
 
+  // Default to middle handle (index 4 out of 0-9 for 10 handles per side)
+  const handleIndex = 4;
+
   // If vertical distance is greater, prefer vertical connections (top/bottom)
   if (absDy > absDx) {
     if (dy > 0) {
       // Target is below source
-      return { sourceHandle: 'bottom', targetHandle: 'top' };
+      return { sourceHandle: `bottom-${handleIndex}`, targetHandle: `top-${handleIndex}` };
     } else {
       // Target is above source
-      return { sourceHandle: 'top', targetHandle: 'bottom' };
+      return { sourceHandle: `top-${handleIndex}`, targetHandle: `bottom-${handleIndex}` };
     }
   } else {
     // Horizontal distance is greater, prefer horizontal connections (left/right)
     if (dx > 0) {
       // Target is to the right of source
-      return { sourceHandle: 'right', targetHandle: 'left' };
+      return { sourceHandle: `right-${handleIndex}`, targetHandle: `left-${handleIndex}` };
     } else {
       // Target is to the left of source
-      return { sourceHandle: 'left', targetHandle: 'right' };
+      return { sourceHandle: `left-${handleIndex}`, targetHandle: `right-${handleIndex}` };
     }
   }
 }

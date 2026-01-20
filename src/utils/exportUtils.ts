@@ -44,6 +44,51 @@ export const exportToJSON = (
   URL.revokeObjectURL(url);
 };
 
+/**
+ * Migrate old handle names to new multi-handle format
+ * e.g., "bottom" -> "bottom-4", "top" -> "top-4"
+ * Also migrates old 3-handle format (0-2) to new 10-handle format (0-9)
+ */
+function migrateHandleId(handleId: string | null | undefined): string | null | undefined {
+  if (!handleId) return handleId;
+
+  // Check if already in new format with valid index (0-9)
+  const match = handleId.match(/^(top|bottom|left|right)-(\d+)$/);
+  if (match) {
+    const [, side, indexStr] = match;
+    const index = parseInt(indexStr, 10);
+
+    // If index is in old 3-handle range (0-2), map to new 10-handle range
+    // Old: 0, 1, 2 -> New: 1, 4, 8 (roughly equivalent positions)
+    if (index <= 2) {
+      const newIndex = index === 0 ? 1 : index === 1 ? 4 : 8;
+      return `${side}-${newIndex}`;
+    }
+
+    // Already in new format
+    return handleId;
+  }
+
+  // Old format: just the side name - migrate to middle handle (index 4 out of 0-9)
+  if (['top', 'bottom', 'left', 'right'].includes(handleId)) {
+    return `${handleId}-4`;
+  }
+
+  // Unknown format, return as-is
+  return handleId;
+}
+
+/**
+ * Migrate edges to use new multi-handle format
+ */
+function migrateEdges(edges: Edge[]): Edge[] {
+  return edges.map(edge => ({
+    ...edge,
+    sourceHandle: migrateHandleId(edge.sourceHandle),
+    targetHandle: migrateHandleId(edge.targetHandle),
+  }));
+}
+
 export const importFromJSON = (
   file: File,
   callback: (data: ArchitectureExport) => void
@@ -52,6 +97,10 @@ export const importFromJSON = (
   reader.onload = (e) => {
     try {
       const data = JSON.parse(e.target?.result as string) as ArchitectureExport;
+
+      // Migrate edges to new handle format if needed
+      data.edges = migrateEdges(data.edges);
+
       callback(data);
     } catch (error) {
       console.error("Failed to parse JSON:", error);

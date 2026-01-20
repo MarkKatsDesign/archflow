@@ -5,6 +5,22 @@ import type { NodeProps } from 'reactflow';
 import type { ServiceNodeData } from '../../types/architecture';
 import { useThemeStore } from '../../store/useThemeStore';
 
+// Number of handles per side for organic edge distribution
+// More handles = finer granularity for positioning
+const HANDLES_PER_SIDE = 10;
+
+// Generate handle positions as percentages
+// For 10 handles: ~9%, 18%, 27%, ... 91% (avoiding edges)
+const getHandleOffsets = (count: number): number[] => {
+  const offsets: number[] = [];
+  for (let i = 1; i <= count; i++) {
+    offsets.push((i / (count + 1)) * 100);
+  }
+  return offsets;
+};
+
+const handleOffsets = getHandleOffsets(HANDLES_PER_SIDE);
+
 const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
   const { service, label } = data;
   const { theme } = useThemeStore();
@@ -35,54 +51,91 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
       `}
       style={gradientStyle}
     >
-      {/* Connection handles on all 4 sides for flexible layouts */}
-      {/* Top handles */}
-      <Handle
-        type="target"
-        position={Position.Top}
-        id="top"
-        className="w-3 h-3 transition-all hover:scale-150"
-        style={{ background: service.color }}
-      />
-      <Handle
-        type="source"
-        position={Position.Top}
-        id="top"
-        className="w-3 h-3 transition-all hover:scale-150"
-        style={{ background: service.color }}
-      />
+      {/* Multiple connection handles on each side for edge distribution */}
 
-      {/* Left handles */}
-      <Handle
-        type="target"
-        position={Position.Left}
-        id="left"
-        className="w-3 h-3 transition-all hover:scale-150"
-        style={{ background: service.color }}
-      />
-      <Handle
-        type="source"
-        position={Position.Left}
-        id="left"
-        className="w-3 h-3 transition-all hover:scale-150"
-        style={{ background: service.color }}
-      />
+      {/* Top handles - organic positioning with many small handles */}
+      {handleOffsets.map((offset, idx) => (
+        <Handle
+          key={`top-${idx}`}
+          type="source"
+          position={Position.Top}
+          id={`top-${idx}`}
+          className="!w-1.5 !h-1.5 transition-all hover:!scale-150 !opacity-30 hover:!opacity-100 !border-0"
+          style={{
+            background: service.color,
+            left: `${offset}%`,
+          }}
+        />
+      ))}
+      {handleOffsets.map((offset, idx) => (
+        <Handle
+          key={`top-target-${idx}`}
+          type="target"
+          position={Position.Top}
+          id={`top-${idx}`}
+          className="!w-1.5 !h-1.5 transition-all hover:!scale-150 !opacity-30 hover:!opacity-100 !border-0"
+          style={{
+            background: service.color,
+            left: `${offset}%`,
+          }}
+        />
+      ))}
 
-      {/* Right handles */}
-      <Handle
-        type="target"
-        position={Position.Right}
-        id="right"
-        className="w-3 h-3 transition-all hover:scale-150"
-        style={{ background: service.color }}
-      />
-      <Handle
-        type="source"
-        position={Position.Right}
-        id="right"
-        className="w-3 h-3 transition-all hover:scale-150"
-        style={{ background: service.color }}
-      />
+      {/* Left handles - organic positioning */}
+      {handleOffsets.map((offset, idx) => (
+        <Handle
+          key={`left-${idx}`}
+          type="source"
+          position={Position.Left}
+          id={`left-${idx}`}
+          className="!w-1.5 !h-1.5 transition-all hover:!scale-150 !opacity-30 hover:!opacity-100 !border-0"
+          style={{
+            background: service.color,
+            top: `${offset}%`,
+          }}
+        />
+      ))}
+      {handleOffsets.map((offset, idx) => (
+        <Handle
+          key={`left-target-${idx}`}
+          type="target"
+          position={Position.Left}
+          id={`left-${idx}`}
+          className="!w-1.5 !h-1.5 transition-all hover:!scale-150 !opacity-30 hover:!opacity-100 !border-0"
+          style={{
+            background: service.color,
+            top: `${offset}%`,
+          }}
+        />
+      ))}
+
+      {/* Right handles - organic positioning */}
+      {handleOffsets.map((offset, idx) => (
+        <Handle
+          key={`right-${idx}`}
+          type="source"
+          position={Position.Right}
+          id={`right-${idx}`}
+          className="!w-1.5 !h-1.5 transition-all hover:!scale-150 !opacity-30 hover:!opacity-100 !border-0"
+          style={{
+            background: service.color,
+            top: `${offset}%`,
+          }}
+        />
+      ))}
+      {handleOffsets.map((offset, idx) => (
+        <Handle
+          key={`right-target-${idx}`}
+          type="target"
+          position={Position.Right}
+          id={`right-${idx}`}
+          className="!w-1.5 !h-1.5 transition-all hover:!scale-150 !opacity-30 hover:!opacity-100 !border-0"
+          style={{
+            background: service.color,
+            top: `${offset}%`,
+          }}
+        />
+      ))}
 
       <div className="flex flex-col gap-2">
         {/* Category Header */}
@@ -129,21 +182,33 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
         </div>
       </div>
 
-      {/* Bottom handles */}
-      <Handle
-        type="target"
-        position={Position.Bottom}
-        id="bottom"
-        className="w-3 h-3 transition-all hover:scale-150"
-        style={{ background: service.color }}
-      />
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="bottom"
-        className="w-3 h-3 transition-all hover:scale-150"
-        style={{ background: service.color }}
-      />
+      {/* Bottom handles - organic positioning */}
+      {handleOffsets.map((offset, idx) => (
+        <Handle
+          key={`bottom-${idx}`}
+          type="source"
+          position={Position.Bottom}
+          id={`bottom-${idx}`}
+          className="!w-1.5 !h-1.5 transition-all hover:!scale-150 !opacity-30 hover:!opacity-100 !border-0"
+          style={{
+            background: service.color,
+            left: `${offset}%`,
+          }}
+        />
+      ))}
+      {handleOffsets.map((offset, idx) => (
+        <Handle
+          key={`bottom-target-${idx}`}
+          type="target"
+          position={Position.Bottom}
+          id={`bottom-${idx}`}
+          className="!w-1.5 !h-1.5 transition-all hover:!scale-150 !opacity-30 hover:!opacity-100 !border-0"
+          style={{
+            background: service.color,
+            left: `${offset}%`,
+          }}
+        />
+      ))}
     </div>
   );
 };
