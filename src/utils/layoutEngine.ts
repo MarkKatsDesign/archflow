@@ -601,10 +601,56 @@ export function optimizeEdges(
     targetGroups.get(key)!.push(info);
   }
 
+  // Track used handles per node+side to prevent duplicates
+  const usedSourceHandles = new Map<string, Set<number>>(); // "nodeId:side" -> Set of used indices
+  const usedTargetHandles = new Map<string, Set<number>>(); // "nodeId:side" -> Set of used indices
+
+  /**
+   * Get the next available handle index, avoiding already used ones
+   */
+  function getAvailableHandle(
+    nodeId: string,
+    side: HandleSide,
+    preferredIndex: number,
+    usedHandles: Map<string, Set<number>>
+  ): number {
+    const key = `${nodeId}:${side}`;
+    if (!usedHandles.has(key)) {
+      usedHandles.set(key, new Set());
+    }
+    const used = usedHandles.get(key)!;
+
+    // If preferred is available, use it
+    if (!used.has(preferredIndex)) {
+      used.add(preferredIndex);
+      return preferredIndex;
+    }
+
+    // Otherwise find the closest available handle
+    for (let offset = 1; offset < HANDLES_PER_SIDE; offset++) {
+      const above = preferredIndex + offset;
+      const below = preferredIndex - offset;
+
+      if (above < HANDLES_PER_SIDE && !used.has(above)) {
+        used.add(above);
+        return above;
+      }
+      if (below >= 0 && !used.has(below)) {
+        used.add(below);
+        return below;
+      }
+    }
+
+    // Fallback (should never happen with 10 handles)
+    return preferredIndex;
+  }
+
   // Calculate source handle indices based on target positions
   const sourceHandleMap = new Map<string, number>(); // edge.id -> source handle index
 
-  for (const [, group] of sourceGroups) {
+  for (const [key, group] of sourceGroups) {
+    const [nodeId, side] = key.split(':') as [string, HandleSide];
+
     // Sort edges by target position to prevent crossings
     const sorted = [...group].sort((a, b) => {
       const keyA = getEdgeSortKey(a.sourceSide, a.targetRect);
@@ -612,28 +658,33 @@ export function optimizeEdges(
       return keyA - keyB;
     });
 
-    // Distribute handles evenly across the available slots
+    // Calculate preferred indices, then assign with conflict resolution
     const count = sorted.length;
     sorted.forEach((info, idx) => {
-      // Map index to handle slot, spreading evenly across available handles
-      // For 3 edges with 10 handles: use slots 2, 4, 7 (roughly evenly spaced)
-      let handleIndex: number;
+      // Calculate preferred handle position
+      let preferredIndex: number;
       if (count === 1) {
-        handleIndex = Math.floor(HANDLES_PER_SIDE / 2); // Center
+        preferredIndex = Math.floor(HANDLES_PER_SIDE / 2); // Center
       } else {
-        // Spread across handles, leaving some margin at edges
-        const margin = 1; // Leave 1 handle margin on each end
+        // Spread across handles, leaving margin at edges
+        const margin = 1;
         const availableSlots = HANDLES_PER_SIDE - 2 * margin;
-        handleIndex = margin + Math.round((idx / (count - 1)) * (availableSlots - 1));
+        // Use floor to ensure unique indices when possible
+        preferredIndex = margin + Math.floor((idx / count) * availableSlots);
       }
-      sourceHandleMap.set(info.edge.id, handleIndex);
+
+      // Get actual available handle (resolves conflicts)
+      const actualIndex = getAvailableHandle(nodeId, side, preferredIndex, usedSourceHandles);
+      sourceHandleMap.set(info.edge.id, actualIndex);
     });
   }
 
   // Calculate target handle indices based on source positions
   const targetHandleMap = new Map<string, number>(); // edge.id -> target handle index
 
-  for (const [, group] of targetGroups) {
+  for (const [key, group] of targetGroups) {
+    const [nodeId, side] = key.split(':') as [string, HandleSide];
+
     // Sort edges by source position to prevent crossings
     const sorted = [...group].sort((a, b) => {
       const keyA = getEdgeSortKey(a.targetSide, a.sourceRect);
@@ -641,22 +692,226 @@ export function optimizeEdges(
       return keyA - keyB;
     });
 
-    // Distribute handles evenly
+    // Calculate preferred indices with conflict resolution
     const count = sorted.length;
     sorted.forEach((info, idx) => {
-      let handleIndex: number;
+      let preferredIndex: number;
       if (count === 1) {
-        handleIndex = Math.floor(HANDLES_PER_SIDE / 2);
+        preferredIndex = Math.floor(HANDLES_PER_SIDE / 2);
       } else {
         const margin = 1;
         const availableSlots = HANDLES_PER_SIDE - 2 * margin;
-        handleIndex = margin + Math.round((idx / (count - 1)) * (availableSlots - 1));
+        preferredIndex = margin + Math.floor((idx / count) * availableSlots);
       }
-      targetHandleMap.set(info.edge.id, handleIndex);
+
+      const actualIndex = getAvailableHandle(nodeId, side, preferredIndex, usedTargetHandles);
+      targetHandleMap.set(info.edge.id, actualIndex);
     });
   }
 
-  // Build optimized edges
+  // Detect overlapping paths and assign lanes
+  // Group edges by their "path signature" - edges with similar paths need different lanes
+  // We use multiple detection strategies to catch different overlap cases
+
+  const BUCKET_SIZE = 40; // Reduced for finer detection of overlaps
+  const quantize = (val: number) => Math.round(val / BUCKET_SIZE);
+
+  /**
+   * Calculate the middle segment position for an edge
+   * This is where the orthogonal path makes its turn
+   */
+  const getMiddleSegment = (info: EdgeInfo): { x: number; y: number } => {
+    const sourceCenter = {
+      x: info.sourceRect.x + info.sourceRect.width / 2,
+      y: info.sourceRect.y + info.sourceRect.height / 2,
+    };
+    const targetCenter = {
+      x: info.targetRect.x + info.targetRect.width / 2,
+      y: info.targetRect.y + info.targetRect.height / 2,
+    };
+
+    // For horizontal connections (right-left), middle is at X midpoint
+    if ((info.sourceSide === 'right' && info.targetSide === 'left') ||
+        (info.sourceSide === 'left' && info.targetSide === 'right')) {
+      return {
+        x: (sourceCenter.x + targetCenter.x) / 2,
+        y: (sourceCenter.y + targetCenter.y) / 2,
+      };
+    }
+    // For vertical connections (top-bottom), middle is at Y midpoint
+    if ((info.sourceSide === 'top' && info.targetSide === 'bottom') ||
+        (info.sourceSide === 'bottom' && info.targetSide === 'top')) {
+      return {
+        x: (sourceCenter.x + targetCenter.x) / 2,
+        y: (sourceCenter.y + targetCenter.y) / 2,
+      };
+    }
+    // For other connections, use the center
+    return {
+      x: (sourceCenter.x + targetCenter.x) / 2,
+      y: (sourceCenter.y + targetCenter.y) / 2,
+    };
+  };
+
+  /**
+   * Generate a path signature that groups edges that would visually overlap
+   * This considers:
+   * 1. The source and target sides (connection direction)
+   * 2. The middle segment position (where paths would overlap)
+   * 3. Whether edges are going in the same general direction
+   */
+  const getPathSignature = (info: EdgeInfo): string => {
+    const midSegment = getMiddleSegment(info);
+
+    // For horizontal connections, group by Y positions (edges at similar heights overlap)
+    if ((info.sourceSide === 'right' && info.targetSide === 'left') ||
+        (info.sourceSide === 'left' && info.targetSide === 'right')) {
+      // Group by: connection direction, midpoint X bucket, and source/target Y buckets
+      const minY = Math.min(info.sourceRect.y, info.targetRect.y);
+      const maxY = Math.max(info.sourceRect.y + info.sourceRect.height, info.targetRect.y + info.targetRect.height);
+      return `H-${quantize(midSegment.x)}-${quantize(minY)}-${quantize(maxY)}`;
+    }
+
+    // For vertical connections, group by X positions (edges at similar widths overlap)
+    if ((info.sourceSide === 'top' && info.targetSide === 'bottom') ||
+        (info.sourceSide === 'bottom' && info.targetSide === 'top')) {
+      const minX = Math.min(info.sourceRect.x, info.targetRect.x);
+      const maxX = Math.max(info.sourceRect.x + info.sourceRect.width, info.targetRect.x + info.targetRect.width);
+      return `V-${quantize(midSegment.y)}-${quantize(minX)}-${quantize(maxX)}`;
+    }
+
+    // For diagonal/corner connections, use more specific signature
+    return `${info.sourceSide}-${info.targetSide}-${quantize(midSegment.x)}-${quantize(midSegment.y)}`;
+  };
+
+  // Group edges by path signature
+  const pathGroups = new Map<string, EdgeInfo[]>();
+  for (const info of edgeInfos) {
+    const sig = getPathSignature(info);
+    if (!pathGroups.has(sig)) {
+      pathGroups.set(sig, []);
+    }
+    pathGroups.get(sig)!.push(info);
+  }
+
+  // Secondary overlap detection: check edges between groups for actual segment overlap
+  // This catches cases where edges have different signatures but still visually overlap
+  const OVERLAP_THRESHOLD = 30; // Edges within 30px are considered overlapping
+
+  const doSegmentsOverlap = (info1: EdgeInfo, info2: EdgeInfo): boolean => {
+    const mid1 = getMiddleSegment(info1);
+    const mid2 = getMiddleSegment(info2);
+
+    // Check if both edges use similar routing direction
+    if (info1.sourceSide !== info2.sourceSide || info1.targetSide !== info2.targetSide) {
+      return false;
+    }
+
+    // For horizontal edges, check if middle X positions are close
+    if ((info1.sourceSide === 'right' && info1.targetSide === 'left') ||
+        (info1.sourceSide === 'left' && info1.targetSide === 'right')) {
+      const xClose = Math.abs(mid1.x - mid2.x) < OVERLAP_THRESHOLD;
+      // Also check if Y ranges overlap (edges actually cross the same vertical space)
+      const y1Range = [Math.min(info1.sourceRect.y, info1.targetRect.y),
+                       Math.max(info1.sourceRect.y + info1.sourceRect.height, info1.targetRect.y + info1.targetRect.height)];
+      const y2Range = [Math.min(info2.sourceRect.y, info2.targetRect.y),
+                       Math.max(info2.sourceRect.y + info2.sourceRect.height, info2.targetRect.y + info2.targetRect.height)];
+      const yOverlap = y1Range[0] < y2Range[1] && y2Range[0] < y1Range[1];
+      return xClose && yOverlap;
+    }
+
+    // For vertical edges, check if middle Y positions are close
+    if ((info1.sourceSide === 'bottom' && info1.targetSide === 'top') ||
+        (info1.sourceSide === 'top' && info1.targetSide === 'bottom')) {
+      const yClose = Math.abs(mid1.y - mid2.y) < OVERLAP_THRESHOLD;
+      const x1Range = [Math.min(info1.sourceRect.x, info1.targetRect.x),
+                       Math.max(info1.sourceRect.x + info1.sourceRect.width, info1.targetRect.x + info1.targetRect.width)];
+      const x2Range = [Math.min(info2.sourceRect.x, info2.targetRect.x),
+                       Math.max(info2.sourceRect.x + info2.sourceRect.width, info2.targetRect.x + info2.targetRect.width)];
+      const xOverlap = x1Range[0] < x2Range[1] && x2Range[0] < x1Range[1];
+      return yClose && xOverlap;
+    }
+
+    // For other connections, check proximity
+    return Math.abs(mid1.x - mid2.x) < OVERLAP_THRESHOLD && Math.abs(mid1.y - mid2.y) < OVERLAP_THRESHOLD;
+  };
+
+  // Merge overlapping groups
+  const mergedGroups: EdgeInfo[][] = [];
+  const processedSignatures = new Set<string>();
+
+  for (const [sig1, group1] of pathGroups) {
+    if (processedSignatures.has(sig1)) continue;
+    processedSignatures.add(sig1);
+
+    const mergedGroup = [...group1];
+
+    // Check against other groups for overlap
+    for (const [sig2, group2] of pathGroups) {
+      if (sig1 === sig2 || processedSignatures.has(sig2)) continue;
+
+      // Check if any edge from group1 overlaps with any edge from group2
+      let hasOverlap = false;
+      for (const info1 of group1) {
+        for (const info2 of group2) {
+          if (doSegmentsOverlap(info1, info2)) {
+            hasOverlap = true;
+            break;
+          }
+        }
+        if (hasOverlap) break;
+      }
+
+      if (hasOverlap) {
+        mergedGroup.push(...group2);
+        processedSignatures.add(sig2);
+      }
+    }
+
+    mergedGroups.push(mergedGroup);
+  }
+
+  // Assign lane numbers to edges in each merged group
+  const laneMap = new Map<string, { lane: number; totalLanes: number }>();
+
+  for (const group of mergedGroups) {
+    if (group.length === 1) {
+      // Single edge, no lane needed
+      laneMap.set(group[0].edge.id, { lane: 0, totalLanes: 1 });
+    } else {
+      // Multiple edges with similar paths - assign lanes
+      // Sort by position to create consistent lane ordering (prevents edge crossings)
+      const sorted = [...group].sort((a, b) => {
+        const mid1 = getMiddleSegment(a);
+        const mid2 = getMiddleSegment(b);
+
+        // For horizontal edges, sort by source Y then target Y
+        if ((a.sourceSide === 'right' && a.targetSide === 'left') ||
+            (a.sourceSide === 'left' && a.targetSide === 'right')) {
+          const yDiff = a.sourceRect.y - b.sourceRect.y;
+          if (Math.abs(yDiff) > 10) return yDiff;
+          return a.targetRect.y - b.targetRect.y;
+        }
+
+        // For vertical edges, sort by source X then target X
+        if ((a.sourceSide === 'bottom' && a.targetSide === 'top') ||
+            (a.sourceSide === 'top' && a.targetSide === 'bottom')) {
+          const xDiff = a.sourceRect.x - b.sourceRect.x;
+          if (Math.abs(xDiff) > 10) return xDiff;
+          return a.targetRect.x - b.targetRect.x;
+        }
+
+        // Default: sort by midpoint position
+        return mid1.x - mid2.x || mid1.y - mid2.y;
+      });
+
+      sorted.forEach((info, idx) => {
+        laneMap.set(info.edge.id, { lane: idx, totalLanes: sorted.length });
+      });
+    }
+  }
+
+  // Build optimized edges with lane information
   const optimizedEdges: ServiceEdge[] = [];
 
   for (const info of edgeInfos) {
@@ -667,6 +922,9 @@ export function optimizeEdges(
 
     const sourceHandle = `${sourceSide}-${sourceIndex}`;
     const targetHandle = `${targetSide}-${targetIndex}`;
+
+    // Get lane assignment
+    const laneInfo = laneMap.get(edge.id) ?? { lane: 0, totalLanes: 1 };
 
     // Check for collisions with other nodes
     const sourcePos = getMultiHandlePosition(sourceRect, sourceHandle);
@@ -684,14 +942,25 @@ export function optimizeEdges(
       }
     }
 
-    // Use smoothstep for edges with collisions (routes around better)
-    const edgeType = hasCollision ? 'smoothstep' : (edge.type || 'default');
+    // Use smartOrthogonal for edges that need routing (collision or multiple lanes)
+    // Use default bezier for simple direct connections
+    let edgeType: string;
+    if (hasCollision || laneInfo.totalLanes > 1) {
+      edgeType = 'smartOrthogonal';
+    } else {
+      edgeType = edge.type || 'default';
+    }
 
     optimizedEdges.push({
       ...edge,
       sourceHandle,
       targetHandle,
       type: edgeType,
+      data: {
+        ...edge.data,
+        lane: laneInfo.lane,
+        totalLanes: laneInfo.totalLanes,
+      },
     });
   }
 
@@ -699,6 +968,134 @@ export function optimizeEdges(
   for (const edge of edges) {
     if (!optimizedEdges.find(e => e.id === edge.id)) {
       optimizedEdges.push(edge);
+    }
+  }
+
+  // ============================================
+  // VERIFICATION STEP: Detect and fix duplicate handle assignments
+  // ============================================
+  // This ensures no two edges share the same handle on the same node
+
+  // Group edges by source node + source handle
+  const sourceHandleGroups = new Map<string, ServiceEdge[]>();
+  for (const edge of optimizedEdges) {
+    if (!edge.sourceHandle) continue;
+    const key = `${edge.source}:${edge.sourceHandle}`;
+    if (!sourceHandleGroups.has(key)) {
+      sourceHandleGroups.set(key, []);
+    }
+    sourceHandleGroups.get(key)!.push(edge);
+  }
+
+  // Group edges by target node + target handle
+  const targetHandleGroups = new Map<string, ServiceEdge[]>();
+  for (const edge of optimizedEdges) {
+    if (!edge.targetHandle) continue;
+    const key = `${edge.target}:${edge.targetHandle}`;
+    if (!targetHandleGroups.has(key)) {
+      targetHandleGroups.set(key, []);
+    }
+    targetHandleGroups.get(key)!.push(edge);
+  }
+
+  // Track which handles are used for reassignment
+  const finalUsedSourceHandles = new Map<string, Set<number>>(); // "nodeId:side" -> Set<handleIndex>
+  const finalUsedTargetHandles = new Map<string, Set<number>>();
+
+  // Initialize with all current assignments
+  for (const edge of optimizedEdges) {
+    if (edge.sourceHandle) {
+      const [side, indexStr] = edge.sourceHandle.split('-');
+      const key = `${edge.source}:${side}`;
+      if (!finalUsedSourceHandles.has(key)) {
+        finalUsedSourceHandles.set(key, new Set());
+      }
+      finalUsedSourceHandles.get(key)!.add(parseInt(indexStr, 10));
+    }
+    if (edge.targetHandle) {
+      const [side, indexStr] = edge.targetHandle.split('-');
+      const key = `${edge.target}:${side}`;
+      if (!finalUsedTargetHandles.has(key)) {
+        finalUsedTargetHandles.set(key, new Set());
+      }
+      finalUsedTargetHandles.get(key)!.add(parseInt(indexStr, 10));
+    }
+  }
+
+  // Fix source handle conflicts
+  for (const [key, group] of sourceHandleGroups) {
+    if (group.length <= 1) continue; // No conflict
+
+    // Multiple edges using same source handle - reassign all but the first
+    const [nodeId, handleId] = [key.substring(0, key.lastIndexOf(':')), key.substring(key.lastIndexOf(':') + 1)];
+    const [side, currentIndexStr] = handleId.split('-');
+    const currentIndex = parseInt(currentIndexStr, 10);
+    const usedKey = `${nodeId}:${side}`;
+
+    // Keep first edge as-is, reassign others
+    for (let i = 1; i < group.length; i++) {
+      const edge = group[i];
+      const usedSet = finalUsedSourceHandles.get(usedKey) || new Set();
+
+      // Find next available handle on this side
+      let newIndex = -1;
+      for (let offset = 1; offset < HANDLES_PER_SIDE; offset++) {
+        const above = currentIndex + offset;
+        const below = currentIndex - offset;
+
+        if (above < HANDLES_PER_SIDE && !usedSet.has(above)) {
+          newIndex = above;
+          break;
+        }
+        if (below >= 0 && !usedSet.has(below)) {
+          newIndex = below;
+          break;
+        }
+      }
+
+      if (newIndex >= 0) {
+        edge.sourceHandle = `${side}-${newIndex}`;
+        usedSet.add(newIndex);
+        finalUsedSourceHandles.set(usedKey, usedSet);
+      }
+    }
+  }
+
+  // Fix target handle conflicts
+  for (const [key, group] of targetHandleGroups) {
+    if (group.length <= 1) continue; // No conflict
+
+    const [nodeId, handleId] = [key.substring(0, key.lastIndexOf(':')), key.substring(key.lastIndexOf(':') + 1)];
+    const [side, currentIndexStr] = handleId.split('-');
+    const currentIndex = parseInt(currentIndexStr, 10);
+    const usedKey = `${nodeId}:${side}`;
+
+    // Keep first edge as-is, reassign others
+    for (let i = 1; i < group.length; i++) {
+      const edge = group[i];
+      const usedSet = finalUsedTargetHandles.get(usedKey) || new Set();
+
+      // Find next available handle on this side
+      let newIndex = -1;
+      for (let offset = 1; offset < HANDLES_PER_SIDE; offset++) {
+        const above = currentIndex + offset;
+        const below = currentIndex - offset;
+
+        if (above < HANDLES_PER_SIDE && !usedSet.has(above)) {
+          newIndex = above;
+          break;
+        }
+        if (below >= 0 && !usedSet.has(below)) {
+          newIndex = below;
+          break;
+        }
+      }
+
+      if (newIndex >= 0) {
+        edge.targetHandle = `${side}-${newIndex}`;
+        usedSet.add(newIndex);
+        finalUsedTargetHandles.set(usedKey, usedSet);
+      }
     }
   }
 

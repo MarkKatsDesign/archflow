@@ -8,6 +8,7 @@ import {
   ArrowRight,
   Loader2,
   Route,
+  Cpu,
 } from 'lucide-react';
 import { useArchitectureStore } from '../../store/useArchitectureStore';
 import { applyAutoLayout, optimizeEdges, type LayoutOptions } from '../../utils/layoutEngine';
@@ -28,6 +29,7 @@ export function AutoLayoutPanel() {
   const [direction, setDirection] = useState<Direction>('TB');
   const [nodeSpacing, setNodeSpacing] = useState(80);
   const [layerSpacing, setLayerSpacing] = useState(100);
+  const [pcbMode, setPcbMode] = useState(false);
 
   const { nodes, edges, setNodes, setEdges } = useArchitectureStore();
 
@@ -58,7 +60,16 @@ export function AutoLayoutPanel() {
 
     setIsOptimizing(true);
     try {
-      const optimizedEdges = optimizeEdges(nodes, edges);
+      let optimizedEdges = optimizeEdges(nodes, edges);
+
+      // Apply PCB style if enabled
+      if (pcbMode) {
+        optimizedEdges = optimizedEdges.map(edge => ({
+          ...edge,
+          type: 'pcb',
+        }));
+      }
+
       setEdges(optimizedEdges);
     } catch (error) {
       console.error('Edge optimization failed:', error);
@@ -192,11 +203,44 @@ export function AutoLayoutPanel() {
               </div>
             </div>
 
+            {/* PCB Mode Toggle */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Cpu className="w-4 h-4 text-cyan-500" />
+                <div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    PCB Style
+                  </span>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    45° angles, sci-fi look
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setPcbMode(!pcbMode)}
+                className={`relative w-11 h-6 rounded-full transition-colors ${
+                  pcbMode
+                    ? 'bg-cyan-500'
+                    : 'bg-gray-200 dark:bg-slate-600'
+                }`}
+              >
+                <div
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
+                    pcbMode ? 'translate-x-5' : ''
+                  }`}
+                />
+              </button>
+            </div>
+
             {/* Optimize Edges Button */}
             <button
               onClick={handleOptimizeEdges}
               disabled={isOptimizing || edges.length === 0}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 rounded-lg font-medium shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                pcbMode
+                  ? 'bg-linear-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white'
+                  : 'bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200'
+              }`}
             >
               {isOptimizing ? (
                 <>
@@ -205,13 +249,15 @@ export function AutoLayoutPanel() {
                 </>
               ) : (
                 <>
-                  <Route className="w-4 h-4" />
-                  Optimize Edges
+                  {pcbMode ? <Cpu className="w-4 h-4" /> : <Route className="w-4 h-4" />}
+                  {pcbMode ? 'Apply PCB Routing' : 'Optimize Edges'}
                 </>
               )}
             </button>
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              Reroute edges to avoid overlapping nodes
+              {pcbMode
+                ? 'Apply circuit board style with 45° chamfered corners'
+                : 'Reroute edges to avoid overlapping nodes'}
             </p>
           </div>
 

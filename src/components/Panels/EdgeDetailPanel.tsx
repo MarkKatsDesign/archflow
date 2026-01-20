@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Tag, Zap, GitBranch, Trash2, Pencil } from "lucide-react";
+import { X, Tag, Zap, GitBranch, Trash2, Pencil, Route, Cpu } from "lucide-react";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import type { Edge } from "reactflow";
 import type { ArchNode } from "../../types/architecture";
@@ -139,6 +139,34 @@ function EdgeDetailPanelContent({
               <div className="text-xs opacity-75">Drag control points to adjust curve</div>
             </button>
             <button
+              onClick={() => handleEdgeTypeChange("smartOrthogonal")}
+              className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
+                edge.type === "smartOrthogonal"
+                  ? "bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-500 text-blue-700 dark:text-blue-300"
+                  : "bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+              }`}
+            >
+              <div className="flex items-center gap-2 font-medium">
+                <Route className="w-3 h-3" />
+                Smart Orthogonal
+              </div>
+              <div className="text-xs opacity-75">90° angles with lane routing</div>
+            </button>
+            <button
+              onClick={() => handleEdgeTypeChange("pcb")}
+              className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
+                edge.type === "pcb"
+                  ? "bg-cyan-50 dark:bg-cyan-900/30 border-2 border-cyan-500 text-cyan-700 dark:text-cyan-300"
+                  : "bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+              }`}
+            >
+              <div className="flex items-center gap-2 font-medium">
+                <Cpu className="w-3 h-3" />
+                PCB Style
+              </div>
+              <div className="text-xs opacity-75">45° angles, sci-fi circuit board look</div>
+            </button>
+            <button
               onClick={() => handleEdgeTypeChange("smoothstep")}
               className={`w-full px-3 py-2 text-left text-sm rounded-md transition-colors ${
                 edge.type === "smoothstep"
@@ -147,7 +175,7 @@ function EdgeDetailPanelContent({
               }`}
             >
               <div className="font-medium">Smooth Step</div>
-              <div className="text-xs opacity-75">Rounded right angles</div>
+              <div className="text-xs opacity-75">Rounded right angles (basic)</div>
             </button>
             <button
               onClick={() => handleEdgeTypeChange("straight")}
@@ -167,7 +195,7 @@ function EdgeDetailPanelContent({
         <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
           <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-md p-3">
             <p className="text-xs text-blue-800 dark:text-blue-300">
-              <strong>Tip:</strong> Use <strong>Editable Bezier</strong> to manually adjust curves by dragging control points. Use animated connections for active data flows.
+              <strong>Tip:</strong> Use <strong>Optimize Edges</strong> for automatic lane-based routing. <strong>PCB Style</strong> creates sci-fi circuit board aesthetics with 45° angles.
             </p>
           </div>
         </div>

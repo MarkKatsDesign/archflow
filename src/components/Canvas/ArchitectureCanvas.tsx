@@ -15,6 +15,8 @@ import CustomNode from "./CustomNode";
 import GroupNode from "./GroupNode";
 import AlignmentGuides from "./AlignmentGuides";
 import EditableBezierEdge from "./EditableBezierEdge";
+import SmartOrthogonalEdge from "./SmartOrthogonalEdge";
+import PCBEdge from "./PCBEdge";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import { useAlignmentGuides } from "../../hooks/useAlignmentGuides";
 import { useOnboardingStore } from "../../store/useOnboardingStore";
@@ -89,6 +91,8 @@ const nodeTypes = {
 
 const edgeTypes = {
   editableBezier: EditableBezierEdge,
+  smartOrthogonal: SmartOrthogonalEdge,
+  pcb: PCBEdge,
 };
 
 // Helper to find the innermost group at a given position
