@@ -484,32 +484,204 @@ function getMultiHandlePosition(
   }
 }
 
+// Debug flag for handle selection logging
+const DEBUG_HANDLE_SELECTION = true;
+
+function debugHandleLog(edgeLabel: string | undefined, ...args: unknown[]) {
+  if (DEBUG_HANDLE_SELECTION && edgeLabel) {
+    console.log(`[Handle:${edgeLabel}]`, ...args);
+  }
+}
+
+/**
+ * Calculate the estimated path cost for a given handle combination
+ * Lower cost = better (shorter, more direct path)
+ */
+function estimatePathCost(
+  sourceRect: { x: number; y: number; width: number; height: number },
+  targetRect: { x: number; y: number; width: number; height: number },
+  sourceSide: HandleSide,
+  targetSide: HandleSide,
+  obstacles: { x: number; y: number; width: number; height: number }[]
+): number {
+  const OBSTACLE_PADDING = 20;
+
+  // Get handle positions (center of each side)
+  const getHandlePos = (
+    rect: { x: number; y: number; width: number; height: number },
+    side: HandleSide
+  ): { x: number; y: number } => {
+    switch (side) {
+      case 'top': return { x: rect.x + rect.width / 2, y: rect.y };
+      case 'bottom': return { x: rect.x + rect.width / 2, y: rect.y + rect.height };
+      case 'left': return { x: rect.x, y: rect.y + rect.height / 2 };
+      case 'right': return { x: rect.x + rect.width, y: rect.y + rect.height / 2 };
+    }
+  };
+
+  const sourcePos = getHandlePos(sourceRect, sourceSide);
+  const targetPos = getHandlePos(targetRect, targetSide);
+
+  // Base cost: Manhattan distance
+  let cost = Math.abs(targetPos.x - sourcePos.x) + Math.abs(targetPos.y - sourcePos.y);
+
+  // Check for obstacles in the path corridor
+  const minX = Math.min(sourcePos.x, targetPos.x);
+  const maxX = Math.max(sourcePos.x, targetPos.x);
+  const minY = Math.min(sourcePos.y, targetPos.y);
+  const maxY = Math.max(sourcePos.y, targetPos.y);
+
+  for (const obs of obstacles) {
+    const obsLeft = obs.x - OBSTACLE_PADDING;
+    const obsRight = obs.x + obs.width + OBSTACLE_PADDING;
+    const obsTop = obs.y - OBSTACLE_PADDING;
+    const obsBottom = obs.y + obs.height + OBSTACLE_PADDING;
+
+    // Check if obstacle overlaps with path corridor
+    const overlapsX = !(obsRight < minX || obsLeft > maxX);
+    const overlapsY = !(obsBottom < minY || obsTop > maxY);
+
+    if (overlapsX && overlapsY) {
+      // Obstacle is in the way - estimate detour distance
+      // The detour is roughly going around the obstacle
+      const detourX = Math.max(0, Math.min(maxX, obsRight) - Math.max(minX, obsLeft));
+      const detourY = Math.max(0, Math.min(maxY, obsBottom) - Math.max(minY, obsTop));
+      cost += (detourX + detourY) * 2; // Double the blocked distance as penalty
+    }
+  }
+
+  // Penalty for "wrong direction" initial movement
+  // If handle faces away from target, add penalty
+  const dx = targetPos.x - sourcePos.x;
+  const dy = targetPos.y - sourcePos.y;
+
+  // Source handle direction penalty
+  if (sourceSide === 'left' && dx > 0) cost += 100; // Handle faces left but target is right
+  if (sourceSide === 'right' && dx < 0) cost += 100;
+  if (sourceSide === 'top' && dy > 0) cost += 100; // Handle faces up but target is below
+  if (sourceSide === 'bottom' && dy < 0) cost += 100;
+
+  // Target handle direction penalty (target should face toward source)
+  if (targetSide === 'left' && dx < 0) cost += 100;
+  if (targetSide === 'right' && dx > 0) cost += 100;
+  if (targetSide === 'top' && dy < 0) cost += 100;
+  if (targetSide === 'bottom' && dy > 0) cost += 100;
+
+  return cost;
+}
+
 /**
  * Determine the best side for connecting based on relative positions
+ * Now considers obstacles to pick handles that result in shorter paths
  */
 function getBestSide(
   sourceRect: { x: number; y: number; width: number; height: number },
-  targetRect: { x: number; y: number; width: number; height: number }
+  targetRect: { x: number; y: number; width: number; height: number },
+  obstacles: { x: number; y: number; width: number; height: number }[] = [],
+  edgeLabel?: string
 ): { sourceSide: HandleSide; targetSide: HandleSide } {
   const dx = (targetRect.x + targetRect.width / 2) - (sourceRect.x + sourceRect.width / 2);
   const dy = (targetRect.y + targetRect.height / 2) - (sourceRect.y + sourceRect.height / 2);
 
-  // Determine primary direction
+  debugHandleLog(edgeLabel, `=== Handle Selection ===`);
+  debugHandleLog(edgeLabel, `  Source: (${sourceRect.x.toFixed(0)}, ${sourceRect.y.toFixed(0)}) ${sourceRect.width}x${sourceRect.height}`);
+  debugHandleLog(edgeLabel, `  Target: (${targetRect.x.toFixed(0)}, ${targetRect.y.toFixed(0)}) ${targetRect.width}x${targetRect.height}`);
+  debugHandleLog(edgeLabel, `  Delta: dx=${dx.toFixed(0)}, dy=${dy.toFixed(0)}`);
+  debugHandleLog(edgeLabel, `  Obstacles count: ${obstacles.length}`);
+
+  // Default sides based on relative position
+  let defaultSourceSide: HandleSide;
+  let defaultTargetSide: HandleSide;
+
   if (Math.abs(dy) > Math.abs(dx)) {
     // Vertical connection
     if (dy > 0) {
-      return { sourceSide: 'bottom', targetSide: 'top' };
+      defaultSourceSide = 'bottom';
+      defaultTargetSide = 'top';
     } else {
-      return { sourceSide: 'top', targetSide: 'bottom' };
+      defaultSourceSide = 'top';
+      defaultTargetSide = 'bottom';
     }
   } else {
     // Horizontal connection
     if (dx > 0) {
-      return { sourceSide: 'right', targetSide: 'left' };
+      defaultSourceSide = 'right';
+      defaultTargetSide = 'left';
     } else {
-      return { sourceSide: 'left', targetSide: 'right' };
+      defaultSourceSide = 'left';
+      defaultTargetSide = 'right';
     }
   }
+
+  debugHandleLog(edgeLabel, `  Default sides: ${defaultSourceSide} → ${defaultTargetSide}`);
+
+  // If no obstacles, use default
+  if (obstacles.length === 0) {
+    debugHandleLog(edgeLabel, `  No obstacles, using default`);
+    return { sourceSide: defaultSourceSide, targetSide: defaultTargetSide };
+  }
+
+  // Try multiple handle combinations and pick the best one
+  const candidates: { sourceSide: HandleSide; targetSide: HandleSide; cost: number }[] = [];
+
+  // Primary candidates based on direction
+  const primaryCombinations: [HandleSide, HandleSide][] = [
+    [defaultSourceSide, defaultTargetSide], // Default
+  ];
+
+  // Alternative combinations for vertical connections
+  if (defaultSourceSide === 'top' || defaultSourceSide === 'bottom') {
+    // When going vertically, also consider horizontal sides if path goes sideways
+    if (dx < -50) {
+      // Target is significantly to the left
+      primaryCombinations.push(['left', 'left']);
+      primaryCombinations.push(['left', 'bottom']);
+      primaryCombinations.push(['left', 'top']);
+    }
+    if (dx > 50) {
+      // Target is significantly to the right
+      primaryCombinations.push(['right', 'right']);
+      primaryCombinations.push(['right', 'bottom']);
+      primaryCombinations.push(['right', 'top']);
+    }
+  }
+
+  // Alternative combinations for horizontal connections
+  if (defaultSourceSide === 'left' || defaultSourceSide === 'right') {
+    // When going horizontally, also consider vertical sides if path goes up/down
+    if (dy < -50) {
+      // Target is significantly above
+      primaryCombinations.push(['top', 'top']);
+      primaryCombinations.push(['top', 'left']);
+      primaryCombinations.push(['top', 'right']);
+    }
+    if (dy > 50) {
+      // Target is significantly below
+      primaryCombinations.push(['bottom', 'bottom']);
+      primaryCombinations.push(['bottom', 'left']);
+      primaryCombinations.push(['bottom', 'right']);
+    }
+  }
+
+  debugHandleLog(edgeLabel, `  Evaluating ${primaryCombinations.length} handle combinations:`);
+
+  // Calculate cost for each combination
+  for (const [srcSide, tgtSide] of primaryCombinations) {
+    const cost = estimatePathCost(sourceRect, targetRect, srcSide, tgtSide, obstacles);
+    candidates.push({ sourceSide: srcSide, targetSide: tgtSide, cost });
+    debugHandleLog(edgeLabel, `    ${srcSide} → ${tgtSide}: cost=${cost.toFixed(0)}`);
+  }
+
+  // Sort by cost and pick the best
+  candidates.sort((a, b) => a.cost - b.cost);
+
+  const best = candidates[0];
+  debugHandleLog(edgeLabel, `  ✓ Best: ${best.sourceSide} → ${best.targetSide} (cost=${best.cost.toFixed(0)})`);
+
+  return {
+    sourceSide: best.sourceSide,
+    targetSide: best.targetSide,
+  };
 }
 
 /**
@@ -561,6 +733,18 @@ export function optimizeEdges(
     });
   }
 
+  // Build obstacle list for path-aware handle selection
+  // Only include service nodes (not groups) as obstacles
+  const serviceNodeIds = new Set(
+    nodes
+      .filter(n => n.type === 'service')
+      .map(n => n.id)
+  );
+
+  const allObstacles = Array.from(nodeRects.entries())
+    .filter(([id]) => serviceNodeIds.has(id))
+    .map(([, rect]) => rect);
+
   // First pass: determine best sides for each edge
   interface EdgeInfo {
     edge: ServiceEdge;
@@ -578,7 +762,15 @@ export function optimizeEdges(
 
     if (!sourceRect || !targetRect) continue;
 
-    const { sourceSide, targetSide } = getBestSide(sourceRect, targetRect);
+    // Get obstacles excluding source and target nodes
+    const edgeObstacles = allObstacles.filter(obs =>
+      obs !== sourceRect && obs !== targetRect
+    );
+
+    // Get edge label for debugging
+    const edgeLabel = edge.label as string | undefined;
+
+    const { sourceSide, targetSide } = getBestSide(sourceRect, targetRect, edgeObstacles, edgeLabel);
 
     edgeInfos.push({
       edge,

@@ -1,0 +1,6318 @@
+{
+  "version": "1.0.0",
+  "exportDate": "2026-01-21T07:54:24.515Z",
+  "nodes": [
+    {
+      "id": "vpc-1768709382435",
+      "type": "group",
+      "position": {
+        "x": 414,
+        "y": 37
+      },
+      "data": {
+        "zone": {
+          "id": "vpc",
+          "name": "Virtual Private Cloud",
+          "shortName": "VPC",
+          "type": "vpc",
+          "provider": "AWS",
+          "description": "Isolated virtual network for AWS resources with full control over IP addressing, subnets, and routing",
+          "color": "#6366f1",
+          "borderStyle": "solid",
+          "backgroundColor": "rgba(99, 102, 241, 0.06)"
+        },
+        "label": "VPC"
+      },
+      "style": {
+        "width": 860,
+        "height": 1260
+      },
+      "width": 860,
+      "height": 1260,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 251.00908812159219,
+        "y": 403.2354157722914
+      },
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "network-zone-1768709764771",
+      "type": "group",
+      "position": {
+        "x": 130,
+        "y": 2887
+      },
+      "data": {
+        "zone": {
+          "id": "network-zone",
+          "name": "Network Zone",
+          "shortName": "CDN & Storage",
+          "type": "network-zone",
+          "provider": "Cloudflare",
+          "description": "Generic network boundary for organizing services",
+          "color": "#8b5cf6",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(139, 92, 246, 0.06)"
+        },
+        "label": "CDN & Storage"
+      },
+      "style": {
+        "width": 515,
+        "height": 194
+      },
+      "width": 515,
+      "height": 194,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1229.6988571477668,
+        "y": 396.0055056329612
+      },
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "network-zone-1768709631579",
+      "type": "group",
+      "position": {
+        "x": 770,
+        "y": 2887
+      },
+      "data": {
+        "zone": {
+          "id": "network-zone",
+          "name": "Network Zone",
+          "shortName": "Databases",
+          "type": "network-zone",
+          "provider": "SaaS",
+          "description": "Generic network boundary for organizing services",
+          "color": "#10b981",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(16, 185, 129, 0.06)"
+        },
+        "label": "Databases"
+      },
+      "style": {
+        "width": 513,
+        "height": 213
+      },
+      "width": 513,
+      "height": 213,
+      "selected": false,
+      "positionAbsolute": {
+        "x": -122.94494367038749,
+        "y": 698.1006732882482
+      },
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "network-zone-1768709799453",
+      "type": "group",
+      "position": {
+        "x": 293,
+        "y": 2197
+      },
+      "data": {
+        "zone": {
+          "id": "network-zone",
+          "name": "Network Zone",
+          "shortName": "Integrations",
+          "type": "network-zone",
+          "provider": "SaaS",
+          "description": "Generic network boundary for organizing services",
+          "color": "#22c55e",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(34, 197, 94, 0.06)"
+        },
+        "label": "Integrations"
+      },
+      "style": {
+        "width": 820,
+        "height": 497
+      },
+      "width": 820,
+      "height": 497,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 224.51571656651038,
+        "y": 1597
+      },
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "network-zone-1768712838138",
+      "type": "group",
+      "position": {
+        "x": 153,
+        "y": 1507
+      },
+      "data": {
+        "zone": {
+          "id": "network-zone",
+          "name": "Network Zone",
+          "shortName": "Monitoring",
+          "type": "network-zone",
+          "provider": "SaaS",
+          "description": "Generic network boundary for organizing services",
+          "color": "#14b8a6",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(20, 184, 166, 0.06)"
+        },
+        "label": "Monitoring"
+      },
+      "style": {
+        "width": 525,
+        "height": 217
+      },
+      "width": 525,
+      "height": 217,
+      "selected": false,
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "vercel-1768711814344",
+      "type": "service",
+      "position": {
+        "x": 112,
+        "y": 1912
+      },
+      "data": {
+        "service": {
+          "id": "vercel",
+          "name": "Vercel",
+          "shortName": "Vercel",
+          "category": "Frontend",
+          "provider": "Vercel",
+          "description": "Full-stack platform for frontend with serverless functions, edge runtime, and automatic CI/CD",
+          "color": "#3b82f6",
+          "compatibleWith": [
+            "supabase",
+            "planetscale",
+            "postgres-rds",
+            "mongodb-atlas",
+            "aws-s3",
+            "cloudflare-r2",
+            "auth0",
+            "clerk",
+            "algolia",
+            "stripe",
+            "resend"
+          ],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 50
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://vercel.com/pricing",
+            "confidence": "medium",
+            "assumptions": "Hobby plan is free forever for personal projects. Pro plan starts at $20/mo + additional usage; estimate assumes low-to-moderate usage."
+          },
+          "scalability": 5,
+          "complexity": 1,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "content-site",
+            "ecommerce"
+          ],
+          "documentation": "https://vercel.com/docs",
+          "tags": [
+            "serverless",
+            "hosting",
+            "ci-cd",
+            "edge",
+            "full-stack",
+            "api-routes"
+          ]
+        },
+        "label": "Vercel"
+      },
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "clerk-1768712351601",
+      "type": "service",
+      "position": {
+        "x": 23,
+        "y": 2397
+      },
+      "data": {
+        "service": {
+          "id": "clerk",
+          "name": "Clerk",
+          "shortName": "Clerk",
+          "category": "Auth",
+          "provider": "SaaS",
+          "description": "User management and authentication with pre-built UI components, MFA, organizations, and enterprise SSO",
+          "color": "#f97316",
+          "compatibleWith": [
+            "vercel",
+            "netlify"
+          ],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 350
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://clerk.com/pricing",
+            "confidence": "high",
+            "assumptions": "Free tier includes 10,000 MAUs."
+          },
+          "scalability": 4,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "content-site",
+            "b2b-saas",
+            "mobile-backend"
+          ],
+          "documentation": "https://clerk.com/docs",
+          "tags": [
+            "auth",
+            "user-management",
+            "ui-components",
+            "mfa",
+            "sso"
+          ]
+        },
+        "label": "Clerk"
+      },
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "public-subnet-1768709382435",
+      "type": "group",
+      "position": {
+        "x": 101,
+        "y": 55
+      },
+      "parentNode": "vpc-1768709382435",
+      "extent": "parent",
+      "data": {
+        "zone": {
+          "id": "public-subnet",
+          "name": "Public Subnet",
+          "shortName": "Public Subnet",
+          "type": "public-subnet",
+          "provider": "AWS",
+          "description": "Subnet with route to Internet Gateway for public-facing resources",
+          "color": "#22c55e",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(34, 197, 94, 0.08)"
+        },
+        "label": "Public Subnet"
+      },
+      "style": {
+        "width": 291,
+        "height": 481
+      },
+      "width": 291,
+      "height": 481,
+      "selected": false,
+      "dragging": false,
+      "positionAbsolute": {
+        "x": 359.76696620223254,
+        "y": 97.22330337977675
+      },
+      "resizing": false
+    },
+    {
+      "id": "private-subnet-1768709382435",
+      "type": "group",
+      "position": {
+        "x": 50,
+        "y": 725
+      },
+      "parentNode": "vpc-1768709382435",
+      "extent": "parent",
+      "data": {
+        "zone": {
+          "id": "private-subnet",
+          "name": "Private Subnet",
+          "shortName": "Private Subnet",
+          "type": "private-subnet",
+          "provider": "AWS",
+          "description": "Subnet without direct internet access for internal resources",
+          "color": "#3b82f6",
+          "borderStyle": "dashed",
+          "backgroundColor": "rgba(59, 130, 246, 0.08)"
+        },
+        "label": "Private Subnet"
+      },
+      "style": {
+        "width": 779,
+        "height": 469
+      },
+      "width": 779,
+      "height": 469,
+      "selected": false,
+      "dragging": false,
+      "positionAbsolute": {
+        "x": 387,
+        "y": 387.4207416839132
+      },
+      "resizing": false
+    },
+    {
+      "id": "cloudflare-cdn-1768711838310",
+      "type": "service",
+      "position": {
+        "x": 50,
+        "y": 50
+      },
+      "data": {
+        "service": {
+          "id": "cloudflare-cdn",
+          "name": "Cloudflare CDN",
+          "shortName": "CF CDN",
+          "category": "CDN",
+          "provider": "Cloudflare",
+          "description": "Global content delivery network with 330+ data centers, unmetered DDoS protection, and edge caching",
+          "color": "#6366f1",
+          "compatibleWith": [
+            "vercel",
+            "netlify",
+            "cloudflare-pages",
+            "aws-s3",
+            "cloudflare-r2"
+          ],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 200
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://www.cloudflare.com/en-au/application-services/products/cdn/#pricing",
+            "confidence": "medium",
+            "assumptions": "CDN included in all plans. Free tier available. Pro at $20/mo (annual), Business at $200/mo (annual). CDN usage does not incur per-GB fees; higher tiers add security and performance features."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "ecommerce",
+            "content-site",
+            "general"
+          ],
+          "documentation": "https://developers.cloudflare.com/cache/",
+          "tags": [
+            "cdn",
+            "cache",
+            "ddos-protection",
+            "edge"
+          ]
+        },
+        "label": "CF CDN"
+      },
+      "parentNode": "network-zone-1768709764771",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "cloudflare-r2-1768711855372",
+      "type": "service",
+      "position": {
+        "x": 320,
+        "y": 50
+      },
+      "data": {
+        "service": {
+          "id": "cloudflare-r2",
+          "name": "Cloudflare R2",
+          "shortName": "R2",
+          "category": "Storage",
+          "provider": "Cloudflare",
+          "description": "S3-compatible object storage with zero egress fees and simple per-GB and per-request pricing",
+          "color": "#06b6d4",
+          "compatibleWith": [
+            "cloudflare-workers",
+            "cloudflare-pages",
+            "vercel",
+            "netlify",
+            "aws-lambda",
+            "gcp-cloud-run"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 50
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://developers.cloudflare.com/r2/pricing",
+            "confidence": "high",
+            "assumptions": "Pricing includes $0.015/GB-month for Standard storage and $0.01/GB-month for Infrequent Access."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": [
+            "static-assets",
+            "edge-functions",
+            "saas-mvp",
+            "content-site",
+            "data-pipeline",
+            "backup"
+          ],
+          "documentation": "https://developers.cloudflare.com/r2",
+          "tags": [
+            "storage",
+            "object-storage",
+            "s3-compatible",
+            "cloudflare",
+            "zero-egress"
+          ]
+        },
+        "label": "R2"
+      },
+      "parentNode": "network-zone-1768709764771",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "neon-1768712471283",
+      "type": "service",
+      "position": {
+        "x": 50,
+        "y": 70
+      },
+      "data": {
+        "service": {
+          "id": "neon",
+          "name": "Neon",
+          "shortName": "Neon",
+          "category": "Database",
+          "provider": "SaaS",
+          "description": "Serverless Postgres with instant branching, autoscaling, scale-to-zero, and bottomless storage",
+          "color": "#10b981",
+          "compatibleWith": [
+            "vercel",
+            "netlify",
+            "cloudflare-pages",
+            "aws-lambda",
+            "railway",
+            "render"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 200
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://neon.tech/pricing",
+            "confidence": "high",
+            "assumptions": "Free plan includes 100 CU-hours per project, 0.5 GB storage."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "edge-functions",
+            "hobby-project",
+            "full-stack-app"
+          ],
+          "documentation": "https://neon.com/docs/introduction",
+          "tags": [
+            "postgres",
+            "serverless",
+            "branching",
+            "autoscaling",
+            "database"
+          ]
+        },
+        "label": "Neon"
+      },
+      "parentNode": "network-zone-1768709631579",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "mongodb-atlas-1768712488713",
+      "type": "service",
+      "position": {
+        "x": 320,
+        "y": 70
+      },
+      "data": {
+        "service": {
+          "id": "mongodb-atlas",
+          "name": "MongoDB Atlas",
+          "shortName": "MongoDB",
+          "category": "Database",
+          "provider": "SaaS",
+          "description": "Fully managed multi-cloud MongoDB database with automatic scaling, backups, vector search, and global distribution",
+          "color": "#10b981",
+          "compatibleWith": [
+            "vercel",
+            "netlify",
+            "aws-lambda",
+            "gcp-cloud-run",
+            "railway",
+            "render"
+          ],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 2000
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://www.mongodb.com/pricing",
+            "confidence": "high",
+            "assumptions": "Free (M0) tier includes 512MB storage."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "mobile-backend",
+            "ecommerce",
+            "real-time-app",
+            "general"
+          ],
+          "documentation": "https://www.mongodb.com/docs/atlas/",
+          "tags": [
+            "nosql",
+            "document-db",
+            "managed",
+            "serverless",
+            "vector-search"
+          ]
+        },
+        "label": "MongoDB"
+      },
+      "parentNode": "network-zone-1768709631579",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "stripe-1768712642903",
+      "type": "service",
+      "position": {
+        "x": 320,
+        "y": 70
+      },
+      "data": {
+        "service": {
+          "id": "stripe",
+          "name": "Stripe",
+          "shortName": "Stripe",
+          "category": "Integrations",
+          "provider": "SaaS",
+          "description": "Complete payment platform with APIs for online payments, subscriptions, invoicing, and financial services",
+          "color": "#22c55e",
+          "compatibleWith": [
+            "vercel",
+            "aws-lambda",
+            "aws-ecs",
+            "supabase"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 300
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://stripe.com/pricing",
+            "confidence": "high",
+            "assumptions": "2.9% + 30¢ for domestic cards."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "ecommerce"
+          ],
+          "documentation": "https://docs.stripe.com/",
+          "tags": [
+            "payments",
+            "subscriptions",
+            "checkout",
+            "billing"
+          ]
+        },
+        "label": "Stripe"
+      },
+      "parentNode": "network-zone-1768709799453",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 170,
+      "height": 100
+    },
+    {
+      "id": "resend-1768712655216",
+      "type": "service",
+      "position": {
+        "x": 590,
+        "y": 70
+      },
+      "data": {
+        "service": {
+          "id": "resend",
+          "name": "Resend",
+          "shortName": "Resend",
+          "category": "Integrations",
+          "provider": "SaaS",
+          "description": "Modern email API for developers with templates, analytics, multi-region delivery, and reliable infrastructure",
+          "color": "#22c55e",
+          "compatibleWith": [
+            "vercel",
+            "aws-lambda",
+            "supabase"
+          ],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 1200
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://resend.com/pricing",
+            "confidence": "high",
+            "assumptions": "Free tier includes 3,000 emails/month."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "ecommerce",
+            "general"
+          ],
+          "documentation": "https://resend.com/docs/introduction",
+          "tags": [
+            "email",
+            "transactional",
+            "notifications"
+          ]
+        },
+        "label": "Resend"
+      },
+      "parentNode": "network-zone-1768709799453",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 170,
+      "height": 100
+    },
+    {
+      "id": "pusher-1768712665162",
+      "type": "service",
+      "position": {
+        "x": 50,
+        "y": 70
+      },
+      "data": {
+        "service": {
+          "id": "pusher",
+          "name": "Pusher Channels",
+          "shortName": "Pusher",
+          "category": "Integrations",
+          "provider": "SaaS",
+          "description": "Real-time WebSocket communication platform for building live features like chat, notifications, collaboration, and multiplayer experiences",
+          "color": "#22c55e",
+          "compatibleWith": [
+            "vercel",
+            "netlify",
+            "aws-lambda",
+            "aws-ecs",
+            "gcp-cloud-run",
+            "railway",
+            "render"
+          ],
+          "costModel": {
+            "type": "tiered",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 500
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://pusher.com/channels/pricing",
+            "confidence": "high",
+            "assumptions": "Free Sandbox plan includes 200k messages/day."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": [
+            "real-time-app",
+            "saas-mvp",
+            "gaming",
+            "mobile-backend",
+            "full-stack-app"
+          ],
+          "documentation": "https://pusher.com/docs/",
+          "tags": [
+            "websockets",
+            "real-time",
+            "pub-sub",
+            "notifications",
+            "chat"
+          ]
+        },
+        "label": "Pusher"
+      },
+      "parentNode": "network-zone-1768709799453",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 170,
+      "height": 100
+    },
+    {
+      "id": "inngest-1768712782979",
+      "type": "service",
+      "position": {
+        "x": 610,
+        "y": 350
+      },
+      "data": {
+        "service": {
+          "id": "inngest",
+          "name": "Inngest",
+          "shortName": "Inngest",
+          "category": "Queue",
+          "provider": "SaaS",
+          "description": "Event-driven durable workflow engine with automatic retries, scheduling, fan-out patterns, and visual debugging",
+          "color": "#ec4899",
+          "compatibleWith": [
+            "vercel",
+            "netlify",
+            "cloudflare-pages",
+            "aws-lambda",
+            "railway",
+            "render"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 200
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://www.inngest.com/pricing",
+            "confidence": "high",
+            "assumptions": "Hobby plan includes 50k executions/month."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "event-driven",
+            "batch-jobs",
+            "workflow",
+            "microservices"
+          ],
+          "documentation": "https://www.inngest.com/docs",
+          "tags": [
+            "workflow",
+            "queue",
+            "durable-execution",
+            "event-driven",
+            "serverless",
+            "background-jobs"
+          ]
+        },
+        "label": "Inngest"
+      },
+      "parentNode": "network-zone-1768709799453",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "sentry-1768712920941",
+      "type": "service",
+      "position": {
+        "x": 50,
+        "y": 70
+      },
+      "data": {
+        "service": {
+          "id": "sentry",
+          "name": "Sentry",
+          "shortName": "Sentry",
+          "category": "Monitoring",
+          "provider": "SaaS",
+          "description": "Application monitoring and error tracking with real-time alerts, performance monitoring, release tracking, and detailed stack traces",
+          "color": "#14b8a6",
+          "compatibleWith": [
+            "vercel",
+            "netlify",
+            "aws-lambda",
+            "aws-ecs",
+            "gcp-cloud-run",
+            "railway",
+            "render",
+            "flyio"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 200
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://sentry.io/pricing/",
+            "confidence": "high",
+            "assumptions": "Developer plan includes 5k errors."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "ecommerce",
+            "mobile-backend",
+            "microservices",
+            "general"
+          ],
+          "documentation": "https://docs.sentry.io/",
+          "tags": [
+            "error-tracking",
+            "monitoring",
+            "apm",
+            "debugging",
+            "alerts"
+          ]
+        },
+        "label": "Sentry"
+      },
+      "parentNode": "network-zone-1768712838138",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 166,
+      "height": 100,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1296.9546740883782,
+        "y": 133.92880901273796
+      },
+      "dragging": false
+    },
+    {
+      "id": "posthog-1768712944441",
+      "type": "service",
+      "position": {
+        "x": 320,
+        "y": 70
+      },
+      "data": {
+        "service": {
+          "id": "posthog",
+          "name": "PostHog",
+          "shortName": "PostHog",
+          "category": "Analytics",
+          "provider": "SaaS",
+          "description": "Open-source product analytics platform with event tracking, session replay, feature flags, A/B testing, surveys, data pipelines, and AI tooling",
+          "color": "#84cc16",
+          "compatibleWith": [
+            "vercel",
+            "netlify",
+            "aws-lambda",
+            "gcp-cloud-run",
+            "railway",
+            "render"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 300
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://posthog.com/pricing",
+            "confidence": "high",
+            "assumptions": "Free tier includes 1M analytics events."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "ecommerce",
+            "mobile-backend",
+            "full-stack-app",
+            "general"
+          ],
+          "documentation": "https://posthog.com/docs",
+          "tags": [
+            "analytics",
+            "product-analytics",
+            "session-replay",
+            "feature-flags",
+            "ab-testing",
+            "open-source",
+            "surveys",
+            "pipelines",
+            "ai"
+          ]
+        },
+        "label": "PostHog"
+      },
+      "parentNode": "network-zone-1768712838138",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1303.9190785947474,
+        "y": 278.25889887340776
+      },
+      "dragging": false
+    },
+    {
+      "id": "aws-api-gateway-1768711925970",
+      "type": "service",
+      "position": {
+        "x": 50,
+        "y": 50
+      },
+      "data": {
+        "service": {
+          "id": "aws-api-gateway",
+          "name": "AWS API Gateway",
+          "shortName": "API Gateway",
+          "category": "Networking",
+          "provider": "AWS",
+          "description": "Fully managed service for building, deploying, and securing REST, HTTP, and WebSocket APIs at scale",
+          "color": "#0ea5e9",
+          "compatibleWith": [
+            "aws-lambda",
+            "aws-ecs",
+            "dynamodb",
+            "postgres-rds"
+          ],
+          "requiresOneOf": [
+            "aws-lambda",
+            "aws-ecs"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 500
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/api-gateway/pricing/",
+            "confidence": "high",
+            "assumptions": "Free tier includes 1M REST calls, 1M HTTP calls, 1M WebSocket messages per month for 12 months."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "mobile-backend",
+            "microservices",
+            "general"
+          ],
+          "documentation": "https://docs.aws.amazon.com/apigateway/",
+          "tags": [
+            "api",
+            "gateway",
+            "serverless",
+            "rest",
+            "websocket"
+          ]
+        },
+        "label": "API Gateway"
+      },
+      "parentNode": "public-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 168,
+      "height": 100
+    },
+    {
+      "id": "aws-alb-1768712011122",
+      "type": "service",
+      "position": {
+        "x": 70,
+        "y": 330
+      },
+      "data": {
+        "service": {
+          "id": "aws-alb",
+          "name": "AWS Application Load Balancer",
+          "shortName": "ALB",
+          "category": "Networking",
+          "provider": "AWS",
+          "description": "Layer 7 load balancer for HTTP/HTTPS traffic with advanced routing, SSL termination, and health checks",
+          "color": "#0ea5e9",
+          "compatibleWith": [
+            "aws-ecs",
+            "postgres-rds",
+            "redis-elasticache"
+          ],
+          "requiresOneOf": [
+            "aws-ecs"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 20,
+              "max": 250
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/elasticloadbalancing/pricing/",
+            "confidence": "high",
+            "assumptions": "ALB pricing includes $0.0225 per ALB-hour plus $0.008 per LCU-hour."
+          },
+          "scalability": 5,
+          "complexity": 4,
+          "managedLevel": "fully",
+          "useCases": [
+            "ecommerce",
+            "microservices",
+            "general"
+          ],
+          "documentation": "https://docs.aws.amazon.com/elasticloadbalancing/",
+          "tags": [
+            "load-balancer",
+            "networking",
+            "ssl",
+            "routing"
+          ]
+        },
+        "label": "ALB"
+      },
+      "parentNode": "public-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 168,
+      "height": 100
+    },
+    {
+      "id": "aws-lambda-1768712047163",
+      "type": "service",
+      "position": {
+        "x": 50,
+        "y": 70
+      },
+      "data": {
+        "service": {
+          "id": "aws-lambda",
+          "name": "AWS Lambda",
+          "shortName": "Lambda",
+          "category": "Backend",
+          "provider": "AWS",
+          "description": "Serverless compute service that runs code in response to events",
+          "color": "#8b5cf6",
+          "compatibleWith": [
+            "aws-s3",
+            "dynamodb",
+            "aws-sqs",
+            "aws-sns",
+            "postgres-rds",
+            "redis-elasticache"
+          ],
+          "incompatibleWith": [
+            "gcp-cloud-run"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 150
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/lambda/pricing/",
+            "confidence": "medium",
+            "assumptions": "Free tier includes 1M requests and 400k GB-seconds per month."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "mobile-backend",
+            "data-pipeline",
+            "general"
+          ],
+          "documentation": "https://docs.aws.amazon.com/lambda/",
+          "tags": [
+            "serverless",
+            "compute",
+            "event-driven"
+          ]
+        },
+        "label": "Lambda"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "aws-fargate-1768712064268",
+      "type": "service",
+      "position": {
+        "x": 590,
+        "y": 70
+      },
+      "data": {
+        "service": {
+          "id": "aws-fargate",
+          "name": "AWS Fargate",
+          "shortName": "Fargate",
+          "category": "Backend",
+          "provider": "AWS",
+          "description": "Serverless compute engine for containers, billed per vCPU-second, GB-second, and storage",
+          "color": "#8b5cf6",
+          "compatibleWith": [
+            "postgres-rds",
+            "dynamodb",
+            "redis-elasticache",
+            "aws-s3",
+            "aws-sqs",
+            "aws-sns",
+            "cloudflare-r2"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": false,
+            "estimatedMonthlyCost": {
+              "min": 10,
+              "max": 600
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/fargate/pricing/",
+            "confidence": "high",
+            "assumptions": "Pricing is based on vCPU-seconds, GB-seconds, and additional ephemeral storage beyond the included 20GB."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": [
+            "microservices",
+            "event-driven",
+            "batch-jobs",
+            "saas-mvp"
+          ],
+          "documentation": "https://docs.aws.amazon.com/ecs/",
+          "tags": [
+            "containers",
+            "serverless",
+            "fargate",
+            "compute"
+          ]
+        },
+        "label": "Fargate"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "aws-fargate-1768714328077",
+      "type": "service",
+      "position": {
+        "x": 320,
+        "y": 70
+      },
+      "data": {
+        "service": {
+          "id": "aws-fargate",
+          "name": "AWS Fargate",
+          "shortName": "Fargate",
+          "category": "Backend",
+          "provider": "AWS",
+          "description": "Serverless compute engine for containers, billed per vCPU-second, GB-second, and storage",
+          "color": "#8b5cf6",
+          "compatibleWith": [
+            "postgres-rds",
+            "dynamodb",
+            "redis-elasticache",
+            "aws-s3",
+            "aws-sqs",
+            "aws-sns",
+            "cloudflare-r2"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": false,
+            "estimatedMonthlyCost": {
+              "min": 10,
+              "max": 600
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/fargate/pricing/",
+            "confidence": "high",
+            "assumptions": "Pricing is based on vCPU-seconds, GB-seconds."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": [
+            "microservices",
+            "event-driven",
+            "batch-jobs",
+            "saas-mvp"
+          ],
+          "documentation": "https://docs.aws.amazon.com/ecs/",
+          "tags": [
+            "containers",
+            "serverless",
+            "fargate",
+            "compute"
+          ]
+        },
+        "label": "Fargate"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100
+    },
+    {
+      "id": "aws-sqs-1768712150198",
+      "type": "service",
+      "position": {
+        "x": 50,
+        "y": 330
+      },
+      "data": {
+        "service": {
+          "id": "aws-sqs",
+          "name": "AWS SQS",
+          "shortName": "SQS",
+          "category": "Queue",
+          "provider": "AWS",
+          "description": "Fully managed message queue service for decoupling and scaling microservices",
+          "color": "#ec4899",
+          "compatibleWith": [
+            "aws-lambda",
+            "aws-ecs",
+            "aws-sns"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 0,
+              "max": 50
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/sqs/pricing/",
+            "confidence": "high",
+            "assumptions": "Free tier includes 1M requests per month."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": [
+            "microservices",
+            "data-pipeline",
+            "saas-mvp",
+            "general"
+          ],
+          "documentation": "https://docs.aws.amazon.com/sqs/",
+          "tags": [
+            "queue",
+            "messaging",
+            "async",
+            "decoupling"
+          ]
+        },
+        "label": "SQS"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 515.0000000000001,
+        "y": 1095
+      },
+      "dragging": false
+    },
+    {
+      "id": "redis-elasticache-1768712128769",
+      "type": "service",
+      "position": {
+        "x": 590,
+        "y": 330
+      },
+      "data": {
+        "service": {
+          "id": "redis-elasticache",
+          "name": "AWS ElastiCache Redis",
+          "shortName": "ElastiCache",
+          "category": "Cache",
+          "provider": "AWS",
+          "description": "Fully managed Redis-compatible in-memory cache with support for serverless, on-demand nodes, clustering, and data tiering",
+          "color": "#f59e0b",
+          "compatibleWith": [
+            "aws-lambda",
+            "aws-ecs",
+            "postgres-rds"
+          ],
+          "requiresOneOf": [
+            "aws-lambda",
+            "aws-ecs"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 10,
+              "max": 1500
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/elasticache/pricing/",
+            "confidence": "high",
+            "assumptions": "Free Tier includes 750 hrs of cache.t3.micro."
+          },
+          "scalability": 5,
+          "complexity": 3,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "ecommerce",
+            "real-time-app",
+            "gaming",
+            "leaderboards"
+          ],
+          "documentation": "https://docs.aws.amazon.com/elasticache/",
+          "tags": [
+            "cache",
+            "redis",
+            "in-memory",
+            "managed",
+            "serverless"
+          ]
+        },
+        "label": "ElastiCache"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1050,
+        "y": 1097
+      },
+      "dragging": false
+    },
+    {
+      "id": "aws-secrets-manager-1768712182351",
+      "type": "service",
+      "position": {
+        "x": 320,
+        "y": 330
+      },
+      "data": {
+        "service": {
+          "id": "aws-secrets-manager",
+          "name": "AWS Secrets Manager",
+          "shortName": "Secrets Manager",
+          "category": "DevOps",
+          "provider": "AWS",
+          "description": "Securely store, rotate, and manage API keys, database credentials, and other secrets",
+          "color": "#64748b",
+          "compatibleWith": [
+            "aws-lambda",
+            "aws-ecs",
+            "postgres-rds"
+          ],
+          "costModel": {
+            "type": "usage",
+            "baseCost": 0,
+            "freeTierAvailable": true,
+            "estimatedMonthlyCost": {
+              "min": 1,
+              "max": 200
+            },
+            "lastUpdated": "2026-01",
+            "pricingUrl": "https://aws.amazon.com/secrets-manager/pricing",
+            "confidence": "high",
+            "assumptions": "Pricing is $0.40 per secret per month."
+          },
+          "scalability": 5,
+          "complexity": 2,
+          "managedLevel": "fully",
+          "useCases": [
+            "saas-mvp",
+            "ecommerce",
+            "microservices",
+            "general"
+          ],
+          "documentation": "https://docs.aws.amazon.com/secretsmanager/",
+          "tags": [
+            "security",
+            "secrets",
+            "encryption",
+            "rotation"
+          ]
+        },
+        "label": "Secrets Manager"
+      },
+      "parentNode": "private-subnet-1768709382435",
+      "extent": "parent",
+      "expandParent": true,
+      "width": 160,
+      "height": 100,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 784.9999999999998,
+        "y": 1094
+      },
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "source": "vercel-1768711814344",
+      "sourceHandle": "bottom-3",
+      "target": "cloudflare-cdn-1768711838310",
+      "targetHandle": "top-5",
+      "animated": false,
+      "id": "reactflow__edge-vercel-1768711814344bottom-cloudflare-cdn-1768711838310top",
+      "label": "Static Assets",
+      "selected": false,
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "vercel-1768711814344",
+        "targetNodeId": "cloudflare-cdn-1768711838310"
+      }
+    },
+    {
+      "source": "vercel-1768711814344",
+      "sourceHandle": "bottom-1",
+      "target": "clerk-1768712351601",
+      "targetHandle": "top-5",
+      "animated": false,
+      "id": "reactflow__edge-vercel-1768711814344right-clerk-1768712351601left",
+      "label": "Auth Token",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "vercel-1768711814344",
+        "targetNodeId": "clerk-1768712351601"
+      }
+    },
+    {
+      "source": "vercel-1768711814344",
+      "sourceHandle": "top-5",
+      "target": "aws-api-gateway-1768711925970",
+      "targetHandle": "bottom-6",
+      "animated": false,
+      "id": "reactflow__edge-vercel-1768711814344left-aws-api-gateway-1768711925970top",
+      "label": "API Calls",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "vercel-1768711814344",
+        "targetNodeId": "aws-api-gateway-1768711925970"
+      }
+    },
+    {
+      "source": "vercel-1768711814344",
+      "sourceHandle": "bottom-6",
+      "target": "pusher-1768712665162",
+      "targetHandle": "top-5",
+      "animated": true,
+      "id": "reactflow__edge-vercel-1768711814344bottom-pusher-1768712665162left",
+      "label": "WebSocket",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "vercel-1768711814344",
+        "targetNodeId": "pusher-1768712665162"
+      }
+    },
+    {
+      "source": "aws-api-gateway-1768711925970",
+      "sourceHandle": "bottom-1",
+      "target": "aws-lambda-1768712047163",
+      "targetHandle": "top-5",
+      "animated": false,
+      "id": "reactflow__edge-aws-api-gateway-1768711925970bottom-aws-lambda-1768712047163top",
+      "label": "Serverless Fn",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-api-gateway-1768711925970",
+        "targetNodeId": "aws-lambda-1768712047163"
+      }
+    },
+    {
+      "source": "aws-api-gateway-1768711925970",
+      "sourceHandle": "bottom-5",
+      "target": "aws-alb-1768712011122",
+      "targetHandle": "top-5",
+      "animated": false,
+      "id": "reactflow__edge-aws-api-gateway-1768711925970right-aws-alb-1768712011122left",
+      "label": "Microservices",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-api-gateway-1768711925970",
+        "targetNodeId": "aws-alb-1768712011122"
+      }
+    },
+    {
+      "source": "aws-alb-1768712011122",
+      "sourceHandle": "right-5",
+      "target": "aws-fargate-1768712064268",
+      "targetHandle": "left-1",
+      "animated": false,
+      "id": "reactflow__edge-aws-alb-1768712011122bottom-aws-fargate-1768712064268top",
+      "label": "HTTP/HTTPS",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-alb-1768712011122",
+        "targetNodeId": "aws-fargate-1768712064268"
+      }
+    },
+    {
+      "source": "aws-alb-1768712011122",
+      "sourceHandle": "bottom-5",
+      "target": "aws-fargate-1768714328077",
+      "targetHandle": "top-5",
+      "animated": false,
+      "id": "reactflow__edge-aws-alb-1768712011122bottom-aws-fargate-1768714328077top",
+      "label": "HTTP/HTTPS",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-alb-1768712011122",
+        "targetNodeId": "aws-fargate-1768714328077"
+      }
+    },
+    {
+      "source": "aws-lambda-1768712047163",
+      "sourceHandle": "bottom-7",
+      "target": "neon-1768712471283",
+      "targetHandle": "top-1",
+      "animated": false,
+      "id": "reactflow__edge-aws-lambda-1768712047163left-neon-1768712471283right",
+      "label": "SQL Queries",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 4,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-lambda-1768712047163",
+        "targetNodeId": "neon-1768712471283"
+      }
+    },
+    {
+      "source": "aws-lambda-1768712047163",
+      "sourceHandle": "right-1",
+      "target": "redis-elasticache-1768712128769",
+      "targetHandle": "left-1",
+      "animated": false,
+      "id": "reactflow__edge-aws-lambda-1768712047163bottom-redis-elasticache-1768712128769top",
+      "label": "Cache",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-lambda-1768712047163",
+        "targetNodeId": "redis-elasticache-1768712128769"
+      }
+    },
+    {
+      "source": "aws-lambda-1768712047163",
+      "sourceHandle": "bottom-4",
+      "target": "aws-sqs-1768712150198",
+      "targetHandle": "top-5",
+      "animated": true,
+      "id": "reactflow__edge-aws-lambda-1768712047163right-aws-sqs-1768712150198left",
+      "label": "Queue Jobs",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-lambda-1768712047163",
+        "targetNodeId": "aws-sqs-1768712150198"
+      }
+    },
+    {
+      "source": "aws-lambda-1768712047163",
+      "sourceHandle": "right-5",
+      "target": "aws-secrets-manager-1768712182351",
+      "targetHandle": "left-5",
+      "animated": false,
+      "id": "reactflow__edge-aws-lambda-1768712047163right-aws-secrets-manager-1768712182351left",
+      "label": "Credentials",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 2,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-lambda-1768712047163",
+        "targetNodeId": "aws-secrets-manager-1768712182351"
+      }
+    },
+    {
+      "source": "aws-lambda-1768712047163",
+      "sourceHandle": "bottom-5",
+      "target": "stripe-1768712642903",
+      "targetHandle": "top-1",
+      "animated": false,
+      "id": "reactflow__edge-aws-lambda-1768712047163bottom-stripe-1768712642903bottom",
+      "label": "Payments API",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 2,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-lambda-1768712047163",
+        "targetNodeId": "stripe-1768712642903"
+      },
+      "selected": true
+    },
+    {
+      "source": "aws-lambda-1768712047163",
+      "sourceHandle": "bottom-1",
+      "target": "sentry-1768712920941",
+      "targetHandle": "top-1",
+      "animated": true,
+      "id": "reactflow__edge-aws-lambda-1768712047163right-sentry-1768712920941left",
+      "label": "Error Logs",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 3,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-lambda-1768712047163",
+        "targetNodeId": "sentry-1768712920941"
+      }
+    },
+    {
+      "source": "sentry-1768712920941",
+      "sourceHandle": "bottom-5",
+      "target": "vercel-1768711814344",
+      "targetHandle": "top-6",
+      "animated": true,
+      "id": "reactflow__edge-sentry-1768712920941bottom-vercel-1768711814344top",
+      "label": "Error Tracking",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "sentry-1768712920941",
+        "targetNodeId": "vercel-1768711814344"
+      }
+    },
+    {
+      "source": "posthog-1768712944441",
+      "sourceHandle": "left-5",
+      "target": "vercel-1768711814344",
+      "targetHandle": "right-5",
+      "animated": true,
+      "id": "reactflow__edge-posthog-1768712944441bottom-vercel-1768711814344top",
+      "label": "Analytics Events",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "posthog-1768712944441",
+        "targetNodeId": "vercel-1768711814344"
+      }
+    },
+    {
+      "source": "aws-lambda-1768712047163",
+      "sourceHandle": "bottom-2",
+      "target": "posthog-1768712944441",
+      "targetHandle": "top-5",
+      "animated": true,
+      "id": "reactflow__edge-aws-lambda-1768712047163right-posthog-1768712944441left",
+      "label": "Backend Events",
+      "type": "pcb",
+      "data": {
+        "lane": 1,
+        "totalLanes": 3,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-lambda-1768712047163",
+        "targetNodeId": "posthog-1768712944441"
+      }
+    },
+    {
+      "source": "aws-fargate-1768712064268",
+      "sourceHandle": "bottom-4",
+      "target": "neon-1768712471283",
+      "targetHandle": "top-5",
+      "animated": false,
+      "id": "reactflow__edge-aws-fargate-1768712064268bottom-neon-1768712471283bottom",
+      "label": "SQL Queries",
+      "type": "pcb",
+      "data": {
+        "lane": 3,
+        "totalLanes": 4,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-fargate-1768712064268",
+        "targetNodeId": "neon-1768712471283"
+      }
+    },
+    {
+      "source": "aws-fargate-1768712064268",
+      "sourceHandle": "bottom-7",
+      "target": "mongodb-atlas-1768712488713",
+      "targetHandle": "top-5",
+      "animated": false,
+      "id": "reactflow__edge-aws-fargate-1768712064268left-mongodb-atlas-1768712488713right",
+      "label": "NoSQL Queries",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-fargate-1768712064268",
+        "targetNodeId": "mongodb-atlas-1768712488713"
+      }
+    },
+    {
+      "source": "aws-fargate-1768712064268",
+      "sourceHandle": "bottom-5",
+      "target": "redis-elasticache-1768712128769",
+      "targetHandle": "top-5",
+      "animated": false,
+      "id": "reactflow__edge-aws-fargate-1768712064268left-redis-elasticache-1768712128769right",
+      "label": "Cache",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-fargate-1768712064268",
+        "targetNodeId": "redis-elasticache-1768712128769"
+      }
+    },
+    {
+      "source": "aws-fargate-1768712064268",
+      "sourceHandle": "left-5",
+      "target": "aws-secrets-manager-1768712182351",
+      "targetHandle": "right-5",
+      "animated": false,
+      "id": "reactflow__edge-aws-fargate-1768712064268right-aws-secrets-manager-1768712182351right",
+      "label": "Credentials",
+      "type": "pcb",
+      "selected": false,
+      "data": {
+        "lane": 0,
+        "totalLanes": 2,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-fargate-1768712064268",
+        "targetNodeId": "aws-secrets-manager-1768712182351"
+      }
+    },
+    {
+      "source": "aws-fargate-1768712064268",
+      "sourceHandle": "bottom-1",
+      "target": "cloudflare-r2-1768711855372",
+      "targetHandle": "top-6",
+      "animated": false,
+      "id": "reactflow__edge-aws-fargate-1768712064268top-cloudflare-r2-1768711855372bottom",
+      "label": "Upload Files",
+      "type": "pcb",
+      "data": {
+        "lane": 2,
+        "totalLanes": 4,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-fargate-1768712064268",
+        "targetNodeId": "cloudflare-r2-1768711855372"
+      }
+    },
+    {
+      "source": "aws-fargate-1768712064268",
+      "sourceHandle": "bottom-2",
+      "target": "stripe-1768712642903",
+      "targetHandle": "top-5",
+      "animated": false,
+      "id": "reactflow__edge-aws-fargate-1768712064268bottom-stripe-1768712642903bottom",
+      "label": "Subscriptions",
+      "type": "pcb",
+      "selected": false,
+      "data": {
+        "lane": 1,
+        "totalLanes": 2,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-fargate-1768712064268",
+        "targetNodeId": "stripe-1768712642903"
+      }
+    },
+    {
+      "source": "sentry-1768712920941",
+      "sourceHandle": "right-5",
+      "target": "aws-fargate-1768712064268",
+      "targetHandle": "left-6",
+      "animated": true,
+      "id": "reactflow__edge-sentry-1768712920941left-aws-fargate-1768712064268left",
+      "label": "Exceptions",
+      "type": "pcb",
+      "data": {
+        "lane": 1,
+        "totalLanes": 2,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "sentry-1768712920941",
+        "targetNodeId": "aws-fargate-1768712064268"
+      },
+      "selected": false
+    },
+    {
+      "source": "aws-fargate-1768714328077",
+      "sourceHandle": "bottom-6",
+      "target": "mongodb-atlas-1768712488713",
+      "targetHandle": "top-1",
+      "animated": false,
+      "id": "reactflow__edge-aws-fargate-1768714328077bottom-mongodb-atlas-1768712488713bottom",
+      "label": "Document Store",
+      "type": "pcb",
+      "selected": false,
+      "data": {
+        "lane": 1,
+        "totalLanes": 4,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-fargate-1768714328077",
+        "targetNodeId": "mongodb-atlas-1768712488713"
+      }
+    },
+    {
+      "source": "aws-fargate-1768714328077",
+      "sourceHandle": "right-5",
+      "target": "redis-elasticache-1768712128769",
+      "targetHandle": "left-5",
+      "animated": false,
+      "id": "reactflow__edge-aws-fargate-1768714328077right-redis-elasticache-1768712128769bottom",
+      "label": "Session Store",
+      "type": "pcb",
+      "data": {
+        "lane": 1,
+        "totalLanes": 2,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-fargate-1768714328077",
+        "targetNodeId": "redis-elasticache-1768712128769"
+      }
+    },
+    {
+      "source": "cloudflare-r2-1768711855372",
+      "sourceHandle": "top-5",
+      "target": "aws-fargate-1768714328077",
+      "targetHandle": "bottom-5",
+      "animated": false,
+      "id": "reactflow__edge-cloudflare-r2-1768711855372bottom-aws-fargate-1768714328077top",
+      "label": "Media Storage",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "cloudflare-r2-1768711855372",
+        "targetNodeId": "aws-fargate-1768714328077"
+      }
+    },
+    {
+      "source": "aws-fargate-1768714328077",
+      "sourceHandle": "bottom-1",
+      "target": "sentry-1768712920941",
+      "targetHandle": "top-5",
+      "animated": true,
+      "id": "reactflow__edge-aws-fargate-1768714328077top-sentry-1768712920941bottom",
+      "label": "Exceptions",
+      "type": "pcb",
+      "data": {
+        "lane": 2,
+        "totalLanes": 3,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-fargate-1768714328077",
+        "targetNodeId": "sentry-1768712920941"
+      }
+    },
+    {
+      "source": "clerk-1768712351601",
+      "sourceHandle": "right-5",
+      "target": "neon-1768712471283",
+      "targetHandle": "left-5",
+      "animated": false,
+      "id": "reactflow__edge-clerk-1768712351601left-neon-1768712471283top",
+      "label": "User Data",
+      "selected": false,
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "clerk-1768712351601",
+        "targetNodeId": "neon-1768712471283"
+      }
+    },
+    {
+      "source": "aws-fargate-1768714328077",
+      "sourceHandle": "bottom-3",
+      "target": "aws-secrets-manager-1768712182351",
+      "targetHandle": "top-5",
+      "animated": false,
+      "id": "reactflow__edge-aws-fargate-1768714328077bottom-aws-secrets-manager-1768712182351right",
+      "label": "Credentials",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "inngest-1768712782979",
+            "x": 903,
+            "y": 2547,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-fargate-1768714328077",
+        "targetNodeId": "aws-secrets-manager-1768712182351"
+      }
+    },
+    {
+      "source": "aws-sqs-1768712150198",
+      "sourceHandle": "bottom-5",
+      "target": "inngest-1768712782979",
+      "targetHandle": "top-1",
+      "animated": true,
+      "id": "reactflow__edge-aws-sqs-1768712150198bottom-inngest-1768712782979bottom",
+      "label": "Workflow Trigger",
+      "type": "pcb",
+      "selected": false,
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "aws-sqs-1768712150198",
+        "targetNodeId": "inngest-1768712782979"
+      }
+    },
+    {
+      "source": "resend-1768712655216",
+      "sourceHandle": "bottom-5",
+      "target": "inngest-1768712782979",
+      "targetHandle": "top-5",
+      "animated": true,
+      "id": "reactflow__edge-resend-1768712655216bottom-inngest-1768712782979top",
+      "label": "Send Email",
+      "type": "pcb",
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-r2-1768711855372",
+            "x": 450,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "resend-1768712655216",
+        "targetNodeId": "inngest-1768712782979"
+      }
+    },
+    {
+      "source": "inngest-1768712782979",
+      "sourceHandle": "left-5",
+      "target": "cloudflare-r2-1768711855372",
+      "targetHandle": "right-5",
+      "animated": true,
+      "id": "reactflow__edge-inngest-1768712782979left-cloudflare-r2-1768711855372left",
+      "label": "File Processing",
+      "type": "pcb",
+      "selected": false,
+      "data": {
+        "lane": 0,
+        "totalLanes": 1,
+        "obstacles": [
+          {
+            "id": "vercel-1768711814344",
+            "x": 112,
+            "y": 1912,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "clerk-1768712351601",
+            "x": 23,
+            "y": 2397,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "cloudflare-cdn-1768711838310",
+            "x": 180,
+            "y": 2937,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "neon-1768712471283",
+            "x": 820,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "mongodb-atlas-1768712488713",
+            "x": 1090,
+            "y": 2957,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "stripe-1768712642903",
+            "x": 613,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "resend-1768712655216",
+            "x": 883,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "pusher-1768712665162",
+            "x": 343,
+            "y": 2267,
+            "width": 170,
+            "height": 100
+          },
+          {
+            "id": "sentry-1768712920941",
+            "x": 203,
+            "y": 1577,
+            "width": 166,
+            "height": 100
+          },
+          {
+            "id": "posthog-1768712944441",
+            "x": 473,
+            "y": 1577,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-api-gateway-1768711925970",
+            "x": 565,
+            "y": 142,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-alb-1768712011122",
+            "x": 585,
+            "y": 422,
+            "width": 168,
+            "height": 100
+          },
+          {
+            "id": "aws-lambda-1768712047163",
+            "x": 514,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768712064268",
+            "x": 1054,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-fargate-1768714328077",
+            "x": 784,
+            "y": 832,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-sqs-1768712150198",
+            "x": 514,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "redis-elasticache-1768712128769",
+            "x": 1054,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          },
+          {
+            "id": "aws-secrets-manager-1768712182351",
+            "x": 784,
+            "y": 1092,
+            "width": 160,
+            "height": 100
+          }
+        ],
+        "sourceNodeId": "inngest-1768712782979",
+        "targetNodeId": "cloudflare-r2-1768711855372"
+      }
+    }
+  ],
+  "metadata": {
+    "totalServices": 20,
+    "categories": [
+      "Frontend",
+      "Auth",
+      "CDN",
+      "Storage",
+      "Database",
+      "Integrations",
+      "Queue",
+      "Monitoring",
+      "Analytics",
+      "Networking",
+      "Backend",
+      "Cache",
+      "DevOps"
+    ],
+    "estimatedCost": {
+      "min": 51,
+      "max": 9400
+    }
+  }
+}
