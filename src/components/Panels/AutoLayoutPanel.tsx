@@ -60,7 +60,10 @@ export function AutoLayoutPanel() {
 
     setIsOptimizing(true);
     try {
-      let optimizedEdges = optimizeEdges(nodes, edges);
+      // Optimize edges with obstacle data if PCB mode is enabled
+      let optimizedEdges = optimizeEdges(nodes, edges, {
+        includePcbObstacles: pcbMode,
+      });
 
       // Apply PCB style if enabled
       if (pcbMode) {

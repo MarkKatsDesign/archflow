@@ -530,15 +530,23 @@ function getEdgeSortKey(
   }
 }
 
+export interface OptimizeEdgesOptions {
+  /** Include obstacle data for PCB-style routing */
+  includePcbObstacles?: boolean;
+}
+
 /**
  * Optimize edge routing with organic handle positioning
  * - Prevents edge crossings by ordering handles based on target positions
  * - Distributes edges evenly across the available handle slots
+ * - Optionally includes obstacle data for PCB-style routing
  */
 export function optimizeEdges(
   nodes: ArchNode[],
-  edges: ServiceEdge[]
+  edges: ServiceEdge[],
+  options: OptimizeEdgesOptions = {}
 ): ServiceEdge[] {
+  const { includePcbObstacles = false } = options;
   // Build a map of node rectangles with absolute positions
   const nodeRects = new Map<string, { x: number; y: number; width: number; height: number }>();
 
@@ -602,17 +610,18 @@ export function optimizeEdges(
   }
 
   // Track used handles per node+side to prevent duplicates
-  const usedSourceHandles = new Map<string, Set<number>>(); // "nodeId:side" -> Set of used indices
-  const usedTargetHandles = new Map<string, Set<number>>(); // "nodeId:side" -> Set of used indices
+  // UNIFIED MAP: tracks both source and target handle usage on each node
+  // This prevents incoming and outgoing edges from sharing the same physical handle
+  const usedHandles = new Map<string, Set<number>>(); // "nodeId:side" -> Set of used indices
 
   /**
    * Get the next available handle index, avoiding already used ones
+   * Uses a unified map that tracks both incoming and outgoing edges
    */
   function getAvailableHandle(
     nodeId: string,
     side: HandleSide,
-    preferredIndex: number,
-    usedHandles: Map<string, Set<number>>
+    preferredIndex: number
   ): number {
     const key = `${nodeId}:${side}`;
     if (!usedHandles.has(key)) {
@@ -673,8 +682,8 @@ export function optimizeEdges(
         preferredIndex = margin + Math.floor((idx / count) * availableSlots);
       }
 
-      // Get actual available handle (resolves conflicts)
-      const actualIndex = getAvailableHandle(nodeId, side, preferredIndex, usedSourceHandles);
+      // Get actual available handle (resolves conflicts using unified map)
+      const actualIndex = getAvailableHandle(nodeId, side, preferredIndex);
       sourceHandleMap.set(info.edge.id, actualIndex);
     });
   }
@@ -704,7 +713,8 @@ export function optimizeEdges(
         preferredIndex = margin + Math.floor((idx / count) * availableSlots);
       }
 
-      const actualIndex = getAvailableHandle(nodeId, side, preferredIndex, usedTargetHandles);
+      // Get actual available handle (resolves conflicts using unified map)
+      const actualIndex = getAvailableHandle(nodeId, side, preferredIndex);
       targetHandleMap.set(info.edge.id, actualIndex);
     });
   }
@@ -951,16 +961,48 @@ export function optimizeEdges(
       edgeType = edge.type || 'default';
     }
 
+    // Build edge data with optional obstacle information for PCB routing
+    const edgeData: Record<string, unknown> = {
+      ...edge.data,
+      lane: laneInfo.lane,
+      totalLanes: laneInfo.totalLanes,
+    };
+
+    // Include obstacle data for PCB-style routing
+    if (includePcbObstacles) {
+      // Convert node rectangles to obstacle format
+      // Only include SERVICE nodes (not groups/zones) and exclude source/target
+      const serviceNodeIds = new Set(
+        nodes
+          .filter(n => n.type === 'service')
+          .map(n => n.id)
+      );
+
+      const obstacles = Array.from(nodeRects.entries())
+        .filter(([id]) =>
+          id !== edge.source &&
+          id !== edge.target &&
+          serviceNodeIds.has(id)
+        )
+        .map(([id, rect]) => ({
+          id,
+          x: rect.x,
+          y: rect.y,
+          width: rect.width,
+          height: rect.height,
+        }));
+
+      edgeData.obstacles = obstacles;
+      edgeData.sourceNodeId = edge.source;
+      edgeData.targetNodeId = edge.target;
+    }
+
     optimizedEdges.push({
       ...edge,
       sourceHandle,
       targetHandle,
       type: edgeType,
-      data: {
-        ...edge.data,
-        lane: laneInfo.lane,
-        totalLanes: laneInfo.totalLanes,
-      },
+      data: edgeData,
     });
   }
 
@@ -975,67 +1017,70 @@ export function optimizeEdges(
   // VERIFICATION STEP: Detect and fix duplicate handle assignments
   // ============================================
   // This ensures no two edges share the same handle on the same node
+  // Uses a UNIFIED approach - tracks all handle usage per node+side regardless of direction
 
-  // Group edges by source node + source handle
-  const sourceHandleGroups = new Map<string, ServiceEdge[]>();
+  // Build unified handle groups: group all edges by node+handle (both source and target)
+  // Key format: "nodeId:handleId" -> array of { edge, isSource: boolean }
+  const unifiedHandleGroups = new Map<string, { edge: ServiceEdge; isSource: boolean }[]>();
+
   for (const edge of optimizedEdges) {
-    if (!edge.sourceHandle) continue;
-    const key = `${edge.source}:${edge.sourceHandle}`;
-    if (!sourceHandleGroups.has(key)) {
-      sourceHandleGroups.set(key, []);
+    // Track source handle usage
+    if (edge.sourceHandle) {
+      const key = `${edge.source}:${edge.sourceHandle}`;
+      if (!unifiedHandleGroups.has(key)) {
+        unifiedHandleGroups.set(key, []);
+      }
+      unifiedHandleGroups.get(key)!.push({ edge, isSource: true });
     }
-    sourceHandleGroups.get(key)!.push(edge);
+    // Track target handle usage
+    if (edge.targetHandle) {
+      const key = `${edge.target}:${edge.targetHandle}`;
+      if (!unifiedHandleGroups.has(key)) {
+        unifiedHandleGroups.set(key, []);
+      }
+      unifiedHandleGroups.get(key)!.push({ edge, isSource: false });
+    }
   }
 
-  // Group edges by target node + target handle
-  const targetHandleGroups = new Map<string, ServiceEdge[]>();
-  for (const edge of optimizedEdges) {
-    if (!edge.targetHandle) continue;
-    const key = `${edge.target}:${edge.targetHandle}`;
-    if (!targetHandleGroups.has(key)) {
-      targetHandleGroups.set(key, []);
-    }
-    targetHandleGroups.get(key)!.push(edge);
-  }
-
-  // Track which handles are used for reassignment
-  const finalUsedSourceHandles = new Map<string, Set<number>>(); // "nodeId:side" -> Set<handleIndex>
-  const finalUsedTargetHandles = new Map<string, Set<number>>();
+  // Track which handles are used for reassignment (unified per node+side)
+  const finalUsedHandles = new Map<string, Set<number>>(); // "nodeId:side" -> Set<handleIndex>
 
   // Initialize with all current assignments
   for (const edge of optimizedEdges) {
     if (edge.sourceHandle) {
       const [side, indexStr] = edge.sourceHandle.split('-');
       const key = `${edge.source}:${side}`;
-      if (!finalUsedSourceHandles.has(key)) {
-        finalUsedSourceHandles.set(key, new Set());
+      if (!finalUsedHandles.has(key)) {
+        finalUsedHandles.set(key, new Set());
       }
-      finalUsedSourceHandles.get(key)!.add(parseInt(indexStr, 10));
+      finalUsedHandles.get(key)!.add(parseInt(indexStr, 10));
     }
     if (edge.targetHandle) {
       const [side, indexStr] = edge.targetHandle.split('-');
       const key = `${edge.target}:${side}`;
-      if (!finalUsedTargetHandles.has(key)) {
-        finalUsedTargetHandles.set(key, new Set());
+      if (!finalUsedHandles.has(key)) {
+        finalUsedHandles.set(key, new Set());
       }
-      finalUsedTargetHandles.get(key)!.add(parseInt(indexStr, 10));
+      finalUsedHandles.get(key)!.add(parseInt(indexStr, 10));
     }
   }
 
-  // Fix source handle conflicts
-  for (const [key, group] of sourceHandleGroups) {
+  // Fix handle conflicts (unified - handles both source and target conflicts together)
+  for (const [key, group] of unifiedHandleGroups) {
     if (group.length <= 1) continue; // No conflict
 
-    // Multiple edges using same source handle - reassign all but the first
-    const [nodeId, handleId] = [key.substring(0, key.lastIndexOf(':')), key.substring(key.lastIndexOf(':') + 1)];
+    // Multiple edges using same handle on same node - reassign all but the first
+    const colonIdx = key.lastIndexOf(':');
+    const nodeId = key.substring(0, colonIdx);
+    const handleId = key.substring(colonIdx + 1);
     const [side, currentIndexStr] = handleId.split('-');
     const currentIndex = parseInt(currentIndexStr, 10);
     const usedKey = `${nodeId}:${side}`;
 
     // Keep first edge as-is, reassign others
     for (let i = 1; i < group.length; i++) {
-      const edge = group[i];
-      const usedSet = finalUsedSourceHandles.get(usedKey) || new Set();
+      const { edge, isSource } = group[i];
+      const usedSet = finalUsedHandles.get(usedKey) || new Set();
 
       // Find next available handle on this side
       let newIndex = -1;
@@ -1054,47 +1099,14 @@ export function optimizeEdges(
       }
 
       if (newIndex >= 0) {
-        edge.sourceHandle = `${side}-${newIndex}`;
-        usedSet.add(newIndex);
-        finalUsedSourceHandles.set(usedKey, usedSet);
-      }
-    }
-  }
-
-  // Fix target handle conflicts
-  for (const [key, group] of targetHandleGroups) {
-    if (group.length <= 1) continue; // No conflict
-
-    const [nodeId, handleId] = [key.substring(0, key.lastIndexOf(':')), key.substring(key.lastIndexOf(':') + 1)];
-    const [side, currentIndexStr] = handleId.split('-');
-    const currentIndex = parseInt(currentIndexStr, 10);
-    const usedKey = `${nodeId}:${side}`;
-
-    // Keep first edge as-is, reassign others
-    for (let i = 1; i < group.length; i++) {
-      const edge = group[i];
-      const usedSet = finalUsedTargetHandles.get(usedKey) || new Set();
-
-      // Find next available handle on this side
-      let newIndex = -1;
-      for (let offset = 1; offset < HANDLES_PER_SIDE; offset++) {
-        const above = currentIndex + offset;
-        const below = currentIndex - offset;
-
-        if (above < HANDLES_PER_SIDE && !usedSet.has(above)) {
-          newIndex = above;
-          break;
+        // Update the appropriate handle based on whether this edge uses the node as source or target
+        if (isSource) {
+          edge.sourceHandle = `${side}-${newIndex}`;
+        } else {
+          edge.targetHandle = `${side}-${newIndex}`;
         }
-        if (below >= 0 && !usedSet.has(below)) {
-          newIndex = below;
-          break;
-        }
-      }
-
-      if (newIndex >= 0) {
-        edge.targetHandle = `${side}-${newIndex}`;
         usedSet.add(newIndex);
-        finalUsedTargetHandles.set(usedKey, usedSet);
+        finalUsedHandles.set(usedKey, usedSet);
       }
     }
   }
