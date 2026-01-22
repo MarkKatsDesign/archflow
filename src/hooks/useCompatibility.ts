@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useArchitectureStore } from '../store/useArchitectureStore';
 import { isServiceNode } from '../types/architecture';
 import type { Service } from '../types/service';
+import { services as allServiceDefinitions } from '../data/services';
 
 export interface CompatibilityStatus {
   isCompatible: boolean;
@@ -16,6 +17,11 @@ const FULL_STACK_PLATFORMS = new Set([
   'netlify',
   'cloudflare-pages',
 ]);
+
+// Create a lookup map for current service definitions
+const serviceDefinitionMap = new Map(
+  allServiceDefinitions.map((s) => [s.id, s])
+);
 
 export function useCompatibility() {
   const { nodes } = useArchitectureStore();
@@ -116,14 +122,19 @@ export function useCompatibility() {
     );
 
     canvasServices.forEach((service) => {
+      // Look up the CURRENT service definition to get up-to-date requiresOneOf values
+      // This ensures imported JSON files with stale requirements still validate correctly
+      const currentDefinition = serviceDefinitionMap.get(service.id);
+      const requiresOneOf = currentDefinition?.requiresOneOf ?? service.requiresOneOf;
+
       // Check if service requires at least one of certain services
-      if (service.requiresOneOf && service.requiresOneOf.length > 0) {
-        const hasRequired = service.requiresOneOf.some((reqId: string) =>
+      if (requiresOneOf && requiresOneOf.length > 0) {
+        const hasRequired = requiresOneOf.some((reqId: string) =>
           canvasServiceIds.has(reqId)
         );
 
         // Also check if we have a full-stack platform that can satisfy backend requirements
-        const requiresBackend = service.requiresOneOf.some((reqId: string) => {
+        const requiresBackend = requiresOneOf.some((reqId: string) => {
           const reqService = canvasServices.find((s) => s.id === reqId);
           return reqService?.category === 'Backend';
         });
@@ -132,7 +143,7 @@ export function useCompatibility() {
 
         if (!hasRequired && !canBeMetByFullStack) {
           warnings.push(
-            `${service.name} requires at least one of: ${service.requiresOneOf.join(', ')}`
+            `${service.name} requires at least one of: ${requiresOneOf.join(', ')}`
           );
         }
       }
