@@ -366,10 +366,11 @@ function findBestMidpoint(
   isHorizontalFirst: boolean,
   obstacles: ObstacleRect[],
   debugLabel?: string,
+  corridorOffset: number = 0,
 ): MidpointResult {
   debugLog(
     debugLabel,
-    `findBestMidpoint: source=(${source.x.toFixed(0)},${source.y.toFixed(0)}) target=(${target.x.toFixed(0)},${target.y.toFixed(0)}) defaultMid=${defaultMid.toFixed(0)} isHorizontalFirst=${isHorizontalFirst}`,
+    `findBestMidpoint: source=(${source.x.toFixed(0)},${source.y.toFixed(0)}) target=(${target.x.toFixed(0)},${target.y.toFixed(0)}) defaultMid=${defaultMid.toFixed(0)} isHorizontalFirst=${isHorizontalFirst} corridorOffset=${corridorOffset.toFixed(0)}`,
   );
   debugLog(debugLabel, `  Total obstacles: ${obstacles.length}`);
 
@@ -598,7 +599,8 @@ function findBestMidpoint(
     const goingRight = target.x > source.x;
 
     // Escape X should be past ALL obstacles in the travel direction
-    const escapeX = goingRight ? allObstacleBounds.right + 20 : allObstacleBounds.left - 20;
+    // Add corridorOffset to spread edges across different corridors
+    const escapeX = (goingRight ? allObstacleBounds.right + 20 : allObstacleBounds.left - 20) + corridorOffset;
 
     // For the vertical segment, we need to clear obstacles
     // Check if we can route: source → escapeX → target
@@ -631,8 +633,8 @@ function findBestMidpoint(
     }
 
     // If direct U-path is blocked, try routing AROUND all obstacles
-    // Go further out to ensure clearance
-    const farEscapeX = goingRight ? allObstacleBounds.right + 50 : allObstacleBounds.left - 50;
+    // Go further out to ensure clearance, add corridorOffset for separation
+    const farEscapeX = (goingRight ? allObstacleBounds.right + 50 : allObstacleBounds.left - 50) + corridorOffset;
     const farWaypoint1: Point = { x: farEscapeX, y: source.y };
     const farWaypoint2: Point = { x: farEscapeX, y: target.y };
 
@@ -662,7 +664,7 @@ function findBestMidpoint(
     }
 
     // Try the opposite direction if same direction is completely blocked
-    const oppositeEscapeX = goingRight ? allObstacleBounds.left - 50 : allObstacleBounds.right + 50;
+    const oppositeEscapeX = (goingRight ? allObstacleBounds.left - 50 : allObstacleBounds.right + 50) + corridorOffset;
     const oppWaypoint1: Point = { x: oppositeEscapeX, y: source.y };
     const oppWaypoint2: Point = { x: oppositeEscapeX, y: target.y };
 
@@ -751,7 +753,7 @@ function findBestMidpoint(
       }
 
       // Try with even further escape X
-      const veryFarEscapeX = goingRight ? allObstacleBounds.right + 100 : allObstacleBounds.left - 100;
+      const veryFarEscapeX = (goingRight ? allObstacleBounds.right + 100 : allObstacleBounds.left - 100) + corridorOffset;
       for (const { escapeY, label } of escapeDirections) {
         const esc1: Point = { x: source.x, y: escapeY };
         const esc2: Point = { x: veryFarEscapeX, y: escapeY };
@@ -843,7 +845,7 @@ function findBestMidpoint(
     // U-path: source → (source.x, escapeY) → (target.x, escapeY) → target
     const goingDown = target.y > source.y;
 
-    const escapeY = goingDown ? allObstacleBounds.bottom + 20 : allObstacleBounds.top - 20;
+    const escapeY = (goingDown ? allObstacleBounds.bottom + 20 : allObstacleBounds.top - 20) + corridorOffset;
 
     const waypoint1: Point = { x: source.x, y: escapeY };
     const waypoint2: Point = { x: target.x, y: escapeY };
@@ -874,7 +876,7 @@ function findBestMidpoint(
     }
 
     // Try further out
-    const farEscapeY = goingDown ? allObstacleBounds.bottom + 50 : allObstacleBounds.top - 50;
+    const farEscapeY = (goingDown ? allObstacleBounds.bottom + 50 : allObstacleBounds.top - 50) + corridorOffset;
     const farWaypoint1: Point = { x: source.x, y: farEscapeY };
     const farWaypoint2: Point = { x: target.x, y: farEscapeY };
 
@@ -904,7 +906,7 @@ function findBestMidpoint(
     }
 
     // Try opposite direction
-    const oppositeEscapeY = goingDown ? allObstacleBounds.top - 50 : allObstacleBounds.bottom + 50;
+    const oppositeEscapeY = (goingDown ? allObstacleBounds.top - 50 : allObstacleBounds.bottom + 50) + corridorOffset;
     const oppWaypoint1: Point = { x: source.x, y: oppositeEscapeY };
     const oppWaypoint2: Point = { x: target.x, y: oppositeEscapeY };
 
@@ -1071,8 +1073,8 @@ function findBestMidpoint(
 
       if (gapSize >= 40) {
         // Try routing with an escape X past obstacles
-        // Use ALL obstacle bounds to find escape point
-        const escapeX = goingRight ? allObstacleBounds.right + 30 : allObstacleBounds.left - 30;
+        // Use ALL obstacle bounds to find escape point, add corridorOffset for separation
+        const escapeX = (goingRight ? allObstacleBounds.right + 30 : allObstacleBounds.left - 30) + corridorOffset;
 
         // 4-segment path: source → (escapeX, source.y) → (escapeX, gapY) → (target.x, gapY) → target
         const wp1: Point = { x: escapeX, y: source.y };
@@ -1132,8 +1134,8 @@ function findBestMidpoint(
       const gapSize = gap.end - gap.start;
 
       if (gapSize >= 40) {
-        // Try routing with an escape Y past obstacles
-        const escapeY = goingDown ? allObstacleBounds.bottom + 30 : allObstacleBounds.top - 30;
+        // Try routing with an escape Y past obstacles, add corridorOffset for separation
+        const escapeY = (goingDown ? allObstacleBounds.bottom + 30 : allObstacleBounds.top - 30) + corridorOffset;
 
         // 4-segment path: source → (source.x, escapeY) → (gapX, escapeY) → (gapX, target.y) → target
         const wp1: Point = { x: source.x, y: escapeY };
@@ -1250,10 +1252,11 @@ function generateZPath(
   isHorizontalFirst: boolean,
   obstacles: ObstacleRect[],
   debugLabel?: string,
+  corridorOffset: number = 0,
 ): Point[] {
   debugLog(
     debugLabel,
-    `generateZPath: midValue=${midValue.toFixed(0)} isHorizontalFirst=${isHorizontalFirst}`,
+    `generateZPath: midValue=${midValue.toFixed(0)} isHorizontalFirst=${isHorizontalFirst} corridorOffset=${corridorOffset.toFixed(0)}`,
   );
 
   // Try to find a better midpoint that avoids obstacles entirely
@@ -1264,6 +1267,7 @@ function generateZPath(
     isHorizontalFirst,
     obstacles,
     debugLabel,
+    corridorOffset,
   );
   const {
     midValue: optimizedMid,
@@ -1628,6 +1632,17 @@ function calculatePCBPath(
   const laneOffset =
     totalLanes > 1 ? (lane - (totalLanes - 1) / 2) * LANE_SPACING : 0;
 
+  // Calculate corridor offset to spread edges across different routing corridors
+  const corridorOffset = calculateCorridorOffset(
+    lane,
+    totalLanes,
+    debugLabel,
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+  );
+
   const source: Point = { x: sourceX, y: sourceY };
   const target: Point = { x: targetX, y: targetY };
 
@@ -1639,11 +1654,11 @@ function calculatePCBPath(
     (sourceSide === "right" && targetSide === "left") ||
     (sourceSide === "left" && targetSide === "right")
   ) {
-    const midX = (sourceX + targetX) / 2 + laneOffset;
+    const midX = (sourceX + targetX) / 2 + laneOffset + corridorOffset;
     connectionType = "HORIZONTAL (right-left)";
     debugLog(
       debugLabel,
-      `  Connection type: ${connectionType}, midX=${midX.toFixed(0)}`,
+      `  Connection type: ${connectionType}, midX=${midX.toFixed(0)}, corridorOffset=${corridorOffset.toFixed(0)}`,
     );
     waypoints = generateZPath(
       source,
@@ -1652,6 +1667,7 @@ function calculatePCBPath(
       true,
       obstacles,
       debugLabel,
+      corridorOffset,
     );
   }
   // Vertical connections (bottom-top or top-bottom)
@@ -1659,11 +1675,11 @@ function calculatePCBPath(
     (sourceSide === "bottom" && targetSide === "top") ||
     (sourceSide === "top" && targetSide === "bottom")
   ) {
-    const midY = (sourceY + targetY) / 2 + laneOffset;
+    const midY = (sourceY + targetY) / 2 + laneOffset + corridorOffset;
     connectionType = "VERTICAL (bottom-top)";
     debugLog(
       debugLabel,
-      `  Connection type: ${connectionType}, midY=${midY.toFixed(0)}`,
+      `  Connection type: ${connectionType}, midY=${midY.toFixed(0)}, corridorOffset=${corridorOffset.toFixed(0)}`,
     );
     waypoints = generateZPath(
       source,
@@ -1672,30 +1688,33 @@ function calculatePCBPath(
       false,
       obstacles,
       debugLabel,
+      corridorOffset,
     );
   }
   // L-shaped connections
   else if (sourceSide === "right" || sourceSide === "left") {
     connectionType = "L-SHAPE (horizontal first)";
-    debugLog(debugLabel, `  Connection type: ${connectionType}`);
+    debugLog(debugLabel, `  Connection type: ${connectionType}, corridorOffset=${corridorOffset.toFixed(0)}`);
     waypoints = generateZPath(
       source,
       target,
-      target.x + laneOffset,
+      target.x + laneOffset + corridorOffset,
       true,
       obstacles,
       debugLabel,
+      corridorOffset,
     );
   } else {
     connectionType = "L-SHAPE (vertical first)";
-    debugLog(debugLabel, `  Connection type: ${connectionType}`);
+    debugLog(debugLabel, `  Connection type: ${connectionType}, corridorOffset=${corridorOffset.toFixed(0)}`);
     waypoints = generateZPath(
       source,
       target,
-      target.y + laneOffset,
+      target.y + laneOffset + corridorOffset,
       false,
       obstacles,
       debugLabel,
+      corridorOffset,
     );
   }
 
@@ -1708,17 +1727,237 @@ function calculatePCBPath(
   waypoints = cleanupWaypoints(waypoints);
   const path = generateChamferedPath(waypoints, CHAMFER_SIZE);
 
-  const midIndex = Math.floor(waypoints.length / 2);
-  const labelX =
-    waypoints.length >= 2
-      ? (waypoints[Math.max(0, midIndex - 1)].x + waypoints[midIndex].x) / 2
-      : sourceX;
-  const labelY =
-    waypoints.length >= 2
-      ? (waypoints[Math.max(0, midIndex - 1)].y + waypoints[midIndex].y) / 2
-      : sourceY;
+  // Smart label positioning to reduce overlaps
+  const { labelX, labelY } = calculateSmartLabelPosition(
+    waypoints,
+    lane,
+    totalLanes,
+    sourceX,
+    sourceY,
+    debugLabel,
+  );
 
   return { path, labelX, labelY };
+}
+
+/**
+ * Calculate a unique corridor offset for an edge based on its characteristics
+ * This helps spread edges across different routing corridors to prevent overlap
+ */
+const CORRIDOR_SPREAD = 15; // Pixels between different routing corridors
+
+function calculateCorridorOffset(
+  lane: number,
+  totalLanes: number,
+  debugLabel?: string,
+  sourceX?: number,
+  sourceY?: number,
+  targetX?: number,
+  targetY?: number,
+): number {
+  // For multi-lane edges, use lane-based offset
+  if (totalLanes > 1) {
+    return (lane - (totalLanes - 1) / 2) * CORRIDOR_SPREAD;
+  }
+
+  // For single-lane edges, calculate hash-based offset
+  let hash = 0;
+  if (debugLabel) {
+    for (let i = 0; i < debugLabel.length; i++) {
+      hash = ((hash << 5) - hash) + debugLabel.charCodeAt(i);
+      hash |= 0;
+    }
+  }
+  // Add position info for more uniqueness
+  if (sourceX !== undefined) hash ^= Math.floor(sourceX * 7);
+  if (sourceY !== undefined) hash ^= Math.floor(sourceY * 11);
+  if (targetX !== undefined) hash ^= Math.floor(targetX * 13);
+  if (targetY !== undefined) hash ^= Math.floor(targetY * 17);
+
+  // Convert to offset in range [-2, 2] * CORRIDOR_SPREAD (5 possible corridors)
+  const offsetIndex = ((hash % 5) + 5) % 5 - 2;
+  return offsetIndex * CORRIDOR_SPREAD;
+}
+
+/**
+ * Calculate smart label position to reduce overlaps
+ * - Prefers middle segments over first/last (away from connection points)
+ * - Uses lane offset to spread labels along the path
+ * - Adds perpendicular offset for multi-lane edges
+ * - Keeps labels away from segment endpoints
+ */
+function calculateSmartLabelPosition(
+  waypoints: Point[],
+  lane: number,
+  totalLanes: number,
+  fallbackX: number,
+  fallbackY: number,
+  debugLabel?: string,
+): { labelX: number; labelY: number } {
+  if (waypoints.length < 2) {
+    return { labelX: fallbackX, labelY: fallbackY };
+  }
+
+  // Find all segments with their lengths and whether they're near endpoints
+  const segments: {
+    index: number;
+    length: number;
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+    isHorizontal: boolean;
+    isFirstSegment: boolean;
+    isLastSegment: boolean;
+    priority: number; // Higher = better for label placement
+  }[] = [];
+
+  const totalSegments = waypoints.length - 1;
+
+  for (let i = 0; i < totalSegments; i++) {
+    const start = waypoints[i];
+    const end = waypoints[i + 1];
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const length = Math.sqrt(dx * dx + dy * dy);
+
+    // Only consider segments long enough for a label (at least 80px for good spacing)
+    if (length >= 80) {
+      const isFirst = i === 0;
+      const isLast = i === totalSegments - 1;
+
+      // Calculate priority: prefer middle segments, longer segments
+      // Middle segments get +10, longer segments get up to +5
+      let priority = length / 100; // Base priority from length
+      if (!isFirst && !isLast) {
+        priority += 10; // Strong preference for middle segments
+      }
+      // Slight preference for segments in the middle of the path
+      const distFromMiddle = Math.abs(i - totalSegments / 2) / totalSegments;
+      priority += (1 - distFromMiddle) * 3;
+
+      segments.push({
+        index: i,
+        length,
+        startX: start.x,
+        startY: start.y,
+        endX: end.x,
+        endY: end.y,
+        isHorizontal: Math.abs(dx) > Math.abs(dy),
+        isFirstSegment: isFirst,
+        isLastSegment: isLast,
+        priority,
+      });
+    }
+  }
+
+  // If no suitable segments found, try with smaller minimum length
+  if (segments.length === 0) {
+    for (let i = 0; i < totalSegments; i++) {
+      const start = waypoints[i];
+      const end = waypoints[i + 1];
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      const length = Math.sqrt(dx * dx + dy * dy);
+
+      if (length >= 40) {
+        const isFirst = i === 0;
+        const isLast = i === totalSegments - 1;
+
+        segments.push({
+          index: i,
+          length,
+          startX: start.x,
+          startY: start.y,
+          endX: end.x,
+          endY: end.y,
+          isHorizontal: Math.abs(dx) > Math.abs(dy),
+          isFirstSegment: isFirst,
+          isLastSegment: isLast,
+          priority: isFirst || isLast ? 0 : 5,
+        });
+      }
+    }
+  }
+
+  // If still no suitable segments, fall back to middle of path
+  if (segments.length === 0) {
+    const midIndex = Math.floor(waypoints.length / 2);
+    return {
+      labelX: (waypoints[Math.max(0, midIndex - 1)].x + waypoints[midIndex].x) / 2,
+      labelY: (waypoints[Math.max(0, midIndex - 1)].y + waypoints[midIndex].y) / 2,
+    };
+  }
+
+  // Sort segments by priority (highest first)
+  segments.sort((a, b) => b.priority - a.priority);
+
+  // Pick segment based on label hash, but prefer higher priority segments
+  let segmentIndex = 0;
+  if (debugLabel && segments.length > 1) {
+    let hash = 0;
+    for (let i = 0; i < debugLabel.length; i++) {
+      hash = ((hash << 5) - hash) + debugLabel.charCodeAt(i);
+      hash |= 0;
+    }
+    // Only consider top half of segments (higher priority)
+    const topSegments = Math.max(1, Math.ceil(segments.length / 2));
+    segmentIndex = Math.abs(hash) % topSegments;
+  }
+
+  // If there are multiple segments and multiple lanes, spread across segments
+  if (segments.length > 1 && totalLanes > 1) {
+    const topSegments = Math.max(1, Math.ceil(segments.length / 2));
+    segmentIndex = (segmentIndex + lane) % topSegments;
+  }
+
+  const segment = segments[segmentIndex];
+
+  // Calculate position along the segment
+  // Keep labels away from endpoints - use 35% to 65% range
+  // For first/last segments, push even more towards the middle
+  let minT = 0.35;
+  let maxT = 0.65;
+
+  if (segment.isFirstSegment) {
+    // For first segment, push label towards the end (away from source)
+    minT = 0.5;
+    maxT = 0.75;
+  } else if (segment.isLastSegment) {
+    // For last segment, push label towards the start (away from target)
+    minT = 0.25;
+    maxT = 0.5;
+  }
+
+  let t = (minT + maxT) / 2; // Default to middle of allowed range
+
+  if (totalLanes > 1) {
+    // Spread within the allowed range based on lane
+    t = minT + (lane / Math.max(1, totalLanes - 1)) * (maxT - minT);
+  } else if (debugLabel) {
+    // For single lane, use hash to vary position within allowed range
+    let hash = 0;
+    for (let i = 0; i < debugLabel.length; i++) {
+      hash = ((hash << 3) - hash) + debugLabel.charCodeAt(i);
+      hash |= 0;
+    }
+    t = minT + (Math.abs(hash) % 100) / 100 * (maxT - minT);
+  }
+
+  let labelX = segment.startX + (segment.endX - segment.startX) * t;
+  let labelY = segment.startY + (segment.endY - segment.startY) * t;
+
+  // Add small perpendicular offset for multi-lane edges to prevent exact overlaps
+  if (totalLanes > 1) {
+    const perpOffset = (lane - (totalLanes - 1) / 2) * 12;
+    if (segment.isHorizontal) {
+      labelY += perpOffset;
+    } else {
+      labelX += perpOffset;
+    }
+  }
+
+  return { labelX, labelY };
 }
 
 function PCBEdge({
