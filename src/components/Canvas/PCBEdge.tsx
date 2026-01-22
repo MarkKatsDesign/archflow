@@ -103,7 +103,7 @@ function getObstaclesBounds(obstacles: ObstacleRect[]): {
 function findClearHorizontalRoute(
   startX: number,
   endX: number,
-  currentY: number,
+  _currentY: number,
   bounds: { top: number; bottom: number },
   allObstacles: ObstacleRect[],
   preferUp: boolean,
@@ -150,7 +150,7 @@ function findClearHorizontalRoute(
 function findClearVerticalRoute(
   startY: number,
   endY: number,
-  currentX: number,
+  _currentX: number,
   bounds: { left: number; right: number },
   allObstacles: ObstacleRect[],
   preferLeft: boolean,
@@ -228,7 +228,7 @@ function isZPathClear(
 function findObstaclesInZPath(
   source: Point,
   target: Point,
-  isHorizontalFirst: boolean,
+  _isHorizontalFirst: boolean,
   obstacles: ObstacleRect[],
 ): ObstacleRect[] {
   // Find obstacles in the bounding box of source and target
@@ -355,6 +355,8 @@ interface MidpointResult {
   useGapRouting?: boolean;
   gapY?: number; // For horizontal-first: Y level to route through gap
   gapX?: number; // For vertical-first: X level to route through gap
+  useUPath?: boolean; // Use 4-segment U-path routing
+  uPathPoints?: Point[]; // Pre-computed U-path waypoints
 }
 
 function findBestMidpoint(
@@ -578,23 +580,481 @@ function findBestMidpoint(
     }
   }
 
-  // If switched orientation also didn't work, try GAP ROUTING
-  // This finds gaps between obstacles and routes through them with an S-shaped path
-  debugLog(debugLabel, `  Trying GAP ROUTING...`);
+  // If switched orientation also didn't work, try U-PATH ROUTING
+  // This creates a 4-segment path that properly respects handle directions
+  debugLog(debugLabel, `  Trying U-PATH ROUTING...`);
+
+  // IMPORTANT: Use bounds of ALL obstacles, not just blocking ones
+  // This ensures we route completely around everything
+  const allObstacleBounds = getObstaclesBounds(obstacles);
+  debugLog(
+    debugLabel,
+    `  ALL obstacle bounds: left=${allObstacleBounds.left.toFixed(0)} right=${allObstacleBounds.right.toFixed(0)} top=${allObstacleBounds.top.toFixed(0)} bottom=${allObstacleBounds.bottom.toFixed(0)}`,
+  );
 
   if (isHorizontalFirst) {
-    // For horizontal-first: find a Y gap to route through
-    // We need to go: source.y → gapY → target.y
+    // For horizontal-first: source exits horizontally, need to escape that way first
+    // U-path: source → (escapeX, source.y) → (escapeX, target.y) → (target.x, target.y) → target
+    const goingRight = target.x > source.x;
+
+    // Escape X should be past ALL obstacles in the travel direction
+    const escapeX = goingRight ? allObstacleBounds.right + 20 : allObstacleBounds.left - 20;
+
+    // For the vertical segment, we need to clear obstacles
+    // Check if we can route: source → escapeX → target
+    const waypoint1: Point = { x: escapeX, y: source.y };
+    const waypoint2: Point = { x: escapeX, y: target.y };
+
+    const seg1Clear =
+      findBlockingObstacles(source, waypoint1, obstacles).length === 0;
+    const seg2Clear =
+      findBlockingObstacles(waypoint1, waypoint2, obstacles).length === 0;
+    const seg3Clear =
+      findBlockingObstacles(waypoint2, target, obstacles).length === 0;
+
+    debugLog(
+      debugLabel,
+      `  U-PATH: escapeX=${escapeX.toFixed(0)}, seg1=${seg1Clear}, seg2=${seg2Clear}, seg3=${seg3Clear}`,
+    );
+
+    if (seg1Clear && seg2Clear && seg3Clear) {
+      debugLog(
+        debugLabel,
+        `  ✓ U-PATH ROUTING via escapeX=${escapeX.toFixed(0)}`,
+      );
+      return {
+        midValue: defaultMid,
+        switchOrientation: false,
+        useUPath: true,
+        uPathPoints: [source, waypoint1, waypoint2, target],
+      };
+    }
+
+    // If direct U-path is blocked, try routing AROUND all obstacles
+    // Go further out to ensure clearance
+    const farEscapeX = goingRight ? allObstacleBounds.right + 50 : allObstacleBounds.left - 50;
+    const farWaypoint1: Point = { x: farEscapeX, y: source.y };
+    const farWaypoint2: Point = { x: farEscapeX, y: target.y };
+
+    const farSeg1Clear =
+      findBlockingObstacles(source, farWaypoint1, obstacles).length === 0;
+    const farSeg2Clear =
+      findBlockingObstacles(farWaypoint1, farWaypoint2, obstacles).length === 0;
+    const farSeg3Clear =
+      findBlockingObstacles(farWaypoint2, target, obstacles).length === 0;
+
+    debugLog(
+      debugLabel,
+      `  U-PATH (far): escapeX=${farEscapeX.toFixed(0)}, seg1=${farSeg1Clear}, seg2=${farSeg2Clear}, seg3=${farSeg3Clear}`,
+    );
+
+    if (farSeg1Clear && farSeg2Clear && farSeg3Clear) {
+      debugLog(
+        debugLabel,
+        `  ✓ U-PATH ROUTING (far) via escapeX=${farEscapeX.toFixed(0)}`,
+      );
+      return {
+        midValue: defaultMid,
+        switchOrientation: false,
+        useUPath: true,
+        uPathPoints: [source, farWaypoint1, farWaypoint2, target],
+      };
+    }
+
+    // Try the opposite direction if same direction is completely blocked
+    const oppositeEscapeX = goingRight ? allObstacleBounds.left - 50 : allObstacleBounds.right + 50;
+    const oppWaypoint1: Point = { x: oppositeEscapeX, y: source.y };
+    const oppWaypoint2: Point = { x: oppositeEscapeX, y: target.y };
+
+    const oppSeg1Clear =
+      findBlockingObstacles(source, oppWaypoint1, obstacles).length === 0;
+    const oppSeg2Clear =
+      findBlockingObstacles(oppWaypoint1, oppWaypoint2, obstacles).length === 0;
+    const oppSeg3Clear =
+      findBlockingObstacles(oppWaypoint2, target, obstacles).length === 0;
+
+    debugLog(
+      debugLabel,
+      `  U-PATH (opposite): escapeX=${oppositeEscapeX.toFixed(0)}, seg1=${oppSeg1Clear}, seg2=${oppSeg2Clear}, seg3=${oppSeg3Clear}`,
+    );
+
+    if (oppSeg1Clear && oppSeg2Clear && oppSeg3Clear) {
+      debugLog(
+        debugLabel,
+        `  ✓ U-PATH ROUTING (opposite) via escapeX=${oppositeEscapeX.toFixed(0)}`,
+      );
+      return {
+        midValue: defaultMid,
+        switchOrientation: false,
+        useUPath: true,
+        uPathPoints: [source, oppWaypoint1, oppWaypoint2, target],
+      };
+    }
+
+    // If U-PATH failed because seg1 is blocked, try ESCAPE-FIRST routing
+    // This adds an initial vertical escape before the horizontal movement
+    // 5-segment path: source → (source.x, escapeY) → (escapeX, escapeY) → (escapeX, target.y) → target
+    debugLog(debugLabel, `  Trying ESCAPE-FIRST routing (5-segment)...`);
+
+    // Find obstacles blocking the immediate horizontal path from source
+    const immediateBlockers = findBlockingObstacles(
+      source,
+      { x: goingRight ? allObstacleBounds.right + 50 : allObstacleBounds.left - 50, y: source.y },
+      obstacles,
+    );
+
+    if (immediateBlockers.length > 0) {
+      const blockerBounds = getObstaclesBounds(immediateBlockers);
+      debugLog(
+        debugLabel,
+        `  Immediate blockers: ${immediateBlockers.length}, bounds: top=${blockerBounds.top.toFixed(0)} bottom=${blockerBounds.bottom.toFixed(0)}`,
+      );
+
+      // Try escaping DOWN first (below the blocking obstacles), then UP
+      const escapeDirections = [
+        { escapeY: blockerBounds.bottom + 15, label: "DOWN" },
+        { escapeY: blockerBounds.top - 15, label: "UP" },
+      ];
+
+      for (const { escapeY, label } of escapeDirections) {
+        // 5-segment: source → (source.x, escapeY) → (farEscapeX, escapeY) → (farEscapeX, target.y) → target
+        const esc1: Point = { x: source.x, y: escapeY };
+        const esc2: Point = { x: farEscapeX, y: escapeY };
+        const esc3: Point = { x: farEscapeX, y: target.y };
+
+        const escSeg1 =
+          findBlockingObstacles(source, esc1, obstacles).length === 0;
+        const escSeg2 =
+          findBlockingObstacles(esc1, esc2, obstacles).length === 0;
+        const escSeg3 =
+          findBlockingObstacles(esc2, esc3, obstacles).length === 0;
+        const escSeg4 =
+          findBlockingObstacles(esc3, target, obstacles).length === 0;
+
+        debugLog(
+          debugLabel,
+          `  ESCAPE-FIRST (${label}): escapeY=${escapeY.toFixed(0)}, escapeX=${farEscapeX.toFixed(0)}, seg1=${escSeg1}, seg2=${escSeg2}, seg3=${escSeg3}, seg4=${escSeg4}`,
+        );
+
+        if (escSeg1 && escSeg2 && escSeg3 && escSeg4) {
+          debugLog(
+            debugLabel,
+            `  ✓ ESCAPE-FIRST ROUTING (${label}) via escapeY=${escapeY.toFixed(0)}`,
+          );
+          return {
+            midValue: defaultMid,
+            switchOrientation: false,
+            useUPath: true,
+            uPathPoints: [source, esc1, esc2, esc3, target],
+          };
+        }
+      }
+
+      // Try with even further escape X
+      const veryFarEscapeX = goingRight ? allObstacleBounds.right + 100 : allObstacleBounds.left - 100;
+      for (const { escapeY, label } of escapeDirections) {
+        const esc1: Point = { x: source.x, y: escapeY };
+        const esc2: Point = { x: veryFarEscapeX, y: escapeY };
+        const esc3: Point = { x: veryFarEscapeX, y: target.y };
+
+        const escSeg1 =
+          findBlockingObstacles(source, esc1, obstacles).length === 0;
+        const escSeg2 =
+          findBlockingObstacles(esc1, esc2, obstacles).length === 0;
+        const escSeg3 =
+          findBlockingObstacles(esc2, esc3, obstacles).length === 0;
+        const escSeg4 =
+          findBlockingObstacles(esc3, target, obstacles).length === 0;
+
+        debugLog(
+          debugLabel,
+          `  ESCAPE-FIRST (${label}, far): escapeY=${escapeY.toFixed(0)}, escapeX=${veryFarEscapeX.toFixed(0)}, seg1=${escSeg1}, seg2=${escSeg2}, seg3=${escSeg3}, seg4=${escSeg4}`,
+        );
+
+        if (escSeg1 && escSeg2 && escSeg3 && escSeg4) {
+          debugLog(
+            debugLabel,
+            `  ✓ ESCAPE-FIRST ROUTING (${label}, far)`,
+          );
+          return {
+            midValue: defaultMid,
+            switchOrientation: false,
+            useUPath: true,
+            uPathPoints: [source, esc1, esc2, esc3, target],
+          };
+        }
+      }
+
+      // If seg4 is blocked (horizontal approach to target), try 6-segment with vertical approach
+      // This helps when target has obstacles at its Y level
+      debugLog(debugLabel, `  Trying 6-SEGMENT routing with vertical target approach...`);
+
+      for (const { escapeY, label } of escapeDirections) {
+        // Find a clear Y level to approach the target from
+        // Try approaching from above (for top handles) or below (for bottom handles)
+        const approachOffsets = [
+          { approachY: target.y - 50, approachLabel: "from-above" },
+          { approachY: target.y + 50, approachLabel: "from-below" },
+          { approachY: target.y - 100, approachLabel: "from-above-far" },
+          { approachY: target.y + 100, approachLabel: "from-below-far" },
+        ];
+
+        for (const { approachY, approachLabel } of approachOffsets) {
+          // 6-segment: source → esc1 → esc2 → esc3 → esc4 → target
+          // source → (source.x, escapeY) → (escapeX, escapeY) → (escapeX, approachY) → (target.x, approachY) → target
+          const esc1: Point = { x: source.x, y: escapeY };
+          const esc2: Point = { x: veryFarEscapeX, y: escapeY };
+          const esc3: Point = { x: veryFarEscapeX, y: approachY };
+          const esc4: Point = { x: target.x, y: approachY };
+
+          const seg1Clear =
+            findBlockingObstacles(source, esc1, obstacles).length === 0;
+          const seg2Clear =
+            findBlockingObstacles(esc1, esc2, obstacles).length === 0;
+          const seg3Clear =
+            findBlockingObstacles(esc2, esc3, obstacles).length === 0;
+          const seg4Clear =
+            findBlockingObstacles(esc3, esc4, obstacles).length === 0;
+          const seg5Clear =
+            findBlockingObstacles(esc4, target, obstacles).length === 0;
+
+          debugLog(
+            debugLabel,
+            `  6-SEG (${label}, ${approachLabel}): escapeY=${escapeY.toFixed(0)}, approachY=${approachY.toFixed(0)}, segs=${seg1Clear},${seg2Clear},${seg3Clear},${seg4Clear},${seg5Clear}`,
+          );
+
+          if (seg1Clear && seg2Clear && seg3Clear && seg4Clear && seg5Clear) {
+            debugLog(
+              debugLabel,
+              `  ✓ 6-SEGMENT ROUTING (${label}, ${approachLabel})`,
+            );
+            return {
+              midValue: defaultMid,
+              switchOrientation: false,
+              useUPath: true,
+              uPathPoints: [source, esc1, esc2, esc3, esc4, target],
+            };
+          }
+        }
+      }
+    }
+  } else {
+    // For vertical-first: source exits vertically, need to escape that way first
+    // U-path: source → (source.x, escapeY) → (target.x, escapeY) → target
+    const goingDown = target.y > source.y;
+
+    const escapeY = goingDown ? allObstacleBounds.bottom + 20 : allObstacleBounds.top - 20;
+
+    const waypoint1: Point = { x: source.x, y: escapeY };
+    const waypoint2: Point = { x: target.x, y: escapeY };
+
+    const seg1Clear =
+      findBlockingObstacles(source, waypoint1, obstacles).length === 0;
+    const seg2Clear =
+      findBlockingObstacles(waypoint1, waypoint2, obstacles).length === 0;
+    const seg3Clear =
+      findBlockingObstacles(waypoint2, target, obstacles).length === 0;
+
+    debugLog(
+      debugLabel,
+      `  U-PATH: escapeY=${escapeY.toFixed(0)}, seg1=${seg1Clear}, seg2=${seg2Clear}, seg3=${seg3Clear}`,
+    );
+
+    if (seg1Clear && seg2Clear && seg3Clear) {
+      debugLog(
+        debugLabel,
+        `  ✓ U-PATH ROUTING via escapeY=${escapeY.toFixed(0)}`,
+      );
+      return {
+        midValue: defaultMid,
+        switchOrientation: false,
+        useUPath: true,
+        uPathPoints: [source, waypoint1, waypoint2, target],
+      };
+    }
+
+    // Try further out
+    const farEscapeY = goingDown ? allObstacleBounds.bottom + 50 : allObstacleBounds.top - 50;
+    const farWaypoint1: Point = { x: source.x, y: farEscapeY };
+    const farWaypoint2: Point = { x: target.x, y: farEscapeY };
+
+    const farSeg1Clear =
+      findBlockingObstacles(source, farWaypoint1, obstacles).length === 0;
+    const farSeg2Clear =
+      findBlockingObstacles(farWaypoint1, farWaypoint2, obstacles).length === 0;
+    const farSeg3Clear =
+      findBlockingObstacles(farWaypoint2, target, obstacles).length === 0;
+
+    debugLog(
+      debugLabel,
+      `  U-PATH (far): escapeY=${farEscapeY.toFixed(0)}, seg1=${farSeg1Clear}, seg2=${farSeg2Clear}, seg3=${farSeg3Clear}`,
+    );
+
+    if (farSeg1Clear && farSeg2Clear && farSeg3Clear) {
+      debugLog(
+        debugLabel,
+        `  ✓ U-PATH ROUTING (far) via escapeY=${farEscapeY.toFixed(0)}`,
+      );
+      return {
+        midValue: defaultMid,
+        switchOrientation: false,
+        useUPath: true,
+        uPathPoints: [source, farWaypoint1, farWaypoint2, target],
+      };
+    }
+
+    // Try opposite direction
+    const oppositeEscapeY = goingDown ? allObstacleBounds.top - 50 : allObstacleBounds.bottom + 50;
+    const oppWaypoint1: Point = { x: source.x, y: oppositeEscapeY };
+    const oppWaypoint2: Point = { x: target.x, y: oppositeEscapeY };
+
+    const oppSeg1Clear =
+      findBlockingObstacles(source, oppWaypoint1, obstacles).length === 0;
+    const oppSeg2Clear =
+      findBlockingObstacles(oppWaypoint1, oppWaypoint2, obstacles).length === 0;
+    const oppSeg3Clear =
+      findBlockingObstacles(oppWaypoint2, target, obstacles).length === 0;
+
+    debugLog(
+      debugLabel,
+      `  U-PATH (opposite): escapeY=${oppositeEscapeY.toFixed(0)}, seg1=${oppSeg1Clear}, seg2=${oppSeg2Clear}, seg3=${oppSeg3Clear}`,
+    );
+
+    if (oppSeg1Clear && oppSeg2Clear && oppSeg3Clear) {
+      debugLog(
+        debugLabel,
+        `  ✓ U-PATH ROUTING (opposite) via escapeY=${oppositeEscapeY.toFixed(0)}`,
+      );
+      return {
+        midValue: defaultMid,
+        switchOrientation: false,
+        useUPath: true,
+        uPathPoints: [source, oppWaypoint1, oppWaypoint2, target],
+      };
+    }
+
+    // If U-PATH failed because seg1 is blocked, try ESCAPE-FIRST routing for vertical-first
+    // 5-segment path: source → (escapeX, source.y) → (escapeX, escapeY) → (target.x, escapeY) → target
+    debugLog(debugLabel, `  Trying ESCAPE-FIRST routing (5-segment) for vertical-first...`);
+
+    const immediateBlockers = findBlockingObstacles(
+      source,
+      { x: source.x, y: goingDown ? allObstacleBounds.bottom + 50 : allObstacleBounds.top - 50 },
+      obstacles,
+    );
+
+    if (immediateBlockers.length > 0) {
+      const blockerBounds = getObstaclesBounds(immediateBlockers);
+      debugLog(
+        debugLabel,
+        `  Immediate blockers: ${immediateBlockers.length}, bounds: left=${blockerBounds.left.toFixed(0)} right=${blockerBounds.right.toFixed(0)}`,
+      );
+
+      const escapeDirections = [
+        { escapeX: blockerBounds.right + 15, label: "RIGHT" },
+        { escapeX: blockerBounds.left - 15, label: "LEFT" },
+      ];
+
+      for (const { escapeX, label } of escapeDirections) {
+        const esc1: Point = { x: escapeX, y: source.y };
+        const esc2: Point = { x: escapeX, y: farEscapeY };
+        const esc3: Point = { x: target.x, y: farEscapeY };
+
+        const escSeg1 =
+          findBlockingObstacles(source, esc1, obstacles).length === 0;
+        const escSeg2 =
+          findBlockingObstacles(esc1, esc2, obstacles).length === 0;
+        const escSeg3 =
+          findBlockingObstacles(esc2, esc3, obstacles).length === 0;
+        const escSeg4 =
+          findBlockingObstacles(esc3, target, obstacles).length === 0;
+
+        debugLog(
+          debugLabel,
+          `  ESCAPE-FIRST (${label}): escapeX=${escapeX.toFixed(0)}, escapeY=${farEscapeY.toFixed(0)}, seg1=${escSeg1}, seg2=${escSeg2}, seg3=${escSeg3}, seg4=${escSeg4}`,
+        );
+
+        if (escSeg1 && escSeg2 && escSeg3 && escSeg4) {
+          debugLog(
+            debugLabel,
+            `  ✓ ESCAPE-FIRST ROUTING (${label})`,
+          );
+          return {
+            midValue: defaultMid,
+            switchOrientation: false,
+            useUPath: true,
+            uPathPoints: [source, esc1, esc2, esc3, target],
+          };
+        }
+      }
+
+      // Try 6-segment routing with horizontal target approach for vertical-first
+      debugLog(debugLabel, `  Trying 6-SEGMENT routing with horizontal target approach...`);
+
+      for (const { escapeX, label } of escapeDirections) {
+        const approachOffsets = [
+          { approachX: target.x - 50, approachLabel: "from-left" },
+          { approachX: target.x + 50, approachLabel: "from-right" },
+          { approachX: target.x - 100, approachLabel: "from-left-far" },
+          { approachX: target.x + 100, approachLabel: "from-right-far" },
+        ];
+
+        for (const { approachX, approachLabel } of approachOffsets) {
+          const esc1: Point = { x: escapeX, y: source.y };
+          const esc2: Point = { x: escapeX, y: farEscapeY };
+          const esc3: Point = { x: approachX, y: farEscapeY };
+          const esc4: Point = { x: approachX, y: target.y };
+
+          const seg1Clear =
+            findBlockingObstacles(source, esc1, obstacles).length === 0;
+          const seg2Clear =
+            findBlockingObstacles(esc1, esc2, obstacles).length === 0;
+          const seg3Clear =
+            findBlockingObstacles(esc2, esc3, obstacles).length === 0;
+          const seg4Clear =
+            findBlockingObstacles(esc3, esc4, obstacles).length === 0;
+          const seg5Clear =
+            findBlockingObstacles(esc4, target, obstacles).length === 0;
+
+          debugLog(
+            debugLabel,
+            `  6-SEG (${label}, ${approachLabel}): escapeX=${escapeX.toFixed(0)}, approachX=${approachX.toFixed(0)}, segs=${seg1Clear},${seg2Clear},${seg3Clear},${seg4Clear},${seg5Clear}`,
+          );
+
+          if (seg1Clear && seg2Clear && seg3Clear && seg4Clear && seg5Clear) {
+            debugLog(
+              debugLabel,
+              `  ✓ 6-SEGMENT ROUTING (${label}, ${approachLabel})`,
+            );
+            return {
+              midValue: defaultMid,
+              switchOrientation: false,
+              useUPath: true,
+              uPathPoints: [source, esc1, esc2, esc3, esc4, target],
+            };
+          }
+        }
+      }
+    }
+  }
+
+  debugLog(debugLabel, `  ✗ U-PATH ROUTING failed, trying GAP ROUTING...`);
+
+  // If U-path also didn't work, try GAP ROUTING
+  // This finds gaps between obstacles and routes through them with an S-shaped path
+
+  if (isHorizontalFirst) {
+    // For horizontal-first: need to escape HORIZONTALLY first, then use a gap
+    // Correct path: source → (escapeX, source.y) → (escapeX, gapY) → (target.x, gapY) → target
     const minY = Math.min(source.y, target.y);
     const maxY = Math.max(source.y, target.y);
-    const minX = Math.min(source.x, target.x);
-    const maxX = Math.max(source.x, target.x);
+    const goingRight = target.x > source.x;
 
-    // Find vertical gaps in the corridor between source and target
+    // Find vertical gaps in the corridor
     const gaps = findVerticalGaps(
       obstacles,
-      minX,
-      maxX,
+      Math.min(source.x, target.x),
+      Math.max(source.x, target.x),
       minY - 200,
       maxY + 200,
     );
@@ -604,52 +1064,60 @@ function findBestMidpoint(
       gaps.map((g) => `[${g.start.toFixed(0)}-${g.end.toFixed(0)}]`),
     );
 
-    // Find a gap that's BETWEEN source.y and target.y (or nearby)
+    // Try each gap with a proper horizontal-first 4-segment path
     for (const gap of gaps) {
       const gapMidY = (gap.start + gap.end) / 2;
       const gapSize = gap.end - gap.start;
 
-      // Only use gaps that are big enough and between source and target Y levels
       if (gapSize >= 40) {
-        // Check if routing through this gap would work
-        // For horizontal-first with gap: source → (source.x, gapY) → (target.x, gapY) → target
-        const waypoint1: Point = { x: source.x, y: gapMidY };
-        const waypoint2: Point = { x: target.x, y: gapMidY };
+        // Try routing with an escape X past obstacles
+        // Use ALL obstacle bounds to find escape point
+        const escapeX = goingRight ? allObstacleBounds.right + 30 : allObstacleBounds.left - 30;
+
+        // 4-segment path: source → (escapeX, source.y) → (escapeX, gapY) → (target.x, gapY) → target
+        const wp1: Point = { x: escapeX, y: source.y };
+        const wp2: Point = { x: escapeX, y: gapMidY };
+        const wp3: Point = { x: target.x, y: gapMidY };
 
         const seg1Clear =
-          findBlockingObstacles(source, waypoint1, obstacles).length === 0;
+          findBlockingObstacles(source, wp1, obstacles).length === 0;
         const seg2Clear =
-          findBlockingObstacles(waypoint1, waypoint2, obstacles).length === 0;
+          findBlockingObstacles(wp1, wp2, obstacles).length === 0;
         const seg3Clear =
-          findBlockingObstacles(waypoint2, target, obstacles).length === 0;
+          findBlockingObstacles(wp2, wp3, obstacles).length === 0;
+        const seg4Clear =
+          findBlockingObstacles(wp3, target, obstacles).length === 0;
 
         debugLog(
           debugLabel,
-          `  Trying gap at Y=${gapMidY.toFixed(0)} (size=${gapSize.toFixed(0)}): seg1=${seg1Clear}, seg2=${seg2Clear}, seg3=${seg3Clear}`,
+          `  Trying gap at Y=${gapMidY.toFixed(0)} with escapeX=${escapeX.toFixed(0)}: seg1=${seg1Clear}, seg2=${seg2Clear}, seg3=${seg3Clear}, seg4=${seg4Clear}`,
         );
 
-        if (seg1Clear && seg2Clear && seg3Clear) {
-          debugLog(debugLabel, `  ✓ GAP ROUTING at Y=${gapMidY.toFixed(0)}`);
+        if (seg1Clear && seg2Clear && seg3Clear && seg4Clear) {
+          debugLog(
+            debugLabel,
+            `  ✓ GAP ROUTING (4-seg) at Y=${gapMidY.toFixed(0)}`,
+          );
           return {
             midValue: defaultMid,
             switchOrientation: false,
-            useGapRouting: true,
-            gapY: gapMidY,
+            useUPath: true,
+            uPathPoints: [source, wp1, wp2, wp3, target],
           };
         }
       }
     }
   } else {
-    // For vertical-first: find an X gap to route through
+    // For vertical-first: need to escape VERTICALLY first, then use a gap
+    // Correct path: source → (source.x, escapeY) → (gapX, escapeY) → (gapX, target.y) → target
     const minX = Math.min(source.x, target.x);
     const maxX = Math.max(source.x, target.x);
-    const minY = Math.min(source.y, target.y);
-    const maxY = Math.max(source.y, target.y);
+    const goingDown = target.y > source.y;
 
     const gaps = findHorizontalGaps(
       obstacles,
-      minY,
-      maxY,
+      Math.min(source.y, target.y),
+      Math.max(source.y, target.y),
       minX - 200,
       maxX + 200,
     );
@@ -664,28 +1132,38 @@ function findBestMidpoint(
       const gapSize = gap.end - gap.start;
 
       if (gapSize >= 40) {
-        const waypoint1: Point = { x: gapMidX, y: source.y };
-        const waypoint2: Point = { x: gapMidX, y: target.y };
+        // Try routing with an escape Y past obstacles
+        const escapeY = goingDown ? allObstacleBounds.bottom + 30 : allObstacleBounds.top - 30;
+
+        // 4-segment path: source → (source.x, escapeY) → (gapX, escapeY) → (gapX, target.y) → target
+        const wp1: Point = { x: source.x, y: escapeY };
+        const wp2: Point = { x: gapMidX, y: escapeY };
+        const wp3: Point = { x: gapMidX, y: target.y };
 
         const seg1Clear =
-          findBlockingObstacles(source, waypoint1, obstacles).length === 0;
+          findBlockingObstacles(source, wp1, obstacles).length === 0;
         const seg2Clear =
-          findBlockingObstacles(waypoint1, waypoint2, obstacles).length === 0;
+          findBlockingObstacles(wp1, wp2, obstacles).length === 0;
         const seg3Clear =
-          findBlockingObstacles(waypoint2, target, obstacles).length === 0;
+          findBlockingObstacles(wp2, wp3, obstacles).length === 0;
+        const seg4Clear =
+          findBlockingObstacles(wp3, target, obstacles).length === 0;
 
         debugLog(
           debugLabel,
-          `  Trying gap at X=${gapMidX.toFixed(0)} (size=${gapSize.toFixed(0)}): seg1=${seg1Clear}, seg2=${seg2Clear}, seg3=${seg3Clear}`,
+          `  Trying gap at X=${gapMidX.toFixed(0)} with escapeY=${escapeY.toFixed(0)}: seg1=${seg1Clear}, seg2=${seg2Clear}, seg3=${seg3Clear}, seg4=${seg4Clear}`,
         );
 
-        if (seg1Clear && seg2Clear && seg3Clear) {
-          debugLog(debugLabel, `  ✓ GAP ROUTING at X=${gapMidX.toFixed(0)}`);
+        if (seg1Clear && seg2Clear && seg3Clear && seg4Clear) {
+          debugLog(
+            debugLabel,
+            `  ✓ GAP ROUTING (4-seg) at X=${gapMidX.toFixed(0)}`,
+          );
           return {
             midValue: defaultMid,
             switchOrientation: false,
-            useGapRouting: true,
-            gapX: gapMidX,
+            useUPath: true,
+            uPathPoints: [source, wp1, wp2, wp3, target],
           };
         }
       }
@@ -793,7 +1271,18 @@ function generateZPath(
     useGapRouting,
     gapY,
     gapX,
+    useUPath,
+    uPathPoints,
   } = result;
+
+  // If U-path routing is enabled, use the pre-computed waypoints
+  if (useUPath && uPathPoints) {
+    debugLog(
+      debugLabel,
+      `  Using U-PATH ROUTING with ${uPathPoints.length} waypoints`,
+    );
+    return uPathPoints;
+  }
 
   // If gap routing is enabled, generate a simple S-shaped path through the gap
   if (useGapRouting) {
