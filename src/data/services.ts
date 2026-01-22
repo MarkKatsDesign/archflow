@@ -335,6 +335,8 @@ export const services: Service[] = [
       "Serverless compute engine for containers, billed per vCPU-second, GB-second, and storage",
     color: categoryColors.Backend,
     compatibleWith: [
+      "aws-alb",
+      "aws-api-gateway",
       "postgres-rds",
       "dynamodb",
       "redis-elasticache",
@@ -1665,8 +1667,8 @@ export const services: Service[] = [
     description:
       "Layer 7 load balancer for HTTP/HTTPS traffic with advanced routing, SSL termination, and health checks",
     color: categoryColors.Networking,
-    compatibleWith: ["aws-ecs", "postgres-rds", "redis-elasticache"],
-    requiresOneOf: ["aws-ecs"],
+    compatibleWith: ["aws-ecs", "aws-fargate", "aws-lambda", "postgres-rds", "redis-elasticache"],
+    requiresOneOf: ["aws-ecs", "aws-fargate", "aws-lambda"],
     costModel: {
       type: "usage",
       baseCost: 0,
