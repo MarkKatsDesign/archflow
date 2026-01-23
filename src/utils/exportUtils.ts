@@ -1,7 +1,83 @@
 import { toPng } from "html-to-image";
 import { jsPDF } from "jspdf";
-import type { Node, Edge } from "reactflow";
+import type { Node, Edge, ReactFlowInstance, Viewport } from "reactflow";
 import type { ServiceNodeData, ArchNode } from "../types/architecture";
+
+// ========================================
+// VIEWPORT UTILITIES FOR FULL EXPORT
+// ========================================
+
+interface NodeBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Calculate the bounding box that contains all nodes
+ */
+function calculateNodesBounds(nodes: Node[]): NodeBounds | null {
+  if (nodes.length === 0) return null;
+
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  nodes.forEach((node) => {
+    const width = node.width || 168; // Default node width
+    const height = node.height || 100; // Default node height
+
+    // For child nodes, we need to calculate absolute position
+    let absoluteX = node.position.x;
+    let absoluteY = node.position.y;
+
+    if (node.parentNode) {
+      const parent = nodes.find((n) => n.id === node.parentNode);
+      if (parent) {
+        absoluteX += parent.position.x;
+        absoluteY += parent.position.y;
+      }
+    }
+
+    minX = Math.min(minX, absoluteX);
+    minY = Math.min(minY, absoluteY);
+    maxX = Math.max(maxX, absoluteX + width);
+    maxY = Math.max(maxY, absoluteY + height);
+  });
+
+  // Add padding around the bounds
+  const padding = 50;
+  return {
+    x: minX - padding,
+    y: minY - padding,
+    width: maxX - minX + padding * 2,
+    height: maxY - minY + padding * 2,
+  };
+}
+
+/**
+ * Calculate viewport to fit given bounds within container dimensions
+ */
+function getViewportForBounds(
+  bounds: NodeBounds,
+  containerWidth: number,
+  containerHeight: number,
+  minZoom: number = 0.1,
+  maxZoom: number = 1,
+  padding: number = 0.1
+): Viewport {
+  const xZoom = containerWidth / bounds.width;
+  const yZoom = containerHeight / bounds.height;
+  const zoom = Math.min(xZoom, yZoom) * (1 - padding);
+  const clampedZoom = Math.min(Math.max(zoom, minZoom), maxZoom);
+
+  const x = (containerWidth - bounds.width * clampedZoom) / 2 - bounds.x * clampedZoom;
+  const y = (containerHeight - bounds.height * clampedZoom) / 2 - bounds.y * clampedZoom;
+
+  return { x, y, zoom: clampedZoom };
+}
 
 // ========================================
 // JSON EXPORT/IMPORT
@@ -150,10 +226,44 @@ function prepareForExport(element: HTMLElement): () => void {
 
 export const exportToPNG = async (
   element: HTMLElement,
-  isDarkMode: boolean = false
+  isDarkMode: boolean = false,
+  reactFlowInstance?: ReactFlowInstance,
+  nodes?: Node[]
 ): Promise<void> => {
   try {
     const backgroundColor = isDarkMode ? "#0f172a" : "#f9fafb";
+
+    // Save current viewport to restore later
+    let originalViewport: Viewport | null = null;
+
+    // If we have the React Flow instance and nodes, fit to show entire architecture
+    if (reactFlowInstance && nodes && nodes.length > 0) {
+      originalViewport = reactFlowInstance.getViewport();
+      const bounds = calculateNodesBounds(nodes);
+
+      if (bounds) {
+        // Get the container dimensions
+        const container = element.parentElement;
+        const containerWidth = container?.clientWidth || 1200;
+        const containerHeight = container?.clientHeight || 800;
+
+        // Calculate viewport to fit all nodes
+        const fitViewport = getViewportForBounds(
+          bounds,
+          containerWidth,
+          containerHeight,
+          0.1,
+          1,
+          0.05
+        );
+
+        // Apply the viewport
+        reactFlowInstance.setViewport(fitViewport);
+
+        // Wait for the viewport change to render
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
 
     // Prepare DOM for export and get restore function
     const restore = prepareForExport(element);
@@ -183,6 +293,11 @@ export const exportToPNG = async (
     } finally {
       // Always restore DOM even if export fails
       restore();
+
+      // Restore original viewport
+      if (originalViewport && reactFlowInstance) {
+        reactFlowInstance.setViewport(originalViewport);
+      }
     }
   } catch (error) {
     console.error("Failed to export PNG:", error);
@@ -302,7 +417,8 @@ export const exportToPDF = async (
   nodes: Node<ServiceNodeData>[],
   edges: Edge[],
   metadata?: { totalCost?: { min: number; max: number }; scale?: string },
-  isDarkMode: boolean = false
+  isDarkMode: boolean = false,
+  reactFlowInstance?: ReactFlowInstance
 ): Promise<void> => {
   try {
     const pdf = new jsPDF("landscape", "mm", "a4");
@@ -313,6 +429,38 @@ export const exportToPDF = async (
     // Page 1: Architecture Diagram
     pdf.setFontSize(20);
     pdf.text("Architecture Diagram", pageWidth / 2, 15, { align: "center" });
+
+    // Save current viewport to restore later
+    let originalViewport: Viewport | null = null;
+
+    // If we have the React Flow instance and nodes, fit to show entire architecture
+    if (reactFlowInstance && nodes && nodes.length > 0) {
+      originalViewport = reactFlowInstance.getViewport();
+      const bounds = calculateNodesBounds(nodes);
+
+      if (bounds) {
+        // Get the container dimensions
+        const container = element.parentElement;
+        const containerWidth = container?.clientWidth || 1200;
+        const containerHeight = container?.clientHeight || 800;
+
+        // Calculate viewport to fit all nodes
+        const fitViewport = getViewportForBounds(
+          bounds,
+          containerWidth,
+          containerHeight,
+          0.1,
+          1,
+          0.05
+        );
+
+        // Apply the viewport
+        reactFlowInstance.setViewport(fitViewport);
+
+        // Wait for the viewport change to render
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
 
     // Prepare DOM for export and get restore function
     const restore = prepareForExport(element);
@@ -338,6 +486,11 @@ export const exportToPDF = async (
     } finally {
       // Always restore DOM even if capture fails
       restore();
+
+      // Restore original viewport
+      if (originalViewport && reactFlowInstance) {
+        reactFlowInstance.setViewport(originalViewport);
+      }
     }
 
     // Add image to PDF

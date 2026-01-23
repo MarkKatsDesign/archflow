@@ -238,9 +238,9 @@ export function CostEstimatePanel() {
                   {/* Service Items - Only show when expanded */}
                   {isExpanded && (
                     <div>
-                      {categoryBreakdown.services.map((serviceCost) => (
+                      {categoryBreakdown.services.map((serviceCost, idx) => (
                         <div
-                          key={serviceCost.service.id}
+                          key={`${serviceCost.service.id}-${idx}`}
                           className="px-4 py-2 pl-8 flex items-center justify-between text-sm hover:bg-gray-50 dark:hover:bg-slate-800/50"
                         >
                           <div className="flex items-center gap-2 flex-1 min-w-0">

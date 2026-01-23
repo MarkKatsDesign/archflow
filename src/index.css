@@ -293,6 +293,29 @@ body {
   fill: var(--accent-primary) !important;
 }
 
+/* Focus mode button - ensure icon visibility in dark mode */
+.react-flow__controls-button svg.lucide {
+  stroke: var(--text-tertiary) !important;
+  fill: none !important;
+}
+
+.react-flow__controls-button:hover svg.lucide {
+  stroke: var(--accent-primary) !important;
+}
+
+/* Focus mode button active state */
+.react-flow__controls-button.focus-active {
+  background: var(--accent-primary) !important;
+}
+
+.react-flow__controls-button.focus-active svg.lucide {
+  stroke: white !important;
+}
+
+.react-flow__controls-button.focus-active:hover {
+  background: var(--accent-primary-hover) !important;
+}
+
 /* Dark mode canvas background */
 .dark .react-flow__background {
   background-color: var(--canvas-bg) !important;
@@ -301,6 +324,27 @@ body {
 /* Dark mode minimap */
 .dark .react-flow__minimap {
   background-color: var(--surface-primary) !important;
+}
+
+/* Smooth zoom transitions for canvas viewport */
+.react-flow__viewport {
+  transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* Focus mode transitions */
+@keyframes focusModeEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.focus-mode-enter {
+  animation: focusModeEnter 0.3s ease-out;
 }
 
 /* ===== GLASSMORPHISM ===== */

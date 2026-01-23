@@ -29,7 +29,7 @@ export function ExportPanel() {
   const [isExporting, setIsExporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { nodes, edges, setNodes, setEdges } = useArchitectureStore();
+  const { nodes, edges, setNodes, setEdges, reactFlowInstance } = useArchitectureStore();
   const { totalMin, totalMax } = useCostCalculator();
   const { answers } = useOnboardingStore();
   const { theme } = useThemeStore();
@@ -83,7 +83,8 @@ export function ExportPanel() {
         return;
       }
 
-      await exportToPNG(viewport, isDarkMode);
+      // Pass reactFlowInstance and nodes to export entire architecture
+      await exportToPNG(viewport, isDarkMode, reactFlowInstance ?? undefined, nodes);
     } catch (error) {
       console.error("PNG export failed:", error);
       alert("Failed to export PNG. Please try again.");
@@ -112,6 +113,7 @@ export function ExportPanel() {
       }
 
       const scale = answers?.scale || "Unknown";
+      // Pass reactFlowInstance to export entire architecture
       await exportToPDF(
         viewport,
         serviceNodes,
@@ -120,7 +122,8 @@ export function ExportPanel() {
           totalCost: { min: totalMin, max: totalMax },
           scale,
         },
-        isDarkMode
+        isDarkMode,
+        reactFlowInstance ?? undefined
       );
     } catch (error) {
       console.error("PDF export failed:", error);

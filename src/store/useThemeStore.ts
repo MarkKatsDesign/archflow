@@ -4,8 +4,11 @@ type Theme = 'light' | 'dark';
 
 interface ThemeState {
   theme: Theme;
+  focusMode: boolean;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
+  setFocusMode: (enabled: boolean) => void;
+  toggleFocusMode: () => void;
 }
 
 const THEME_KEY = 'archflow_theme';
@@ -29,6 +32,7 @@ function getInitialTheme(): Theme {
 
 export const useThemeStore = create<ThemeState>((set, get) => ({
   theme: getInitialTheme(),
+  focusMode: false,
 
   setTheme: (theme) => {
     localStorage.setItem(THEME_KEY, theme);
@@ -39,5 +43,13 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
     const newTheme = get().theme === 'light' ? 'dark' : 'light';
     localStorage.setItem(THEME_KEY, newTheme);
     set({ theme: newTheme });
+  },
+
+  setFocusMode: (enabled) => {
+    set({ focusMode: enabled });
+  },
+
+  toggleFocusMode: () => {
+    set({ focusMode: !get().focusMode });
   },
 }));

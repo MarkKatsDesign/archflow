@@ -1,7 +1,8 @@
-import React, { useCallback, useRef, useState, useMemo } from "react";
+import React, { useCallback, useRef, useState, useMemo, useEffect } from "react";
 import ReactFlow, {
   Background,
   Controls,
+  ControlButton,
   MiniMap,
   ReactFlowProvider,
   ConnectionLineType,
@@ -17,6 +18,7 @@ import AlignmentGuides from "./AlignmentGuides";
 import EditableBezierEdge from "./EditableBezierEdge";
 import SmartOrthogonalEdge from "./SmartOrthogonalEdge";
 import PCBEdge from "./PCBEdge";
+import { Maximize2, Minimize2 } from "lucide-react";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
 import { useAlignmentGuides } from "../../hooks/useAlignmentGuides";
 import { useOnboardingStore } from "../../store/useOnboardingStore";
@@ -144,10 +146,20 @@ function ArchitectureCanvasInner() {
     setSelectedNodeId,
     selectedEdgeId,
     setSelectedEdgeId,
+    setReactFlowInstance,
   } = useArchitectureStore();
 
-  const [reactFlowInstance, setReactFlowInstance] =
+  const [reactFlowInstance, setLocalReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
+
+  // Store instance both locally and in global store for access outside ReactFlow context
+  const handleInit = useCallback(
+    (instance: ReactFlowInstance) => {
+      setLocalReactFlowInstance(instance);
+      setReactFlowInstance(instance);
+    },
+    [setReactFlowInstance]
+  );
 
   // Smart alignment guides for smooth drag experience
   const { guides, isShiftPressed, onNodesChangeWithAlignment } =
@@ -316,8 +328,20 @@ function ArchitectureCanvasInner() {
   }, []);
 
   const isEmpty = nodes.length === 0;
-  const { theme } = useThemeStore();
+  const { theme, focusMode, toggleFocusMode, setFocusMode } = useThemeStore();
   const isDark = theme === "dark";
+
+  // Handle Escape key to exit focus mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && focusMode) {
+        setFocusMode(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [focusMode, setFocusMode]);
 
   return (
     <div
@@ -330,7 +354,7 @@ function ArchitectureCanvasInner() {
         onNodesChange={handleNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onInit={setReactFlowInstance}
+        onInit={handleInit}
         onDrop={onDrop}
         onDragOver={onDragOver}
         onNodeClick={onNodeClick}
@@ -366,6 +390,8 @@ function ArchitectureCanvasInner() {
           strokeDasharray: "5 5",
         }}
         fitView
+        minZoom={0.1}
+        maxZoom={4}
         className={
           isDark
             ? "bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950/50"
@@ -374,7 +400,20 @@ function ArchitectureCanvasInner() {
       >
         {/* Refined grid - larger spacing, lower opacity */}
         <Background color={isDark ? "#475569" : "#cbd5e1"} gap={24} size={1} />
-        <Controls />
+        <Controls>
+          {/* Focus Mode Button - integrated into controls ribbon */}
+          <ControlButton
+            onClick={toggleFocusMode}
+            title={focusMode ? "Exit Focus Mode (Esc)" : "Focus Mode"}
+            className={focusMode ? "focus-active" : ""}
+          >
+            {focusMode ? (
+              <Minimize2 className="w-3.5 h-3.5" />
+            ) : (
+              <Maximize2 className="w-3.5 h-3.5" />
+            )}
+          </ControlButton>
+        </Controls>
 
         {/* Smart alignment guides */}
         <AlignmentGuides guides={guides} />

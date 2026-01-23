@@ -12,6 +12,7 @@ import type {
   OnEdgesChange,
   OnConnect,
   Node,
+  ReactFlowInstance,
 } from 'reactflow';
 import type { ServiceNode, ServiceEdge, ArchNode, GroupNode } from '../types/architecture';
 import type { ArchitectureTemplate, TemplateNode } from '../types/template';
@@ -114,6 +115,7 @@ interface ArchitectureStore {
   edges: ServiceEdge[];
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
+  reactFlowInstance: ReactFlowInstance | null;
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
@@ -125,6 +127,7 @@ interface ArchitectureStore {
   setEdges: (edges: ServiceEdge[]) => void;
   setSelectedNodeId: (nodeId: string | null) => void;
   setSelectedEdgeId: (edgeId: string | null) => void;
+  setReactFlowInstance: (instance: ReactFlowInstance | null) => void;
   applyTemplate: (template: ArchitectureTemplate) => void;
   // Group operations
   addNodeToGroup: (nodeId: string, groupId: string) => void;
@@ -138,6 +141,7 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
   edges: [],
   selectedNodeId: null,
   selectedEdgeId: null,
+  reactFlowInstance: null,
 
   onNodesChange: (changes: NodeChange[]) => {
     set({
@@ -236,6 +240,10 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
 
   setSelectedEdgeId: (edgeId: string | null) => {
     set({ selectedEdgeId: edgeId });
+  },
+
+  setReactFlowInstance: (instance: ReactFlowInstance | null) => {
+    set({ reactFlowInstance: instance });
   },
 
   applyTemplate: (template: ArchitectureTemplate) => {
