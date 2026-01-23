@@ -12,6 +12,7 @@ import { useOnboardingStore } from "../../../store/useOnboardingStore";
 import { useArchitectureStore } from "../../../store/useArchitectureStore";
 import { services } from "../../../data/services";
 import type { ArchitectureTemplate } from "../../../types/template";
+import { isTemplateGroupNode } from "../../../types/template";
 
 interface TemplateCardProps {
   template: ArchitectureTemplate;
@@ -30,8 +31,9 @@ function TemplateCard({
   onSelect,
   onApply,
 }: TemplateCardProps) {
-  // Get service names for display
+  // Get service names for display (filter out group nodes)
   const serviceNames = template.nodes
+    .filter((node) => !isTemplateGroupNode(node))
     .map((node) => {
       const service = services.find((s) => s.id === node.data.service.id);
       return service?.shortName || node.data.service.id;

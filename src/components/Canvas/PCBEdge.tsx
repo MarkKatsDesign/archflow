@@ -1,6 +1,12 @@
-import { memo } from "react";
-import { BaseEdge, EdgeLabelRenderer, type EdgeProps } from "reactflow";
+import { memo, useCallback, useMemo } from "react";
+import { BaseEdge, type EdgeProps } from "reactflow";
 import { useArchitectureStore } from "../../store/useArchitectureStore";
+import {
+  parsePathToPoints,
+  getPointOnPolyline,
+  findClosestPointOnPolyline,
+} from "../../utils/pathUtils";
+import { DraggableEdgeLabel } from "./DraggableEdgeLabel";
 
 export interface ObstacleRect {
   x: number;
@@ -16,6 +22,7 @@ export interface PCBEdgeData {
   obstacles?: ObstacleRect[];
   sourceNodeId?: string;
   targetNodeId?: string;
+  labelPosition?: number; // 0-1 position along the path
 }
 
 const LANE_SPACING = 18;
@@ -1984,10 +1991,11 @@ function PCBEdge({
   const lane = data?.lane ?? 0;
   const totalLanes = data?.totalLanes ?? 1;
   const obstacles = data?.obstacles ?? [];
+  const labelPosition = data?.labelPosition;
 
   const edgeLabel = typeof label === "string" ? label : undefined;
 
-  const { path, labelX, labelY } = calculatePCBPath(
+  const { path, labelX: defaultLabelX, labelY: defaultLabelY } = calculatePCBPath(
     sourceX,
     sourceY,
     targetX,
@@ -2000,8 +2008,44 @@ function PCBEdge({
     edgeLabel,
   );
 
+  // Parse path to points for label positioning
+  const pathPoints = useMemo(() => parsePathToPoints(path), [path]);
+
+  // Calculate label position - use custom position if set, otherwise use smart default
+  const { labelX, labelY } = useMemo(() => {
+    // If labelPosition is explicitly set, use it
+    if (labelPosition !== undefined && pathPoints.length >= 2) {
+      const point = getPointOnPolyline(labelPosition, pathPoints);
+      return { labelX: point.x, labelY: point.y };
+    }
+    // Otherwise use the smart default from calculatePCBPath
+    return { labelX: defaultLabelX, labelY: defaultLabelY };
+  }, [pathPoints, labelPosition, defaultLabelX, defaultLabelY]);
+
+  // Function to find closest point on path for dragging
+  const findClosestPoint = useCallback(
+    (screenX: number, screenY: number) => {
+      if (pathPoints.length < 2) {
+        return { t: 0.5, x: defaultLabelX, y: defaultLabelY };
+      }
+      return findClosestPointOnPolyline({ x: screenX, y: screenY }, pathPoints);
+    },
+    [pathPoints, defaultLabelX, defaultLabelY]
+  );
+
   const defaultColor = "#06b6d4";
   const selectedColor = "#22d3ee";
+
+  // Custom label styles for PCB theme
+  const pcbLabelStyle = {
+    ...labelStyle,
+    fill: (labelStyle?.fill as string) || "#06b6d4",
+  };
+
+  const pcbLabelBgStyle = {
+    ...labelBgStyle,
+    fill: (labelBgStyle?.fill as string) || "#0f172a",
+  };
 
   return (
     <>
@@ -2020,33 +2064,19 @@ function PCBEdge({
       />
 
       {label && (
-        <EdgeLabelRenderer>
-          <div
-            style={{
-              position: "absolute",
-              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-              pointerEvents: "all",
-            }}
-            className="nodrag nopan"
-          >
-            <div
-              style={{
-                background: (labelBgStyle?.fill as string) || "#0f172a",
-                padding: labelBgPadding
-                  ? `${labelBgPadding[1]}px ${labelBgPadding[0]}px`
-                  : "4px 8px",
-                borderRadius: labelBgBorderRadius || 4,
-                fontSize: (labelStyle?.fontSize as number) || 12,
-                fontWeight: (labelStyle?.fontWeight as number) || 600,
-                color: (labelStyle?.fill as string) || "#06b6d4",
-                boxShadow: "0 0 10px rgba(6, 182, 212, 0.3)",
-                border: "1px solid rgba(6, 182, 212, 0.3)",
-              }}
-            >
-              {label}
-            </div>
-          </div>
-        </EdgeLabelRenderer>
+        <DraggableEdgeLabel
+          edgeId={id}
+          label={label}
+          labelX={labelX}
+          labelY={labelY}
+          labelStyle={pcbLabelStyle}
+          labelBgStyle={pcbLabelBgStyle}
+          labelBgPadding={labelBgPadding}
+          labelBgBorderRadius={labelBgBorderRadius}
+          customBorder="1px solid rgba(6, 182, 212, 0.3)"
+          customBoxShadow="0 0 10px rgba(6, 182, 212, 0.3)"
+          findClosestPoint={findClosestPoint}
+        />
       )}
     </>
   );

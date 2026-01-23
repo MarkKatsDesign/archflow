@@ -43,4 +43,11 @@ export function isGroupNode(node: ArchNode): node is GroupNode {
   return node.type === 'group';
 }
 
-export type ServiceEdge = Edge;
+// Edge data with optional label position
+export interface ServiceEdgeData {
+  labelPosition?: number; // 0-1, where 0 = source, 0.5 = middle, 1 = target
+  // Additional edge-specific data can be added here
+  [key: string]: unknown;
+}
+
+export type ServiceEdge = Edge<ServiceEdgeData>;

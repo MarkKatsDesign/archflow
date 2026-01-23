@@ -13,9 +13,11 @@ import type {
   OnConnect,
   Node,
 } from 'reactflow';
-import type { ServiceNode, ServiceEdge, ArchNode } from '../types/architecture';
+import type { ServiceNode, ServiceEdge, ArchNode, GroupNode } from '../types/architecture';
 import type { ArchitectureTemplate, TemplateNode } from '../types/template';
+import { isTemplateGroupNode } from '../types/template';
 import { services } from '../data/services';
+import { boundaryZones } from '../data/infrastructure';
 
 /**
  * Sort nodes so that parent nodes appear before their children.
@@ -237,23 +239,86 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
   },
 
   applyTemplate: (template: ArchitectureTemplate) => {
-    // Generate unique node IDs and populate with full service data
-    const nodes: ServiceNode[] = template.nodes.map((templateNode, idx) => {
-      const service = services.find((s) => s.id === templateNode.data.service.id);
-      if (!service) {
-        throw new Error(`Service not found: ${templateNode.data.service.id}`);
-      }
+    const timestamp = Date.now();
 
-      return {
-        id: `${service.id}-${Date.now()}-${idx}`,
-        type: 'service',
-        position: templateNode.position,
-        data: {
-          service,
-          label: service.shortName,
-        },
-      };
+    // First pass: Generate IDs for all nodes
+    // We need IDs before we can resolve parentIndex references
+    const nodeIds: string[] = template.nodes.map((templateNode, idx) => {
+      if (isTemplateGroupNode(templateNode)) {
+        const zone = boundaryZones.find((z) => z.id === templateNode.data.zone.id);
+        if (!zone) {
+          throw new Error(`Zone not found: ${templateNode.data.zone.id}`);
+        }
+        return `${zone.id}-${timestamp}-${idx}`;
+      } else {
+        const service = services.find((s) => s.id === templateNode.data.service.id);
+        if (!service) {
+          throw new Error(`Service not found: ${templateNode.data.service.id}`);
+        }
+        return `${service.id}-${timestamp}-${idx}`;
+      }
     });
+
+    // Second pass: Create actual nodes with resolved parent references
+    const nodes: ArchNode[] = template.nodes.map((templateNode, idx) => {
+      const id = nodeIds[idx];
+
+      // Resolve parent if specified
+      const parentNode =
+        templateNode.parentIndex !== undefined
+          ? nodeIds[templateNode.parentIndex]
+          : undefined;
+
+      if (isTemplateGroupNode(templateNode)) {
+        const zone = boundaryZones.find(
+          (z) => z.id === templateNode.data.zone.id
+        )!;
+
+        return {
+          id,
+          type: 'group',
+          position: templateNode.position,
+          data: {
+            zone,
+            label: templateNode.data.label || zone.shortName,
+          },
+          style: {
+            width: templateNode.style.width,
+            height: templateNode.style.height,
+          },
+          // Parent relationship for nested groups
+          ...(parentNode && {
+            parentNode,
+            extent: 'parent' as const,
+            expandParent: true,
+          }),
+        } as GroupNode;
+      } else {
+        // Service node
+        const service = services.find(
+          (s) => s.id === templateNode.data.service.id
+        )!;
+
+        return {
+          id,
+          type: 'service',
+          position: templateNode.position,
+          data: {
+            service,
+            label: service.shortName,
+          },
+          // Parent relationship for services inside groups
+          ...(parentNode && {
+            parentNode,
+            extent: 'parent' as const,
+            expandParent: true,
+          }),
+        } as ServiceNode;
+      }
+    });
+
+    // Sort nodes so parents come before children (React Flow requirement)
+    const sortedNodes = sortNodesParentsFirst(nodes);
 
     // Map edges to actual node IDs
     const edges: ServiceEdge[] = template.edges.map((templateEdge, idx) => {
@@ -263,10 +328,13 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
       // Calculate optimal handles if not explicitly specified in template
       const sourceTemplateNode = template.nodes[templateEdge.sourceIndex];
       const targetTemplateNode = template.nodes[templateEdge.targetIndex];
-      const optimalHandles = calculateOptimalHandles(sourceTemplateNode, targetTemplateNode);
+      const optimalHandles = calculateOptimalHandles(
+        sourceTemplateNode,
+        targetTemplateNode
+      );
 
       return {
-        id: `edge-${Date.now()}-${idx}`,
+        id: `edge-${timestamp}-${idx}`,
         source: sourceNode.id,
         target: targetNode.id,
         sourceHandle: templateEdge.sourceHandle ?? optimalHandles.sourceHandle,
@@ -276,7 +344,7 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
       };
     });
 
-    set({ nodes, edges, selectedNodeId: null });
+    set({ nodes: sortedNodes, edges, selectedNodeId: null });
   },
 
   // Add a node to a group

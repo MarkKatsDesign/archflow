@@ -1,10 +1,17 @@
-import { memo } from 'react';
-import { BaseEdge, EdgeLabelRenderer, type EdgeProps } from 'reactflow';
+import { memo, useCallback, useMemo } from 'react';
+import { BaseEdge, type EdgeProps } from 'reactflow';
 import { useArchitectureStore } from '../../store/useArchitectureStore';
+import {
+  parsePathToPoints,
+  getPointOnPolyline,
+  findClosestPointOnPolyline,
+} from '../../utils/pathUtils';
+import { DraggableEdgeLabel } from './DraggableEdgeLabel';
 
 export interface SmartOrthogonalEdgeData {
   lane?: number; // Lane offset for parallel edges (0 = center, positive/negative = offset)
   totalLanes?: number; // Total number of lanes in this group
+  labelPosition?: number; // 0-1 position along the path
 }
 
 const LANE_SPACING = 20; // Pixels between parallel lanes (increased for better visibility)
@@ -283,8 +290,9 @@ function SmartOrthogonalEdge({
 
   const lane = data?.lane ?? 0;
   const totalLanes = data?.totalLanes ?? 1;
+  const labelPosition = data?.labelPosition ?? 0.5;
 
-  const { path, labelX, labelY } = calculateOrthogonalPath(
+  const { path, labelX: defaultLabelX, labelY: defaultLabelY } = calculateOrthogonalPath(
     sourceX,
     sourceY,
     targetX,
@@ -293,6 +301,29 @@ function SmartOrthogonalEdge({
     targetHandleId,
     lane,
     totalLanes
+  );
+
+  // Parse path to points for label positioning
+  const pathPoints = useMemo(() => parsePathToPoints(path), [path]);
+
+  // Calculate label position along the path
+  const { labelX, labelY } = useMemo(() => {
+    if (pathPoints.length < 2) {
+      return { labelX: defaultLabelX, labelY: defaultLabelY };
+    }
+    const point = getPointOnPolyline(labelPosition, pathPoints);
+    return { labelX: point.x, labelY: point.y };
+  }, [pathPoints, labelPosition, defaultLabelX, defaultLabelY]);
+
+  // Function to find closest point on path for dragging
+  const findClosestPoint = useCallback(
+    (screenX: number, screenY: number) => {
+      if (pathPoints.length < 2) {
+        return { t: 0.5, x: defaultLabelX, y: defaultLabelY };
+      }
+      return findClosestPointOnPolyline({ x: screenX, y: screenY }, pathPoints);
+    },
+    [pathPoints, defaultLabelX, defaultLabelY]
   );
 
   return (
@@ -307,32 +338,19 @@ function SmartOrthogonalEdge({
         }}
       />
 
-      {/* Label */}
+      {/* Draggable Label */}
       {label && (
-        <EdgeLabelRenderer>
-          <div
-            style={{
-              position: 'absolute',
-              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-              pointerEvents: 'all',
-            }}
-            className="nodrag nopan"
-          >
-            <div
-              style={{
-                background: (labelBgStyle?.fill as string) || '#ffffff',
-                padding: labelBgPadding ? `${labelBgPadding[1]}px ${labelBgPadding[0]}px` : '4px 8px',
-                borderRadius: labelBgBorderRadius || 4,
-                fontSize: (labelStyle?.fontSize as number) || 12,
-                fontWeight: (labelStyle?.fontWeight as number) || 600,
-                color: (labelStyle?.fill as string) || '#1e293b',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-              }}
-            >
-              {label}
-            </div>
-          </div>
-        </EdgeLabelRenderer>
+        <DraggableEdgeLabel
+          edgeId={id}
+          label={label}
+          labelX={labelX}
+          labelY={labelY}
+          labelStyle={labelStyle}
+          labelBgStyle={labelBgStyle}
+          labelBgPadding={labelBgPadding}
+          labelBgBorderRadius={labelBgBorderRadius}
+          findClosestPoint={findClosestPoint}
+        />
       )}
     </>
   );

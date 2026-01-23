@@ -70,49 +70,62 @@ export const templates: ArchitectureTemplate[] = [
     budgetCompatible: ['moderate', 'flexible'],
 
     nodes: [
+      // Index 0: VPC (group) - must come first
+      {
+        type: 'group',
+        position: { x: 175, y: 170 },
+        data: { zone: { id: 'vpc' }, label: 'AWS VPC' },
+        style: { width: 250, height: 180 },
+      },
+      // Index 1: Vercel (external)
       {
         position: { x: 100, y: 50 },
         data: { service: { id: 'vercel' } },
       },
+      // Index 2: Auth0 (external)
       {
         position: { x: 400, y: 50 },
         data: { service: { id: 'auth0' } },
       },
+      // Index 3: RDS (inside VPC) - relative position to VPC
       {
-        position: { x: 250, y: 200 },
+        position: { x: 50, y: 50 },
+        parentIndex: 0,
         data: { service: { id: 'postgres-rds' } },
       },
+      // Index 4: S3 (outside VPC - S3 is regional)
       {
-        position: { x: 100, y: 350 },
+        position: { x: 100, y: 400 },
         data: { service: { id: 'aws-s3' } },
       },
+      // Index 5: Algolia (external)
       {
-        position: { x: 400, y: 350 },
+        position: { x: 400, y: 400 },
         data: { service: { id: 'algolia' } },
       },
     ],
 
     edges: [
       {
-        sourceIndex: 0, // Vercel
-        targetIndex: 1, // Auth0
+        sourceIndex: 1, // Vercel
+        targetIndex: 2, // Auth0
         animated: true,
         label: 'Auth Token',
       },
       {
-        sourceIndex: 0, // Vercel
-        targetIndex: 2, // Postgres RDS
+        sourceIndex: 1, // Vercel
+        targetIndex: 3, // Postgres RDS
         animated: true,
         label: 'SQL Queries',
       },
       {
-        sourceIndex: 0, // Vercel
-        targetIndex: 3, // S3
+        sourceIndex: 1, // Vercel
+        targetIndex: 4, // S3
         label: 'File Upload',
       },
       {
-        sourceIndex: 0, // Vercel
-        targetIndex: 4, // Algolia
+        sourceIndex: 1, // Vercel
+        targetIndex: 5, // Algolia
         animated: true,
         label: 'Search API',
       },
@@ -148,49 +161,70 @@ export const templates: ArchitectureTemplate[] = [
     budgetCompatible: ['minimal', 'moderate'],
 
     nodes: [
+      // Index 0: VPC (outermost group)
       {
-        position: { x: 250, y: 50 },
+        type: 'group',
+        position: { x: 150, y: 130 },
+        data: { zone: { id: 'vpc' }, label: 'VPC' },
+        style: { width: 300, height: 200 },
+      },
+      // Index 1: Public Subnet (nested in VPC)
+      {
+        type: 'group',
+        position: { x: 20, y: 40 },
+        parentIndex: 0,
+        data: { zone: { id: 'public-subnet' }, label: 'Public Subnet' },
+        style: { width: 260, height: 130 },
+      },
+      // Index 2: CloudFront (edge, external)
+      {
+        position: { x: 225, y: 30 },
         data: { service: { id: 'aws-cloudfront' } },
       },
+      // Index 3: Lambda (in public subnet)
       {
-        position: { x: 250, y: 200 },
+        position: { x: 55, y: 35 },
+        parentIndex: 1,
         data: { service: { id: 'aws-lambda' } },
       },
+      // Index 4: DynamoDB (regional service, outside VPC)
       {
-        position: { x: 100, y: 350 },
+        position: { x: 75, y: 400 },
         data: { service: { id: 'dynamodb' } },
       },
+      // Index 5: S3 (regional service)
       {
-        position: { x: 250, y: 500 },
+        position: { x: 250, y: 400 },
         data: { service: { id: 'aws-s3' } },
       },
+      // Index 6: SQS (regional service)
       {
-        position: { x: 400, y: 350 },
+        position: { x: 425, y: 400 },
         data: { service: { id: 'aws-sqs' } },
       },
     ],
 
     edges: [
       {
-        sourceIndex: 0, // CloudFront
-        targetIndex: 1, // Lambda
+        sourceIndex: 2, // CloudFront
+        targetIndex: 3, // Lambda
         animated: true,
         label: 'HTTP Request',
       },
       {
-        sourceIndex: 1, // Lambda
-        targetIndex: 2, // DynamoDB
+        sourceIndex: 3, // Lambda
+        targetIndex: 4, // DynamoDB
         animated: true,
         label: 'NoSQL Query',
       },
       {
-        sourceIndex: 1, // Lambda
-        targetIndex: 3, // S3
+        sourceIndex: 3, // Lambda
+        targetIndex: 5, // S3
         label: 'Object Storage',
       },
       {
-        sourceIndex: 1, // Lambda
-        targetIndex: 4, // SQS
+        sourceIndex: 3, // Lambda
+        targetIndex: 6, // SQS
         animated: true,
         label: 'Async Job',
       },
@@ -305,56 +339,77 @@ export const templates: ArchitectureTemplate[] = [
     budgetCompatible: ['minimal', 'moderate'],
 
     nodes: [
+      // Index 0: VPC
       {
-        position: { x: 100, y: 50 },
+        type: 'group',
+        position: { x: 175, y: 100 },
+        data: { zone: { id: 'vpc' }, label: 'VPC' },
+        style: { width: 250, height: 200 },
+      },
+      // Index 1: Private Subnet (for Lambda)
+      {
+        type: 'group',
+        position: { x: 20, y: 40 },
+        parentIndex: 0,
+        data: { zone: { id: 'private-subnet' }, label: 'Private Subnet' },
+        style: { width: 210, height: 130 },
+      },
+      // Index 2: S3 (event source, outside VPC)
+      {
+        position: { x: 50, y: 30 },
         data: { service: { id: 'aws-s3' } },
       },
+      // Index 3: Lambda (in private subnet)
       {
-        position: { x: 250, y: 50 },
+        position: { x: 30, y: 35 },
+        parentIndex: 1,
         data: { service: { id: 'aws-lambda' } },
       },
+      // Index 4: SQS (regional)
       {
-        position: { x: 400, y: 50 },
+        position: { x: 475, y: 30 },
         data: { service: { id: 'aws-sqs' } },
       },
+      // Index 5: DynamoDB (regional)
       {
-        position: { x: 250, y: 200 },
+        position: { x: 175, y: 370 },
         data: { service: { id: 'dynamodb' } },
       },
+      // Index 6: SNS (regional)
       {
-        position: { x: 400, y: 200 },
+        position: { x: 375, y: 370 },
         data: { service: { id: 'aws-sns' } },
       },
     ],
 
     edges: [
       {
-        sourceIndex: 0, // S3
-        targetIndex: 1, // Lambda
+        sourceIndex: 2, // S3
+        targetIndex: 3, // Lambda
         animated: true,
         label: 'S3 Event',
       },
       {
-        sourceIndex: 1, // Lambda
-        targetIndex: 2, // SQS
+        sourceIndex: 3, // Lambda
+        targetIndex: 4, // SQS
         animated: true,
         label: 'Queue Job',
       },
       {
-        sourceIndex: 2, // SQS
-        targetIndex: 1, // Lambda (processor)
+        sourceIndex: 4, // SQS
+        targetIndex: 3, // Lambda (processor)
         animated: true,
         label: 'Process Batch',
       },
       {
-        sourceIndex: 1, // Lambda
-        targetIndex: 3, // DynamoDB
+        sourceIndex: 3, // Lambda
+        targetIndex: 5, // DynamoDB
         animated: true,
         label: 'Update Status',
       },
       {
-        sourceIndex: 1, // Lambda
-        targetIndex: 4, // SNS
+        sourceIndex: 3, // Lambda
+        targetIndex: 6, // SNS
         label: 'Notify',
       },
     ],
@@ -390,66 +445,100 @@ export const templates: ArchitectureTemplate[] = [
     budgetCompatible: ['flexible', 'enterprise'],
 
     nodes: [
+      // Index 0: VPC
       {
-        position: { x: 250, y: 50 },
+        type: 'group',
+        position: { x: 50, y: 30 },
+        data: { zone: { id: 'vpc' }, label: 'Production VPC' },
+        style: { width: 500, height: 470 },
+      },
+      // Index 1: Public Subnet
+      {
+        type: 'group',
+        position: { x: 25, y: 40 },
+        parentIndex: 0,
+        data: { zone: { id: 'public-subnet' }, label: 'Public Subnet' },
+        style: { width: 450, height: 130 },
+      },
+      // Index 2: Private Subnet
+      {
+        type: 'group',
+        position: { x: 25, y: 190 },
+        parentIndex: 0,
+        data: { zone: { id: 'private-subnet' }, label: 'Private Subnet' },
+        style: { width: 450, height: 250 },
+      },
+      // Index 3: ALB (in public subnet)
+      {
+        position: { x: 150, y: 35 },
+        parentIndex: 1,
         data: { service: { id: 'aws-alb' } },
       },
+      // Index 4: ECS Service 1 (in private subnet)
       {
-        position: { x: 100, y: 200 },
+        position: { x: 25, y: 35 },
+        parentIndex: 2,
         data: { service: { id: 'aws-ecs' } },
       },
+      // Index 5: ECS Service 2 (in private subnet)
       {
-        position: { x: 400, y: 200 },
+        position: { x: 250, y: 35 },
+        parentIndex: 2,
         data: { service: { id: 'aws-ecs' } },
       },
+      // Index 6: ElastiCache (in private subnet)
       {
-        position: { x: 100, y: 350 },
+        position: { x: 25, y: 145 },
+        parentIndex: 2,
         data: { service: { id: 'redis-elasticache' } },
       },
+      // Index 7: RDS (in private subnet)
       {
-        position: { x: 250, y: 350 },
+        position: { x: 250, y: 145 },
+        parentIndex: 2,
         data: { service: { id: 'postgres-rds' } },
       },
+      // Index 8: CloudWatch (regional, outside VPC)
       {
-        position: { x: 400, y: 350 },
+        position: { x: 600, y: 200 },
         data: { service: { id: 'aws-cloudwatch' } },
       },
     ],
 
     edges: [
       {
-        sourceIndex: 0, // ALB
-        targetIndex: 1, // ECS Service 1
+        sourceIndex: 3, // ALB
+        targetIndex: 4, // ECS Service 1
         animated: true,
         label: 'Route Traffic',
       },
       {
-        sourceIndex: 0, // ALB
-        targetIndex: 2, // ECS Service 2
+        sourceIndex: 3, // ALB
+        targetIndex: 5, // ECS Service 2
         animated: true,
         label: 'Load Balance',
       },
       {
-        sourceIndex: 1, // ECS Service 1
-        targetIndex: 3, // ElastiCache
+        sourceIndex: 4, // ECS Service 1
+        targetIndex: 6, // ElastiCache
         animated: true,
         label: 'Cache Read',
       },
       {
-        sourceIndex: 1, // ECS Service 1
-        targetIndex: 4, // RDS
+        sourceIndex: 4, // ECS Service 1
+        targetIndex: 7, // RDS
         animated: true,
         label: 'DB Query',
       },
       {
-        sourceIndex: 2, // ECS Service 2
-        targetIndex: 4, // RDS
+        sourceIndex: 5, // ECS Service 2
+        targetIndex: 7, // RDS
         animated: true,
         label: 'DB Query',
       },
       {
-        sourceIndex: 1, // ECS Service 1
-        targetIndex: 5, // CloudWatch
+        sourceIndex: 4, // ECS Service 1
+        targetIndex: 8, // CloudWatch
         label: 'Metrics',
       },
     ],

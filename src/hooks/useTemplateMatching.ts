@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { templates } from '../data/templates';
 import { useOnboardingStore } from '../store/useOnboardingStore';
 import type { TemplateMatch } from '../types/template';
+import { isTemplateGroupNode } from '../types/template';
 
 export function useTemplateMatching(): TemplateMatch[] {
   const { answers } = useOnboardingStore();
@@ -38,9 +39,10 @@ export function useTemplateMatching(): TemplateMatch[] {
       if (answers.existingSystems.length > 0 && !answers.existingSystems.includes('none')) {
         // Check if template services match existing systems
         // Simple check: if any existing system is mentioned in template description
+        const serviceNodes = template.nodes.filter((node) => !isTemplateGroupNode(node));
         const hasMatchingProvider = answers.existingSystems.some((system) => {
           if (system === 'aws') {
-            return template.nodes.some((node) => node.data.service.id.startsWith('aws-'));
+            return serviceNodes.some((node) => node.data.service.id.startsWith('aws-'));
           }
           return template.id.toLowerCase().includes(system);
         });

@@ -1,14 +1,42 @@
 import type { ProjectType, Scale, BudgetRange } from './onboarding';
 
-// Node template without generated IDs
-export interface TemplateNode {
+// Base position for all template nodes
+interface TemplateNodeBase {
   position: { x: number; y: number };
+  parentIndex?: number; // Index of parent group in nodes array (for nesting)
+}
+
+// Service template node
+export interface TemplateServiceNode extends TemplateNodeBase {
+  type?: 'service'; // Optional for backward compatibility (defaults to 'service')
   data: {
     service: {
-      id: string;  // Service ID from services.ts
+      id: string; // Service ID from services.ts
     };
   };
-  type?: string;
+}
+
+// Group/Zone template node
+export interface TemplateGroupNode extends TemplateNodeBase {
+  type: 'group'; // Required to identify as group
+  data: {
+    zone: {
+      id: string; // Zone ID from infrastructure.ts (e.g., 'vpc', 'public-subnet')
+    };
+    label?: string; // Optional custom label
+  };
+  style: {
+    width: number;
+    height: number;
+  };
+}
+
+// Union type for template nodes
+export type TemplateNode = TemplateServiceNode | TemplateGroupNode;
+
+// Type guard for group nodes
+export function isTemplateGroupNode(node: TemplateNode): node is TemplateGroupNode {
+  return node.type === 'group';
 }
 
 // Edge template with source/target indices instead of IDs

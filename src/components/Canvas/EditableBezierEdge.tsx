@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef, useEffect } from 'react';
+import { useCallback, useState, useRef, useEffect, useMemo } from 'react';
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -7,6 +7,8 @@ import {
   type EdgeProps,
 } from 'reactflow';
 import { useArchitectureStore } from '../../store/useArchitectureStore';
+import { getPointOnBezier, findClosestPointOnBezier } from '../../utils/pathUtils';
+import { DraggableEdgeLabel } from './DraggableEdgeLabel';
 
 export interface ControlPoint {
   x: number;
@@ -18,6 +20,7 @@ export interface EditableBezierEdgeData {
     source: ControlPoint;
     target: ControlPoint;
   };
+  labelPosition?: number; // 0-1 position along the curve
 }
 
 export function EditableBezierEdge({
@@ -78,8 +81,8 @@ export function EditableBezierEdge({
   // Build the bezier path manually with custom control points
   const path = `M ${sourceX},${sourceY} C ${controlPoints.source.x},${controlPoints.source.y} ${controlPoints.target.x},${controlPoints.target.y} ${targetX},${targetY}`;
 
-  // Calculate midpoint for label positioning
-  const [edgePath, labelX, labelY] = getBezierPath({
+  // Calculate default path (used when no custom control points)
+  const [edgePath] = getBezierPath({
     sourceX,
     sourceY,
     sourcePosition,
@@ -87,6 +90,29 @@ export function EditableBezierEdge({
     targetY,
     targetPosition,
   });
+
+  // Calculate label position along the curve
+  const labelPosition = data?.labelPosition ?? 0.5;
+  const { labelX, labelY } = useMemo(() => {
+    const p0 = { x: sourceX, y: sourceY };
+    const p1 = controlPoints.source;
+    const p2 = controlPoints.target;
+    const p3 = { x: targetX, y: targetY };
+    const point = getPointOnBezier(labelPosition, p0, p1, p2, p3);
+    return { labelX: point.x, labelY: point.y };
+  }, [sourceX, sourceY, targetX, targetY, controlPoints, labelPosition]);
+
+  // Function to find closest point on curve for dragging
+  const findClosestPoint = useCallback(
+    (screenX: number, screenY: number) => {
+      const p0 = { x: sourceX, y: sourceY };
+      const p1 = controlPoints.source;
+      const p2 = controlPoints.target;
+      const p3 = { x: targetX, y: targetY };
+      return findClosestPointOnBezier({ x: screenX, y: screenY }, p0, p1, p2, p3);
+    },
+    [sourceX, sourceY, targetX, targetY, controlPoints]
+  );
 
   // Handle control point drag
   const handleMouseDown = useCallback(
@@ -188,31 +214,19 @@ export function EditableBezierEdge({
         }}
       />
 
-      {/* Label */}
+      {/* Draggable Label */}
       {label && (
-        <EdgeLabelRenderer>
-          <div
-            style={{
-              position: 'absolute',
-              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-              pointerEvents: 'all',
-            }}
-            className="nodrag nopan"
-          >
-            <div
-              style={{
-                background: (labelBgStyle?.fill as string) || '#ffffff',
-                padding: labelBgPadding ? `${labelBgPadding[1]}px ${labelBgPadding[0]}px` : '4px 8px',
-                borderRadius: labelBgBorderRadius || 4,
-                fontSize: (labelStyle?.fontSize as number) || 12,
-                fontWeight: (labelStyle?.fontWeight as number) || 600,
-                color: (labelStyle?.fill as string) || '#1e293b',
-              }}
-            >
-              {label}
-            </div>
-          </div>
-        </EdgeLabelRenderer>
+        <DraggableEdgeLabel
+          edgeId={id}
+          label={label}
+          labelX={labelX}
+          labelY={labelY}
+          labelStyle={labelStyle}
+          labelBgStyle={labelBgStyle}
+          labelBgPadding={labelBgPadding}
+          labelBgBorderRadius={labelBgBorderRadius}
+          findClosestPoint={findClosestPoint}
+        />
       )}
 
       {/* Control Point Handles - Only show when selected */}
