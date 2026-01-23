@@ -630,4 +630,241 @@ export const templates: ArchitectureTemplate[] = [
       'Limited to supported frameworks',
     ],
   },
+
+  // Template 8: ML Training & Inference Platform
+  {
+    id: 'ml-training-inference-platform',
+    name: 'ML Training & Inference Platform',
+    description:
+      'Production-ready ML platform with the full lifecycle from data ingestion to model deployment. Includes training infrastructure, model registry, real-time inference endpoints, and MLOps tooling.',
+
+    projectTypes: ['ai-ml', 'data-pipeline'],
+    idealScale: ['growth', 'enterprise'],
+    budgetCompatible: ['moderate', 'flexible', 'enterprise'],
+
+    nodes: [
+      // Index 0: VPC (outermost container)
+      {
+        type: 'group',
+        position: { x: 50, y: 80 },
+        data: { zone: { id: 'vpc' }, label: 'ML Platform VPC' },
+        style: { width: 520, height: 380 },
+      },
+      // Index 1: Private Subnet (for ML workloads)
+      {
+        type: 'group',
+        position: { x: 25, y: 40 },
+        parentIndex: 0,
+        data: { zone: { id: 'private-subnet' }, label: 'Private Subnet' },
+        style: { width: 470, height: 310 },
+      },
+      // Index 2: S3 Data Lake (external - regional service)
+      {
+        position: { x: 50, y: 30 },
+        data: { service: { id: 'aws-s3' } },
+      },
+      // Index 3: SageMaker Training (in private subnet)
+      {
+        position: { x: 30, y: 40 },
+        parentIndex: 1,
+        data: { service: { id: 'aws-sagemaker' } },
+      },
+      // Index 4: SageMaker Inference Endpoint (in private subnet)
+      {
+        position: { x: 260, y: 40 },
+        parentIndex: 1,
+        data: { service: { id: 'aws-sagemaker' } },
+      },
+      // Index 5: Lambda Preprocessing (in private subnet)
+      {
+        position: { x: 30, y: 180 },
+        parentIndex: 1,
+        data: { service: { id: 'aws-lambda' } },
+      },
+      // Index 6: ECR Model Registry (in private subnet)
+      {
+        position: { x: 260, y: 180 },
+        parentIndex: 1,
+        data: { service: { id: 'aws-ecr' } },
+      },
+      // Index 7: API Gateway (external - edge service)
+      {
+        position: { x: 620, y: 150 },
+        data: { service: { id: 'aws-api-gateway' } },
+      },
+      // Index 8: CloudWatch Monitoring (external)
+      {
+        position: { x: 620, y: 300 },
+        data: { service: { id: 'aws-cloudwatch' } },
+      },
+      // Index 9: W&B Experiment Tracking (external SaaS)
+      {
+        position: { x: 620, y: 450 },
+        data: { service: { id: 'wandb' } },
+      },
+    ],
+
+    edges: [
+      {
+        sourceIndex: 2, // S3
+        targetIndex: 3, // SageMaker Training
+        animated: true,
+        label: 'Training Data',
+      },
+      {
+        sourceIndex: 3, // SageMaker Training
+        targetIndex: 6, // ECR
+        animated: true,
+        label: 'Push Model',
+      },
+      {
+        sourceIndex: 6, // ECR
+        targetIndex: 4, // SageMaker Endpoint
+        animated: true,
+        label: 'Deploy Model',
+      },
+      {
+        sourceIndex: 7, // API Gateway
+        targetIndex: 5, // Lambda
+        animated: true,
+        label: 'Request',
+      },
+      {
+        sourceIndex: 5, // Lambda
+        targetIndex: 4, // SageMaker Endpoint
+        animated: true,
+        label: 'Inference',
+      },
+      {
+        sourceIndex: 5, // Lambda
+        targetIndex: 2, // S3
+        label: 'Fetch Features',
+      },
+      {
+        sourceIndex: 3, // SageMaker Training
+        targetIndex: 9, // W&B
+        label: 'Log Metrics',
+      },
+      {
+        sourceIndex: 4, // SageMaker Endpoint
+        targetIndex: 8, // CloudWatch
+        label: 'Metrics',
+      },
+    ],
+
+    estimatedMonthlyCost: { min: 200, max: 5000 },
+    complexity: 4,
+
+    pros: [
+      'Complete ML lifecycle from data to deployment',
+      'Fully managed training and inference infrastructure',
+      'Built-in experiment tracking with W&B',
+      'Auto-scaling inference endpoints',
+      'Enterprise-grade security with VPC isolation',
+      'Model versioning and registry with ECR',
+    ],
+
+    cons: [
+      'Higher costs for GPU training instances',
+      'Requires ML engineering expertise',
+      'AWS vendor lock-in',
+      'Complex debugging across distributed components',
+    ],
+  },
+
+  // Template 9: GenAI/LLM Application
+  {
+    id: 'genai-llm-application',
+    name: 'GenAI/LLM Application',
+    description:
+      'Modern architecture for building LLM-powered applications with managed foundation models, conversation history, and RAG (Retrieval-Augmented Generation) support.',
+
+    projectTypes: ['ai-ml', 'saas'],
+    idealScale: ['startup-mvp', 'growth'],
+    budgetCompatible: ['minimal', 'moderate', 'flexible'],
+
+    nodes: [
+      // Index 0: Vercel Frontend
+      {
+        position: { x: 50, y: 50 },
+        data: { service: { id: 'vercel' } },
+      },
+      // Index 1: API Gateway
+      {
+        position: { x: 250, y: 50 },
+        data: { service: { id: 'aws-api-gateway' } },
+      },
+      // Index 2: Lambda Orchestration
+      {
+        position: { x: 250, y: 200 },
+        data: { service: { id: 'aws-lambda' } },
+      },
+      // Index 3: Bedrock LLM
+      {
+        position: { x: 450, y: 200 },
+        data: { service: { id: 'aws-bedrock' } },
+      },
+      // Index 4: DynamoDB (conversation history)
+      {
+        position: { x: 100, y: 350 },
+        data: { service: { id: 'dynamodb' } },
+      },
+      // Index 5: S3 (RAG documents)
+      {
+        position: { x: 300, y: 350 },
+        data: { service: { id: 'aws-s3' } },
+      },
+    ],
+
+    edges: [
+      {
+        sourceIndex: 0, // Vercel
+        targetIndex: 1, // API Gateway
+        animated: true,
+        label: 'Chat Request',
+      },
+      {
+        sourceIndex: 1, // API Gateway
+        targetIndex: 2, // Lambda
+        animated: true,
+        label: 'Invoke',
+      },
+      {
+        sourceIndex: 2, // Lambda
+        targetIndex: 3, // Bedrock
+        animated: true,
+        label: 'LLM Request',
+      },
+      {
+        sourceIndex: 2, // Lambda
+        targetIndex: 4, // DynamoDB
+        animated: true,
+        label: 'Chat History',
+      },
+      {
+        sourceIndex: 2, // Lambda
+        targetIndex: 5, // S3
+        label: 'RAG Fetch',
+      },
+    ],
+
+    estimatedMonthlyCost: { min: 20, max: 500 },
+    complexity: 2,
+
+    pros: [
+      'Quick to deploy LLM-powered features',
+      'Access to Claude, Llama, and other top models via Bedrock',
+      'Serverless scales from zero to millions',
+      'Built-in RAG support with S3 documents',
+      'Conversation memory with DynamoDB',
+      'Pay-per-token pricing keeps costs low initially',
+    ],
+
+    cons: [
+      'Token costs can scale quickly with usage',
+      'Cold starts may affect latency',
+      'Limited model customization vs self-hosted',
+      'Requires prompt engineering expertise',
+    ],
+  },
 ];
