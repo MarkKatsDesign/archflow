@@ -1610,6 +1610,43 @@ function generateChamferedPath(
 /**
  * Calculate PCB-style path with obstacle avoidance
  */
+/**
+ * Infer handle side from position when handle ID is not available
+ * This provides a smart fallback based on the relative positions of source and target
+ */
+function inferHandleSide(
+  isSource: boolean,
+  sourceX: number,
+  sourceY: number,
+  targetX: number,
+  targetY: number,
+): string {
+  const dx = targetX - sourceX;
+  const dy = targetY - sourceY;
+  const absDx = Math.abs(dx);
+  const absDy = Math.abs(dy);
+
+  if (isSource) {
+    // For source, determine which side the target is relative to
+    if (absDx > absDy) {
+      // More horizontal movement
+      return dx > 0 ? "right" : "left";
+    } else {
+      // More vertical movement
+      return dy > 0 ? "bottom" : "top";
+    }
+  } else {
+    // For target, determine which side the source is relative to
+    if (absDx > absDy) {
+      // More horizontal movement
+      return dx > 0 ? "left" : "right";
+    } else {
+      // More vertical movement
+      return dy > 0 ? "top" : "bottom";
+    }
+  }
+}
+
 function calculatePCBPath(
   sourceX: number,
   sourceY: number,
@@ -1622,8 +1659,9 @@ function calculatePCBPath(
   obstacles: ObstacleRect[] = [],
   debugLabel?: string,
 ): { path: string; labelX: number; labelY: number } {
-  const sourceSide = sourceHandle?.split("-")[0] || "right";
-  const targetSide = targetHandle?.split("-")[0] || "left";
+  // Extract side from handle ID, or infer from positions if not available
+  const sourceSide = sourceHandle?.split("-")[0] || inferHandleSide(true, sourceX, sourceY, targetX, targetY);
+  const targetSide = targetHandle?.split("-")[0] || inferHandleSide(false, sourceX, sourceY, targetX, targetY);
 
   debugLog(debugLabel, `=== calculatePCBPath ===`);
   debugLog(

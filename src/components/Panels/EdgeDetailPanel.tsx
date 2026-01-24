@@ -31,7 +31,13 @@ function EdgeDetailPanelContent({
   };
 
   const handleEdgeTypeChange = (type: string) => {
-    updateEdge(edge.id, { type });
+    // Explicitly preserve sourceHandle and targetHandle when changing edge type
+    // This prevents React Flow from potentially resetting handle positions during the type transition
+    updateEdge(edge.id, {
+      type,
+      sourceHandle: edge.sourceHandle,
+      targetHandle: edge.targetHandle,
+    });
   };
 
   const handleDelete = () => {
