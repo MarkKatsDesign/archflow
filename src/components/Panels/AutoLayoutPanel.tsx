@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   LayoutGrid,
   ChevronDown,
@@ -9,24 +9,32 @@ import {
   Loader2,
   Route,
   Cpu,
-} from 'lucide-react';
-import { useArchitectureStore } from '../../store/useArchitectureStore';
-import { applyAutoLayout, optimizeEdges, type LayoutOptions } from '../../utils/layoutEngine';
+} from "lucide-react";
+import { useArchitectureStore } from "../../store/useArchitectureStore";
+import {
+  applyAutoLayout,
+  optimizeEdges,
+  type LayoutOptions,
+} from "../../utils/layoutEngine";
 
-type Direction = LayoutOptions['direction'];
+type Direction = LayoutOptions["direction"];
 
-const directions: { value: Direction; icon: typeof ArrowDown; label: string }[] = [
-  { value: 'TB', icon: ArrowDown, label: 'Top to Bottom' },
-  { value: 'LR', icon: ArrowRight, label: 'Left to Right' },
-  { value: 'BT', icon: ArrowUp, label: 'Bottom to Top' },
-  { value: 'RL', icon: ArrowLeft, label: 'Right to Left' },
+const directions: {
+  value: Direction;
+  icon: typeof ArrowDown;
+  label: string;
+}[] = [
+  { value: "TB", icon: ArrowDown, label: "Top to Bottom" },
+  { value: "LR", icon: ArrowRight, label: "Left to Right" },
+  { value: "BT", icon: ArrowUp, label: "Bottom to Top" },
+  { value: "RL", icon: ArrowLeft, label: "Right to Left" },
 ];
 
 export function AutoLayoutPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLayouting, setIsLayouting] = useState(false);
   const [isOptimizing, setIsOptimizing] = useState(false);
-  const [direction, setDirection] = useState<Direction>('TB');
+  const [direction, setDirection] = useState<Direction>("TB");
   const [nodeSpacing, setNodeSpacing] = useState(80);
   const [layerSpacing, setLayerSpacing] = useState(100);
   const [pcbMode, setPcbMode] = useState(false);
@@ -42,14 +50,14 @@ export function AutoLayoutPanel() {
         direction,
         nodeSpacing,
         layerSpacing,
-        algorithm: 'layered',
+        algorithm: "layered",
       });
 
       setNodes(result.nodes);
       setEdges(result.edges);
       setIsOpen(false);
     } catch (error) {
-      console.error('Auto layout failed:', error);
+      console.error("Failed to apply auto layout:", error);
     } finally {
       setIsLayouting(false);
     }
@@ -67,15 +75,15 @@ export function AutoLayoutPanel() {
 
       // Apply PCB style if enabled
       if (pcbMode) {
-        optimizedEdges = optimizedEdges.map(edge => ({
+        optimizedEdges = optimizedEdges.map((edge) => ({
           ...edge,
-          type: 'pcb',
+          type: "pcb",
         }));
       }
 
       setEdges(optimizedEdges);
     } catch (error) {
-      console.error('Edge optimization failed:', error);
+      console.error("Failed to optimize edges:", error);
     } finally {
       setIsOptimizing(false);
     }
@@ -94,10 +102,12 @@ export function AutoLayoutPanel() {
         className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-xl shadow-md border border-gray-200 dark:border-slate-700 hover:shadow-lg transition-all hover:-translate-y-0.5"
       >
         <LayoutGrid className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-        <span className="font-semibold text-gray-700 dark:text-gray-200">Auto Layout</span>
+        <span className="font-semibold text-gray-700 dark:text-gray-200">
+          Auto Layout
+        </span>
         <ChevronDown
           className={`w-4 h-4 text-gray-500 transition-transform ${
-            isOpen ? 'rotate-180' : ''
+            isOpen ? "rotate-180" : ""
           }`}
         />
       </button>
@@ -128,16 +138,16 @@ export function AutoLayoutPanel() {
                     onClick={() => setDirection(value)}
                     className={`flex-1 p-2 rounded-lg border transition-all ${
                       direction === value
-                        ? 'bg-indigo-100 dark:bg-indigo-900/40 border-indigo-300 dark:border-indigo-600'
-                        : 'bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-600'
+                        ? "bg-indigo-100 dark:bg-indigo-900/40 border-indigo-300 dark:border-indigo-600"
+                        : "bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-600"
                     }`}
                     title={label}
                   >
                     <Icon
                       className={`w-5 h-5 mx-auto ${
                         direction === value
-                          ? 'text-indigo-600 dark:text-indigo-400'
-                          : 'text-gray-500 dark:text-gray-400'
+                          ? "text-indigo-600 dark:text-indigo-400"
+                          : "text-gray-500 dark:text-gray-400"
                       }`}
                     />
                   </button>
@@ -222,14 +232,12 @@ export function AutoLayoutPanel() {
               <button
                 onClick={() => setPcbMode(!pcbMode)}
                 className={`relative w-11 h-6 rounded-full transition-colors ${
-                  pcbMode
-                    ? 'bg-cyan-500'
-                    : 'bg-gray-200 dark:bg-slate-600'
+                  pcbMode ? "bg-cyan-500" : "bg-gray-200 dark:bg-slate-600"
                 }`}
               >
                 <div
                   className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                    pcbMode ? 'translate-x-5' : ''
+                    pcbMode ? "translate-x-5" : ""
                   }`}
                 />
               </button>
@@ -241,8 +249,8 @@ export function AutoLayoutPanel() {
               disabled={isOptimizing || edges.length === 0}
               className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                 pcbMode
-                  ? 'bg-linear-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white'
-                  : 'bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200'
+                  ? "bg-linear-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white"
+                  : "bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200"
               }`}
             >
               {isOptimizing ? (
@@ -252,15 +260,19 @@ export function AutoLayoutPanel() {
                 </>
               ) : (
                 <>
-                  {pcbMode ? <Cpu className="w-4 h-4" /> : <Route className="w-4 h-4" />}
-                  {pcbMode ? 'Apply PCB Routing' : 'Optimize Edges'}
+                  {pcbMode ? (
+                    <Cpu className="w-4 h-4" />
+                  ) : (
+                    <Route className="w-4 h-4" />
+                  )}
+                  {pcbMode ? "Apply PCB Routing" : "Optimize Edges"}
                 </>
               )}
             </button>
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
               {pcbMode
-                ? 'Apply circuit board style with 45° chamfered corners'
-                : 'Reroute edges to avoid overlapping nodes'}
+                ? "Apply circuit board style with 45° chamfered corners"
+                : "Reroute edges to avoid overlapping nodes"}
             </p>
           </div>
 

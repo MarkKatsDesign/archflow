@@ -29,7 +29,8 @@ export function ExportPanel() {
   const [isExporting, setIsExporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { nodes, edges, setNodes, setEdges, reactFlowInstance } = useArchitectureStore();
+  const { nodes, edges, setNodes, setEdges, reactFlowInstance } =
+    useArchitectureStore();
   const { totalMin, totalMax } = useCostCalculator();
   const { answers } = useOnboardingStore();
   const { theme } = useThemeStore();
@@ -64,7 +65,7 @@ export function ExportPanel() {
       setNodes(data.nodes as unknown as ArchNode[]);
       setEdges(data.edges);
       alert(
-        `Imported ${data.nodes.length} services and ${data.edges.length} connections`
+        `Imported ${data.nodes.length} services and ${data.edges.length} connections`,
       );
     });
 
@@ -76,7 +77,7 @@ export function ExportPanel() {
     setIsExporting(true);
     try {
       const viewport = document.querySelector(
-        ".react-flow__viewport"
+        ".react-flow__viewport",
       ) as HTMLElement;
       if (!viewport) {
         alert("Canvas not found. Make sure you have services on the canvas.");
@@ -84,9 +85,13 @@ export function ExportPanel() {
       }
 
       // Pass reactFlowInstance and nodes to export entire architecture
-      await exportToPNG(viewport, isDarkMode, reactFlowInstance ?? undefined, nodes);
-    } catch (error) {
-      console.error("PNG export failed:", error);
+      await exportToPNG(
+        viewport,
+        isDarkMode,
+        reactFlowInstance ?? undefined,
+        nodes,
+      );
+    } catch {
       alert("Failed to export PNG. Please try again.");
     } finally {
       setIsExporting(false);
@@ -105,7 +110,7 @@ export function ExportPanel() {
     setIsExporting(true);
     try {
       const viewport = document.querySelector(
-        ".react-flow__viewport"
+        ".react-flow__viewport",
       ) as HTMLElement;
       if (!viewport) {
         alert("Canvas not found");
@@ -123,10 +128,10 @@ export function ExportPanel() {
           scale,
         },
         isDarkMode,
-        reactFlowInstance ?? undefined
+        reactFlowInstance ?? undefined,
       );
-    } catch (error) {
-      console.error("PDF export failed:", error);
+    } catch {
+      alert("Failed to export PDF. Please try again.");
     } finally {
       setIsExporting(false);
     }
@@ -136,8 +141,7 @@ export function ExportPanel() {
     setIsExporting(true);
     try {
       await exportToTerraform(serviceNodes, edges);
-    } catch (error) {
-      console.error("Terraform export failed:", error);
+    } catch {
       alert("Failed to export Terraform files. Please try again.");
     } finally {
       setIsExporting(false);
@@ -166,12 +170,16 @@ export function ExportPanel() {
           {isEmpty ? (
             <>
               <Upload className="w-4 h-4 text-green-600 dark:text-green-400" />
-              <span className="font-semibold text-gray-700 dark:text-gray-200">Import</span>
+              <span className="font-semibold text-gray-700 dark:text-gray-200">
+                Import
+              </span>
             </>
           ) : (
             <>
               <Download className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              <span className="font-semibold text-gray-700 dark:text-gray-200">Export</span>
+              <span className="font-semibold text-gray-700 dark:text-gray-200">
+                Export
+              </span>
             </>
           )}
           <ChevronDown

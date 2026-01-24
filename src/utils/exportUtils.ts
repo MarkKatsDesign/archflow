@@ -66,15 +66,18 @@ function getViewportForBounds(
   containerHeight: number,
   minZoom: number = 0.1,
   maxZoom: number = 1,
-  padding: number = 0.1
+  padding: number = 0.1,
 ): Viewport {
   const xZoom = containerWidth / bounds.width;
   const yZoom = containerHeight / bounds.height;
   const zoom = Math.min(xZoom, yZoom) * (1 - padding);
   const clampedZoom = Math.min(Math.max(zoom, minZoom), maxZoom);
 
-  const x = (containerWidth - bounds.width * clampedZoom) / 2 - bounds.x * clampedZoom;
-  const y = (containerHeight - bounds.height * clampedZoom) / 2 - bounds.y * clampedZoom;
+  const x =
+    (containerWidth - bounds.width * clampedZoom) / 2 - bounds.x * clampedZoom;
+  const y =
+    (containerHeight - bounds.height * clampedZoom) / 2 -
+    bounds.y * clampedZoom;
 
   return { x, y, zoom: clampedZoom };
 }
@@ -98,7 +101,7 @@ export interface ArchitectureExport {
 export const exportToJSON = (
   nodes: ArchNode[],
   edges: Edge[],
-  metadata?: ArchitectureExport["metadata"]
+  metadata?: ArchitectureExport["metadata"],
 ): void => {
   const exportData: ArchitectureExport = {
     version: "1.0.0",
@@ -125,7 +128,9 @@ export const exportToJSON = (
  * e.g., "bottom" -> "bottom-4", "top" -> "top-4"
  * Also migrates old 3-handle format (0-2) to new 10-handle format (0-9)
  */
-function migrateHandleId(handleId: string | null | undefined): string | null | undefined {
+function migrateHandleId(
+  handleId: string | null | undefined,
+): string | null | undefined {
   if (!handleId) return handleId;
 
   // Check if already in new format with valid index (0-9)
@@ -146,7 +151,7 @@ function migrateHandleId(handleId: string | null | undefined): string | null | u
   }
 
   // Old format: just the side name - migrate to middle handle (index 4 out of 0-9)
-  if (['top', 'bottom', 'left', 'right'].includes(handleId)) {
+  if (["top", "bottom", "left", "right"].includes(handleId)) {
     return `${handleId}-4`;
   }
 
@@ -158,7 +163,7 @@ function migrateHandleId(handleId: string | null | undefined): string | null | u
  * Migrate edges to use new multi-handle format
  */
 function migrateEdges(edges: Edge[]): Edge[] {
-  return edges.map(edge => ({
+  return edges.map((edge) => ({
     ...edge,
     sourceHandle: migrateHandleId(edge.sourceHandle),
     targetHandle: migrateHandleId(edge.targetHandle),
@@ -167,7 +172,7 @@ function migrateEdges(edges: Edge[]): Edge[] {
 
 export const importFromJSON = (
   file: File,
-  callback: (data: ArchitectureExport) => void
+  callback: (data: ArchitectureExport) => void,
 ): void => {
   const reader = new FileReader();
   reader.onload = (e) => {
@@ -178,8 +183,7 @@ export const importFromJSON = (
       data.edges = migrateEdges(data.edges);
 
       callback(data);
-    } catch (error) {
-      console.error("Failed to parse JSON:", error);
+    } catch {
       alert("Invalid JSON file");
     }
   };
@@ -228,7 +232,7 @@ export const exportToPNG = async (
   element: HTMLElement,
   isDarkMode: boolean = false,
   reactFlowInstance?: ReactFlowInstance,
-  nodes?: Node[]
+  nodes?: Node[],
 ): Promise<void> => {
   try {
     const backgroundColor = isDarkMode ? "#0f172a" : "#f9fafb";
@@ -254,7 +258,7 @@ export const exportToPNG = async (
           containerHeight,
           0.1,
           1,
-          0.05
+          0.05,
         );
 
         // Apply the viewport
@@ -281,7 +285,7 @@ export const exportToPNG = async (
             "react-flow__panel",
           ];
           return !exclusions.some((classname) =>
-            (node as HTMLElement)?.classList?.contains(classname)
+            (node as HTMLElement)?.classList?.contains(classname),
           );
         },
       });
@@ -299,8 +303,7 @@ export const exportToPNG = async (
         reactFlowInstance.setViewport(originalViewport);
       }
     }
-  } catch (error) {
-    console.error("Failed to export PNG:", error);
+  } catch {
     alert("Failed to export image");
   }
 };
@@ -312,7 +315,7 @@ export const exportToPNG = async (
 export const exportToMarkdown = (
   nodes: Node<ServiceNodeData>[],
   edges: Edge[],
-  metadata?: { totalCost?: { min: number; max: number }; scale?: string }
+  metadata?: { totalCost?: { min: number; max: number }; scale?: string },
 ): void => {
   const services = nodes.map((n) => n.data.service);
   const categories = [...new Set(services.map((s) => s.category))];
@@ -418,7 +421,7 @@ export const exportToPDF = async (
   edges: Edge[],
   metadata?: { totalCost?: { min: number; max: number }; scale?: string },
   isDarkMode: boolean = false,
-  reactFlowInstance?: ReactFlowInstance
+  reactFlowInstance?: ReactFlowInstance,
 ): Promise<void> => {
   try {
     const pdf = new jsPDF("landscape", "mm", "a4");
@@ -451,7 +454,7 @@ export const exportToPDF = async (
           containerHeight,
           0.1,
           1,
-          0.05
+          0.05,
         );
 
         // Apply the viewport
@@ -479,7 +482,7 @@ export const exportToPDF = async (
             "react-flow__panel",
           ];
           return !exclusions.some((classname) =>
-            (node as HTMLElement)?.classList?.contains(classname)
+            (node as HTMLElement)?.classList?.contains(classname),
           );
         },
       });
@@ -507,7 +510,7 @@ export const exportToPDF = async (
       pageHeight - 10,
       {
         align: "center",
-      }
+      },
     );
 
     if (metadata?.totalCost) {
@@ -515,7 +518,7 @@ export const exportToPDF = async (
         `Est. Cost: $${metadata.totalCost.min}-$${metadata.totalCost.max}/mo`,
         pageWidth - 10,
         pageHeight - 10,
-        { align: "right" }
+        { align: "right" },
       );
     }
 
@@ -580,8 +583,7 @@ export const exportToPDF = async (
 
     // Save PDF
     pdf.save(`architecture-${Date.now()}.pdf`);
-  } catch (error) {
-    console.error("Failed to export PDF:", error);
+  } catch {
     alert("Failed to export PDF");
   }
 };
