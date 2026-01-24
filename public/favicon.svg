@@ -1,0 +1,25 @@
+<svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Circular background with gradient -->
+  <defs>
+    <linearGradient id="faviconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
+    <clipPath id="faviconClip">
+      <circle cx="50" cy="50" r="46" />
+    </clipPath>
+  </defs>
+
+  <!-- Main circle -->
+  <circle cx="50" cy="50" r="46" fill="url(#faviconGradient)" />
+
+  <!-- Layered waves clipped to circle -->
+  <g clip-path="url(#faviconClip)">
+    <!-- Bottom wave - lightest -->
+    <path d="M0 75 Q25 65, 50 75 T100 75 L100 100 L0 100 Z" fill="rgba(255, 255, 255, 0.2)" />
+    <!-- Middle wave -->
+    <path d="M0 60 Q25 50, 50 60 T100 60 L100 100 L0 100 Z" fill="rgba(255, 255, 255, 0.35)" />
+    <!-- Top wave - brightest -->
+    <path d="M0 48 Q25 38, 50 48 T100 48 L100 100 L0 100 Z" fill="rgba(255, 255, 255, 0.5)" />
+  </g>
+</svg>
