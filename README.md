@@ -114,7 +114,7 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing, docu
   - **DevOps** (5 services): GitHub Actions, AWS Secrets Manager, Doppler, AWS ECR, Docker Hub
   - **Integrations** (7 services): Stripe, Resend, SendGrid, AWS SES, Sanity, Contentful, Strapi
   - All new services include full metadata (compatibility, costs, scalability, complexity)
-- ✅ Enhanced templates (3 → 7 production-ready architectures):
+- ✅ Enhanced templates (3 → 9 production-ready architectures):
   - **Modern SaaS (Jamstack)**: Vercel + Clerk + Supabase + Stripe + Resend - Complete SaaS starter
   - **Event-Driven Serverless**: S3 + Lambda + SQS + DynamoDB + SNS - Async processing workflows
   - **Containerized Microservices**: ALB + ECS + ElastiCache + RDS + CloudWatch - Enterprise-grade
@@ -407,6 +407,20 @@ npm run build
 - **Best for**: Indie hackers, MVPs, simple full-stack apps
 - **Pros**: Simplest deployment, all free tiers, auto-deploy
 
+### ML Training & Inference Platform
+- **Services**: VPC, S3, SageMaker (×2), Lambda, ECR, API Gateway, CloudWatch, W&B
+- **Cost**: $200-5000/month
+- **Complexity**: High (4/5)
+- **Best for**: ML teams, model training pipelines, production inference
+- **Pros**: Complete ML lifecycle, managed infrastructure, experiment tracking, auto-scaling endpoints
+
+### GenAI/LLM Application
+- **Services**: Vercel, API Gateway, Lambda, Bedrock, DynamoDB, S3
+- **Cost**: $20-500/month
+- **Complexity**: Low-Medium (2/5)
+- **Best for**: AI chatbots, RAG applications, LLM-powered features
+- **Pros**: Quick to deploy, access to Claude/Llama via Bedrock, serverless scaling, pay-per-token
+
 ### Example Complex Architecture (Import Ready)
 Want to see what ArchFlow can handle? Import the example architecture from `docs/architecture-1768735131289.json`:
 - **Full SaaS Architecture**: Complete production-ready setup with VPC, subnets, and multiple service zones
@@ -417,16 +431,16 @@ Want to see what ArchFlow can handle? Import the example architecture from `docs
 
 To import: Click Export → Import JSON → Select the file from the `docs` folder.
 
-## Available Services (54) + Infrastructure Zones (10)
+## Available Services (77) + Infrastructure Zones (10)
 
 ### Multi-Cloud & Platform Coverage
-ArchFlow provides a comprehensive catalog of services across AWS, GCP, Azure, and popular SaaS providers, covering all layers of modern cloud architectures.
+ArchFlow provides a comprehensive catalog of services across AWS, GCP, Azure, and popular SaaS providers, covering all layers of modern cloud architectures — including a robust AI/ML category for building intelligent applications.
 
 ### Services by Category
 - **Frontend** (3): Vercel, Netlify, Cloudflare Pages
 - **CDN** (2): Cloudflare CDN, AWS CloudFront
 - **Backend** (11): AWS Lambda, AWS ECS, AWS ECS on EC2, AWS Fargate, GCP Cloud Run, Azure Functions, Azure Container Apps, Railway, Render, Fly.io, DigitalOcean App Platform
-- **Database** (7): RDS Postgres, Supabase, PlanetScale, DynamoDB, MongoDB Atlas, Neon, Firebase/Firestore
+- **Database** (9): RDS Postgres, Supabase, PlanetScale, DynamoDB, MongoDB Atlas, Neon, Firebase/Firestore, Pinecone, Qdrant
 - **Cache** (2): ElastiCache Redis, Upstash Redis
 - **Queue & Workflow** (7): AWS SQS, AWS SNS, GCP Pub/Sub, Confluent Cloud (Kafka), RabbitMQ, Inngest, Temporal
 - **Storage** (3): AWS S3, Cloudflare R2, GCP Cloud Storage
@@ -437,16 +451,28 @@ ArchFlow provides a comprehensive catalog of services across AWS, GCP, Azure, an
 - **Networking** (4): AWS API Gateway, AWS ALB, Route53, Cloudflare DNS
 - **DevOps** (5): GitHub Actions, AWS Secrets Manager, Doppler, AWS ECR, Docker Hub
 - **Integrations** (8): Stripe, Pusher, Resend, SendGrid, AWS SES, Sanity, Contentful, Strapi
+- **AI/ML** (14): AWS SageMaker, AWS Bedrock, Google Vertex AI, Azure ML, OpenAI API, Anthropic Claude API, Cohere, Mistral AI, Groq, Hugging Face, Replicate, Weights & Biases, ElevenLabs, Deepgram
+
+### AI/ML Services Highlight
+ArchFlow includes comprehensive AI/ML support for building intelligent applications:
+- **LLM APIs**: OpenAI, Anthropic Claude, Mistral AI, Groq, Cohere — access frontier models via simple APIs
+- **ML Platforms**: AWS SageMaker, Google Vertex AI, Azure ML — full lifecycle training and deployment
+- **GenAI Platforms**: AWS Bedrock — managed access to Claude, Llama, and other foundation models
+- **Vector Databases**: Pinecone, Qdrant — essential for RAG, semantic search, and AI memory
+- **Model Hosting**: Hugging Face, Replicate — deploy open-source and custom models
+- **MLOps**: Weights & Biases — experiment tracking and model versioning
+- **Voice AI**: ElevenLabs (text-to-speech), Deepgram (speech-to-text) — build voice-enabled applications
 
 ### Infrastructure Zones (Phase 9)
 - **AWS**: VPC, Public Subnet, Private Subnet, Availability Zone, Security Group, NAT Gateway
 - **Generic**: Network Zone, Public Zone, Private Zone, DMZ
 
 ### Provider Breakdown
-- **AWS**: 16 services + 6 infrastructure zones
+- **AWS**: 19 services + 6 infrastructure zones
 - **GCP**: 4 services (Cloud Run, Pub/Sub, Cloud Storage, Firebase)
-- **Azure**: 2 services (Functions, Container Apps)
-- **Multi-Provider SaaS**: 28+ services (databases, auth, monitoring, integrations)
+- **Azure**: 3 services (Functions, Container Apps, Azure ML)
+- **AI/ML SaaS**: 11 services (OpenAI, Anthropic, Mistral, Groq, Cohere, Hugging Face, Replicate, W&B, ElevenLabs, Deepgram, Pinecone, Qdrant)
+- **Multi-Provider SaaS**: 30+ services (databases, auth, monitoring, integrations)
 - **Open Source**: 2 services (Elasticsearch, RabbitMQ)
 - **Generic Infrastructure**: 4 zones (cloud-agnostic network boundaries)
 
@@ -458,6 +484,23 @@ The service library has been expanded to include the "glue" services that real p
 **DevOps & Security**: Include CI/CD pipelines (GitHub Actions), secrets management (AWS Secrets Manager, Doppler), and container registries (ECR, Docker Hub) to show complete deployment workflows.
 
 **Third-Party Integrations**: Add payments (Stripe), transactional email (Resend, SendGrid, SES), and headless CMS (Sanity, Contentful, Strapi) to build complete SaaS and e-commerce architectures.
+
+### What's New: AI/ML Services & Templates
+ArchFlow now includes comprehensive support for building AI-powered applications:
+
+**LLM & GenAI APIs**: Design architectures with the leading AI providers — OpenAI, Anthropic Claude, Mistral, Groq, and Cohere. Build chatbots, content generators, code assistants, and AI agents.
+
+**Vector Databases**: Pinecone and Qdrant for RAG (Retrieval-Augmented Generation), semantic search, recommendation systems, and long-term AI memory.
+
+**ML Platforms**: AWS SageMaker, Google Vertex AI, and Azure ML for training custom models, AutoML, and managed inference endpoints.
+
+**Voice AI**: ElevenLabs for text-to-speech and Deepgram for speech-to-text — build voice assistants, transcription services, and audio applications.
+
+**MLOps**: Weights & Biases for experiment tracking, model versioning, and team collaboration on ML projects.
+
+**AI Architecture Templates**: Two new production-ready templates:
+- **ML Training & Inference Platform**: Complete ML lifecycle with SageMaker, ECR, and W&B
+- **GenAI/LLM Application**: Serverless RAG architecture with Bedrock, Lambda, and DynamoDB
 
 ## Tech Stack
 
