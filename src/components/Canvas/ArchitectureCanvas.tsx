@@ -433,8 +433,8 @@ function ArchitectureCanvasInner() {
           </Panel>
         )}
 
-        {/* Canvas Overview - Bottom Right, above Smart Suggestions */}
-        {!isEmpty && (
+        {/* Canvas Overview - Bottom Right, above Smart Suggestions (hidden in Focus Mode) */}
+        {!isEmpty && !focusMode && (
           <MiniMap
             nodeColor={getNodeColor}
             className="absolute! bottom-24! right-4! z-50!"

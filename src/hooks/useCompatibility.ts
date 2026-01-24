@@ -164,9 +164,13 @@ export function useCompatibility() {
       );
     }
 
-    // Anti-pattern: Backend without database (for non-trivial apps)
+    // Anti-pattern: Backend without database or storage (for non-trivial apps)
     // Only warn if we have explicit Backend category (not full-stack platforms)
-    if (hasBackendCategory && !hasDatabaseCategory && canvasServices.length > 2) {
+    // Storage services (like S3) can serve as persistent storage for ML/data pipelines
+    const hasStorageCategory = canvasServices.some(
+      (s) => s.category === 'Storage'
+    );
+    if (hasBackendCategory && !hasDatabaseCategory && !hasStorageCategory && canvasServices.length > 2) {
       warnings.push(
         'Most applications need a Database for persistent storage'
       );

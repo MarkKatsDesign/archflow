@@ -1850,8 +1850,8 @@ export const services: Service[] = [
     description:
       "Fully managed container registry for storing, managing, and deploying Docker and OCI images",
     color: categoryColors.DevOps,
-    compatibleWith: ["aws-ecs", "aws-lambda"],
-    requiresOneOf: ["aws-ecs"],
+    compatibleWith: ["aws-ecs", "aws-lambda", "aws-sagemaker"],
+    requiresOneOf: ["aws-ecs", "aws-lambda", "aws-sagemaker"],
     costModel: {
       type: "usage",
       baseCost: 0,
