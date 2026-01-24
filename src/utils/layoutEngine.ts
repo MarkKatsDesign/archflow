@@ -748,6 +748,7 @@ export interface OptimizeEdgesOptions {
  * - Prevents edge crossings by ordering handles based on target positions
  * - Distributes edges evenly across the available handle slots
  * - Optionally includes obstacle data for PCB-style routing
+ * - PRESERVES manually selected handles (user choice takes precedence)
  */
 export function optimizeEdges(
   nodes: ArchNode[],
@@ -755,6 +756,47 @@ export function optimizeEdges(
   options: OptimizeEdgesOptions = {},
 ): ServiceEdge[] {
   const { includePcbObstacles = false } = options;
+
+  // Separate edges into manual (user-selected handles) and automatic (needs optimization)
+  const manualEdges: ServiceEdge[] = [];
+  const autoEdges: ServiceEdge[] = [];
+
+  for (const edge of edges) {
+    // Consider an edge "manual" if it has explicitly set sourceHandle and targetHandle
+    // This indicates the user has made a conscious choice about handle positioning
+    if (edge.sourceHandle && edge.targetHandle) {
+      manualEdges.push(edge);
+    } else {
+      autoEdges.push(edge);
+    }
+  }
+
+  // Process automatic edges with the full optimization algorithm
+  const optimizedAutoEdges = optimizeAutoEdges(
+    nodes,
+    autoEdges,
+    includePcbObstacles,
+  );
+
+  // For manual edges, only update routing type and collision detection if needed
+  const optimizedManualEdges = optimizeManualEdges(
+    nodes,
+    manualEdges,
+    includePcbObstacles,
+  );
+
+  // Combine results
+  return [...optimizedAutoEdges, ...optimizedManualEdges];
+}
+
+/**
+ * Optimize edges that don't have manual handle selections
+ */
+function optimizeAutoEdges(
+  nodes: ArchNode[],
+  edges: ServiceEdge[],
+  includePcbObstacles: boolean,
+): ServiceEdge[] {
   // Build a map of node rectangles with absolute positions
   const nodeRects = new Map<
     string,
@@ -1397,6 +1439,126 @@ export function optimizeEdges(
         finalUsedHandles.set(usedKey, usedSet);
       }
     }
+  }
+
+  return optimizedEdges;
+}
+
+/**
+ * Optimize edges that have manual handle selections
+ * Preserves user choices but may update routing type for collisions
+ */
+function optimizeManualEdges(
+  nodes: ArchNode[],
+  edges: ServiceEdge[],
+  includePcbObstacles: boolean,
+): ServiceEdge[] {
+  // Build a map of node rectangles with absolute positions
+  const nodeRects = new Map<
+    string,
+    { x: number; y: number; width: number; height: number }
+  >();
+
+  for (const node of nodes) {
+    const pos = getAbsolutePosition(node, nodes);
+    const dims = getNodeDimensions(node);
+    nodeRects.set(node.id, {
+      x: pos.x,
+      y: pos.y,
+      width: dims.width,
+      height: dims.height,
+    });
+  }
+
+  const optimizedEdges: ServiceEdge[] = [];
+
+  for (const edge of edges) {
+    const sourceRect = nodeRects.get(edge.source);
+    const targetRect = nodeRects.get(edge.target);
+
+    if (!sourceRect || !targetRect) {
+      // Keep edge as-is if nodes not found
+      optimizedEdges.push(edge);
+      continue;
+    }
+
+    // PRESERVE MANUAL HANDLES - don't change sourceHandle/targetHandle
+    const sourceHandle = edge.sourceHandle!;
+    const targetHandle = edge.targetHandle!;
+
+    // Check for collisions with other nodes using the manual handles
+    const sourcePos = getMultiHandlePosition(sourceRect, sourceHandle);
+    const targetPos = getMultiHandlePosition(targetRect, targetHandle);
+
+    const otherNodes = Array.from(nodeRects.entries())
+      .filter(([id]) => id !== edge.source && id !== edge.target)
+      .map(([, rect]) => rect);
+
+    let hasCollision = false;
+    for (const node of otherNodes) {
+      if (
+        lineIntersectsRect(
+          sourcePos.x,
+          sourcePos.y,
+          targetPos.x,
+          targetPos.y,
+          node,
+        )
+      ) {
+        hasCollision = true;
+        break;
+      }
+    }
+
+    // Use smartOrthogonal for edges with collisions, keep existing type otherwise
+    let edgeType: string;
+    if (hasCollision) {
+      edgeType = "smartOrthogonal";
+    } else {
+      edgeType = edge.type || "default";
+    }
+
+    // Build edge data with optional obstacle information for PCB routing
+    const edgeData: Record<string, unknown> = {
+      ...edge.data,
+      // Manual edges don't need lane information since they have fixed handles
+      lane: 0,
+      totalLanes: 1,
+    };
+
+    // Include obstacle data for PCB-style routing if requested
+    if (includePcbObstacles) {
+      // Convert node rectangles to obstacle format
+      const serviceNodeIds = new Set(
+        nodes.filter((n) => n.type === "service").map((n) => n.id),
+      );
+
+      const obstacles = Array.from(nodeRects.entries())
+        .filter(
+          ([id]) =>
+            id !== edge.source && id !== edge.target && serviceNodeIds.has(id),
+        )
+        .map(([id, rect]) => ({
+          id,
+          x: rect.x,
+          y: rect.y,
+          width: rect.width,
+          height: rect.height,
+        }));
+
+      edgeData.obstacles = obstacles;
+      edgeData.sourceNodeId = edge.source;
+      edgeData.targetNodeId = edge.target;
+    }
+
+    optimizedEdges.push({
+      ...edge,
+      // Keep the original manual handles
+      sourceHandle,
+      targetHandle,
+      type: edgeType,
+      data: edgeData,
+    });
   }
 
   return optimizedEdges;
