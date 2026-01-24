@@ -352,7 +352,7 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
       };
     });
 
-    set({ nodes: sortedNodes, edges, selectedNodeId: null });
+    set({ nodes: sortedNodes, edges, selectedNodeId: null, selectedEdgeId: null });
   },
 
   // Add a node to a group

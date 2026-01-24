@@ -149,6 +149,9 @@ function ArchitectureCanvasInner() {
     setReactFlowInstance,
   } = useArchitectureStore();
 
+  const { theme, focusMode, toggleFocusMode, setFocusMode } = useThemeStore();
+  const isDark = theme === "dark";
+
   const [reactFlowInstance, setLocalReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
 
@@ -292,8 +295,13 @@ function ArchitectureCanvasInner() {
     });
   }, [nodes]);
 
-  // Apply dynamic styling to edges based on selection
+  // Apply dynamic styling to edges based on selection and theme
   const styledEdges = useMemo(() => {
+    // Default colors based on theme
+    const defaultStroke = isDark ? "#94a3b8" : "#64748b";
+    const defaultLabelFill = isDark ? "#e2e8f0" : "#1e293b";
+    const defaultLabelBgFill = isDark ? "#1e293b" : "#ffffff";
+
     return edges.map((edge) => {
       const isSelected = edge.id === selectedEdgeId;
       return {
@@ -301,21 +309,21 @@ function ArchitectureCanvasInner() {
         style: {
           ...edge.style,
           strokeWidth: isSelected ? 4 : 2,
-          stroke: isSelected ? "#3b82f6" : edge.style?.stroke || "#64748b",
+          stroke: isSelected ? "#3b82f6" : edge.style?.stroke || defaultStroke,
         },
         labelStyle: {
           ...edge.labelStyle,
-          fill: isSelected ? "#1e40af" : "#1e293b",
+          fill: isSelected ? "#1e40af" : defaultLabelFill,
           fontWeight: isSelected ? 700 : 600,
         },
         labelBgStyle: {
           ...edge.labelBgStyle,
-          fill: isSelected ? "#dbeafe" : "#ffffff",
+          fill: isSelected ? "#dbeafe" : defaultLabelBgFill,
           fillOpacity: isSelected ? 1 : 0.9,
         },
       };
     });
-  }, [edges, selectedEdgeId]);
+  }, [edges, selectedEdgeId, isDark]);
 
   // Get node color for minimap (handles both service and group nodes)
   const getNodeColor = useCallback((node: Node) => {
@@ -328,8 +336,6 @@ function ArchitectureCanvasInner() {
   }, []);
 
   const isEmpty = nodes.length === 0;
-  const { theme, focusMode, toggleFocusMode, setFocusMode } = useThemeStore();
-  const isDark = theme === "dark";
 
   // Handle Escape key to exit focus mode
   useEffect(() => {
