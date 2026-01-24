@@ -7,8 +7,9 @@ import ReactFlow, {
   ReactFlowProvider,
   ConnectionLineType,
   Panel,
+  reconnectEdge,
 } from "reactflow";
-import type { ReactFlowInstance, EdgeMouseHandler, Node } from "reactflow";
+import type { ReactFlowInstance, EdgeMouseHandler, Node, Edge, Connection } from "reactflow";
 import "reactflow/dist/style.css";
 import { MousePointer2, ArrowRight, Layers } from "lucide-react";
 
@@ -149,11 +150,17 @@ function ArchitectureCanvasInner() {
     setReactFlowInstance,
   } = useArchitectureStore();
 
+  // Get setEdges separately to use in reconnection handler
+  const setEdges = useArchitectureStore((state) => state.setEdges);
+
   const { theme, focusMode, toggleFocusMode, setFocusMode } = useThemeStore();
   const isDark = theme === "dark";
 
   const [reactFlowInstance, setLocalReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
+
+  // Track edge being reconnected
+  const edgeReconnectSuccessful = useRef(true);
 
   // Store instance both locally and in global store for access outside ReactFlow context
   const handleInit = useCallback(
@@ -285,6 +292,29 @@ function ArchitectureCanvasInner() {
     [setSelectedEdgeId, setSelectedNodeId]
   );
 
+  // Edge reconnection handlers - allows users to drag edge endpoints to different handles
+  const onReconnectStart = useCallback(() => {
+    edgeReconnectSuccessful.current = false;
+  }, []);
+
+  const onReconnect = useCallback(
+    (oldEdge: Edge, newConnection: Connection) => {
+      edgeReconnectSuccessful.current = true;
+      // reconnectEdge returns the updated edges array with the reconnected edge
+      const updatedEdges = reconnectEdge(oldEdge, newConnection, edges) as typeof edges;
+      setEdges(updatedEdges);
+    },
+    [edges, setEdges]
+  );
+
+  const onReconnectEnd = useCallback(() => {
+    if (!edgeReconnectSuccessful.current) {
+      // User dropped the edge endpoint in empty space - keep the original edge
+      // Optionally, you could delete the edge here if that's preferred UX
+    }
+    edgeReconnectSuccessful.current = true;
+  }, []);
+
   // Sort nodes so groups render behind services (lower zIndex)
   const sortedNodes = useMemo(() => {
     return [...nodes].sort((a, b) => {
@@ -321,6 +351,8 @@ function ArchitectureCanvasInner() {
           fill: isSelected ? "#dbeafe" : defaultLabelBgFill,
           fillOpacity: isSelected ? 1 : 0.9,
         },
+        // Enable edge reconnection - allows dragging endpoints to different handles
+        reconnectable: true,
       };
     });
   }, [edges, selectedEdgeId, isDark]);
@@ -366,6 +398,9 @@ function ArchitectureCanvasInner() {
         onNodeClick={onNodeClick}
         onEdgeClick={onEdgeClick}
         onPaneClick={onPaneClick}
+        onReconnectStart={onReconnectStart}
+        onReconnect={onReconnect}
+        onReconnectEnd={onReconnectEnd}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         defaultEdgeOptions={{
