@@ -2939,7 +2939,7 @@ export const services: Service[] = [
       "real-time-app",
       "enterprise",
     ],
-    documentation: "https://developers.deepgram.com/docs",
+    documentation: "https://developers.deepgram.com/home",
     tags: [
       "voice-ai",
       "speech-to-text",
