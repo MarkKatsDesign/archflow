@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { Handle, Position } from "reactflow";
 import { DollarSign, CheckCircle2 } from "lucide-react";
 import type { NodeProps } from "reactflow";
@@ -25,20 +25,58 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
   const { service, label } = data;
   const { theme } = useThemeStore();
   const isDark = theme === "dark";
+  const [isHovered, setIsHovered] = useState(false);
 
   // Check for badges
   const hasFreeTier = service.costModel?.freeTierAvailable;
   const isFullyManaged = service.managedLevel === "fully";
 
+  // Determine shadow based on state: selected > hovered > default
+  const getBoxShadow = () => {
+    if (selected) {
+      return isDark
+        // Dark mode selected: prominent shadow + strong colored glow + ring
+        ? `0 20px 40px -8px rgba(0, 0, 0, 0.5),
+           0 8px 16px -4px rgba(0, 0, 0, 0.4),
+           0 0 20px 2px ${service.color}40,
+           0 0 0 2px ${service.color}60`
+        // Light mode selected: softer shadow + colored glow + ring
+        : `0 20px 40px -8px rgba(0, 0, 0, 0.15),
+           0 8px 16px -4px rgba(0, 0, 0, 0.1),
+           0 0 20px 2px ${service.color}30,
+           0 0 0 2px ${service.color}50`;
+    }
+    if (isHovered) {
+      return isDark
+        // Dark mode hover: enhanced shadow + stronger colored glow
+        ? `0 12px 32px -4px rgba(0, 0, 0, 0.5),
+           0 6px 12px -2px rgba(0, 0, 0, 0.4),
+           0 0 16px 1px ${service.color}35`
+        // Light mode hover: lifted shadow + colored glow
+        : `0 8px 24px -4px rgba(0, 0, 0, 0.12),
+           0 4px 10px -2px rgba(0, 0, 0, 0.08),
+           0 0 12px 1px ${service.color}25`;
+    }
+    // Default state
+    return isDark
+      // Dark mode default: visible shadow + subtle colored glow
+      ? `0 8px 24px -4px rgba(0, 0, 0, 0.5),
+         0 4px 8px -2px rgba(0, 0, 0, 0.4),
+         0 0 12px 0px ${service.color}20`
+      // Light mode default: clean shadow + hint of color
+      : `0 4px 16px -2px rgba(0, 0, 0, 0.1),
+         0 2px 6px -1px rgba(0, 0, 0, 0.08),
+         0 0 8px 0px ${service.color}15`;
+  };
+
   // Create subtle gradient based on service color and theme
+  // Enhanced shadows with colored glow for better visibility
   const gradientStyle = {
     background: isDark
-      ? `linear-gradient(145deg, #1e293b 0%, ${service.color}20 100%)`
-      : `linear-gradient(145deg, white 0%, ${service.color}10 100%)`,
+      ? `linear-gradient(145deg, #1e293b 0%, ${service.color}15 100%)`
+      : `linear-gradient(160deg, white 0%, ${service.color}08 100%)`,
     borderColor: service.color,
-    boxShadow: selected
-      ? `0 20px 25px -5px rgba(0, 0, 0, ${isDark ? "0.3" : "0.1"}), 0 8px 10px -6px rgba(0, 0, 0, ${isDark ? "0.2" : "0.1"}), 0 0 0 2px ${service.color}40`
-      : `0 10px 15px -3px rgba(0, 0, 0, ${isDark ? "0.3" : "0.1"}), 0 4px 6px -4px rgba(0, 0, 0, ${isDark ? "0.2" : "0.1"})`,
+    boxShadow: getBoxShadow(),
   };
 
   return (
@@ -46,10 +84,12 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
       className={`
         px-4 py-3 rounded-xl min-w-40 max-w-50
         border-2 transition-all duration-200 ease-out
-        hover:-translate-y-1 hover:shadow-xl
+        hover:border-opacity-80
         ${selected ? "scale-105 ring-2 ring-blue-400/50" : ""}
       `}
       style={gradientStyle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Multiple connection handles on each side for edge distribution */}
 
@@ -192,14 +232,14 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
         </div>
       </div>
 
-      {/* Bottom handles - multiple positions */}
+      {/* Bottom handles - organic positioning */}
       {handleOffsets.map((offset, idx) => (
         <Handle
           key={`bottom-${idx}`}
           type="source"
           position={Position.Bottom}
           id={`bottom-${idx}`}
-          className="w-2 h-2 transition-all hover:scale-150 opacity-60 hover:opacity-100"
+          className="w-1.5! h-1.5! transition-all hover:scale-150! opacity-30! hover:opacity-100! border-0!"
           style={{
             background: service.color,
             left: `${offset}%`,
@@ -212,7 +252,7 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
           type="target"
           position={Position.Bottom}
           id={`bottom-${idx}`}
-          className="w-2 h-2 transition-all hover:scale-150 opacity-60 hover:opacity-100"
+          className="w-1.5! h-1.5! transition-all hover:scale-150! opacity-30! hover:opacity-100! border-0!"
           style={{
             background: service.color,
             left: `${offset}%`,
