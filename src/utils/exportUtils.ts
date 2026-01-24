@@ -125,34 +125,45 @@ export const exportToJSON = (
 
 /**
  * Migrate old handle names to new multi-handle format
- * e.g., "bottom" -> "bottom-4", "top" -> "top-4"
- * Also migrates old 3-handle format (0-2) to new 10-handle format (0-9)
+ * Old formats:
+ *   - "bottom" -> "bottom-s-4" or "bottom-t-4"
+ *   - "left-4" -> "left-s-4" or "left-t-4"
+ * New format: "side-type-index" (e.g., "left-s-4", "right-t-7")
  */
 function migrateHandleId(
   handleId: string | null | undefined,
+  isSource: boolean = true,
 ): string | null | undefined {
   if (!handleId) return handleId;
 
-  // Check if already in new format with valid index (0-9)
-  const match = handleId.match(/^(top|bottom|left|right)-(\d+)$/);
-  if (match) {
-    const [, side, indexStr] = match;
-    const index = parseInt(indexStr, 10);
+  const type = isSource ? "s" : "t";
 
-    // If index is in old 3-handle range (0-2), map to new 10-handle range
-    // Old: 0, 1, 2 -> New: 1, 4, 8 (roughly equivalent positions)
-    if (index <= 2) {
-      const newIndex = index === 0 ? 1 : index === 1 ? 4 : 8;
-      return `${side}-${newIndex}`;
-    }
-
+  // Check if already in new format with type indicator (side-type-index)
+  const newMatch = handleId.match(/^(top|bottom|left|right)-([st])-(\d+)$/);
+  if (newMatch) {
     // Already in new format
     return handleId;
   }
 
+  // Check if in old format without type (side-index)
+  const oldMatch = handleId.match(/^(top|bottom|left|right)-(\d+)$/);
+  if (oldMatch) {
+    const [, side, indexStr] = oldMatch;
+    let index = parseInt(indexStr, 10);
+
+    // If index is in old 3-handle range (0-2), map to new 10-handle range
+    // Old: 0, 1, 2 -> New: 1, 4, 8 (roughly equivalent positions)
+    if (index <= 2) {
+      index = index === 0 ? 1 : index === 1 ? 4 : 8;
+    }
+
+    // Add type indicator
+    return `${side}-${type}-${index}`;
+  }
+
   // Old format: just the side name - migrate to middle handle (index 4 out of 0-9)
   if (["top", "bottom", "left", "right"].includes(handleId)) {
-    return `${handleId}-4`;
+    return `${handleId}-${type}-4`;
   }
 
   // Unknown format, return as-is
@@ -165,8 +176,8 @@ function migrateHandleId(
 function migrateEdges(edges: Edge[]): Edge[] {
   return edges.map((edge) => ({
     ...edge,
-    sourceHandle: migrateHandleId(edge.sourceHandle),
-    targetHandle: migrateHandleId(edge.targetHandle),
+    sourceHandle: migrateHandleId(edge.sourceHandle, true),
+    targetHandle: migrateHandleId(edge.targetHandle, false),
   }));
 }
 

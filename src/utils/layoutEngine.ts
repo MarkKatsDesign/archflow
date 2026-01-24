@@ -495,13 +495,30 @@ type HandleId = string;
 /**
  * Get handle position on a node for a specific handle ID
  * Handles are distributed along each side
+ * Handle ID format: "side-type-index" (e.g., "left-s-4" or "left-t-4")
+ * Also supports legacy format: "side-index" (e.g., "left-4")
  */
 function getMultiHandlePosition(
   node: { x: number; y: number; width: number; height: number },
   handleId: HandleId,
 ): { x: number; y: number } {
-  const [side, indexStr] = handleId.split("-");
-  const index = parseInt(indexStr, 10);
+  const parts = handleId.split("-");
+  let side: string;
+  let index: number;
+
+  if (parts.length === 3) {
+    // New format: "side-type-index" (e.g., "left-s-4")
+    side = parts[0];
+    index = parseInt(parts[2], 10);
+  } else if (parts.length === 2) {
+    // Legacy format: "side-index" (e.g., "left-4")
+    side = parts[0];
+    index = parseInt(parts[1], 10);
+  } else {
+    // Fallback
+    return { x: node.x + node.width / 2, y: node.y + node.height / 2 };
+  }
+
   const offset = (index + 1) / (HANDLES_PER_SIDE + 1);
 
   switch (side) {
@@ -1252,8 +1269,9 @@ function optimizeAutoEdges(
     const targetIndex =
       targetHandleMap.get(edge.id) ?? Math.floor(HANDLES_PER_SIDE / 2);
 
-    const sourceHandle = `${sourceSide}-${sourceIndex}`;
-    const targetHandle = `${targetSide}-${targetIndex}`;
+    // Handle format: "side-type-index" where type is 's' for source, 't' for target
+    const sourceHandle = `${sourceSide}-s-${sourceIndex}`;
+    const targetHandle = `${targetSide}-t-${targetIndex}`;
 
     // Get lane assignment
     const laneInfo = laneMap.get(edge.id) ?? { lane: 0, totalLanes: 1 };
@@ -1430,10 +1448,11 @@ function optimizeAutoEdges(
 
       if (newIndex >= 0) {
         // Update the appropriate handle based on whether this edge uses the node as source or target
+        // Handle format: "side-type-index" where type is 's' for source, 't' for target
         if (isSource) {
-          edge.sourceHandle = `${side}-${newIndex}`;
+          edge.sourceHandle = `${side}-s-${newIndex}`;
         } else {
-          edge.targetHandle = `${side}-${newIndex}`;
+          edge.targetHandle = `${side}-t-${newIndex}`;
         }
         usedSet.add(newIndex);
         finalUsedHandles.set(usedKey, usedSet);

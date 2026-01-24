@@ -73,7 +73,8 @@ function sortNodesParentsFirst(nodes: ArchNode[]): ArchNode[] {
 /**
  * Calculates the optimal source and target handles based on node positions.
  * Returns handles that create the most direct and visually appealing connection.
- * Uses multi-handle naming convention (e.g., "bottom-4", "top-4")
+ * Uses multi-handle naming convention (e.g., "bottom-s-4", "top-t-4")
+ * Format: "side-type-index" where type is 's' for source, 't' for target
  */
 function calculateOptimalHandles(
   sourceNode: TemplateNode,
@@ -93,19 +94,19 @@ function calculateOptimalHandles(
   if (absDy > absDx) {
     if (dy > 0) {
       // Target is below source
-      return { sourceHandle: `bottom-${handleIndex}`, targetHandle: `top-${handleIndex}` };
+      return { sourceHandle: `bottom-s-${handleIndex}`, targetHandle: `top-t-${handleIndex}` };
     } else {
       // Target is above source
-      return { sourceHandle: `top-${handleIndex}`, targetHandle: `bottom-${handleIndex}` };
+      return { sourceHandle: `top-s-${handleIndex}`, targetHandle: `bottom-t-${handleIndex}` };
     }
   } else {
     // Horizontal distance is greater, prefer horizontal connections (left/right)
     if (dx > 0) {
       // Target is to the right of source
-      return { sourceHandle: `right-${handleIndex}`, targetHandle: `left-${handleIndex}` };
+      return { sourceHandle: `right-s-${handleIndex}`, targetHandle: `left-t-${handleIndex}` };
     } else {
       // Target is to the left of source
-      return { sourceHandle: `left-${handleIndex}`, targetHandle: `right-${handleIndex}` };
+      return { sourceHandle: `left-s-${handleIndex}`, targetHandle: `right-t-${handleIndex}` };
     }
   }
 }

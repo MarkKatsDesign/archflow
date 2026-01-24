@@ -94,13 +94,14 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
       {/* Multiple connection handles on each side for edge distribution */}
 
       {/* Top handles - organic positioning with many small handles */}
+      {/* Source and target handles need DIFFERENT IDs for React Flow to properly detect drops */}
       {handleOffsets.map((offset, idx) => (
         <Handle
-          key={`top-${idx}`}
+          key={`top-source-${idx}`}
           type="source"
           position={Position.Top}
-          id={`top-${idx}`}
-          className="w-1.5! h-1.5! transition-all hover:scale-150! opacity-30! hover:opacity-100! border-0!"
+          id={`top-s-${idx}`}
+          className="w-2! h-2! transition-all hover:scale-150! opacity-40! hover:opacity-100! border-0!"
           style={{
             background: service.color,
             left: `${offset}%`,
@@ -112,8 +113,8 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
           key={`top-target-${idx}`}
           type="target"
           position={Position.Top}
-          id={`top-${idx}`}
-          className="w-1.5! h-1.5! transition-all hover:scale-150! opacity-30! hover:opacity-100! border-0!"
+          id={`top-t-${idx}`}
+          className="w-2! h-2! transition-all hover:scale-150! opacity-40! hover:opacity-100! border-0!"
           style={{
             background: service.color,
             left: `${offset}%`,
@@ -124,11 +125,11 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
       {/* Left handles - organic positioning */}
       {handleOffsets.map((offset, idx) => (
         <Handle
-          key={`left-${idx}`}
+          key={`left-source-${idx}`}
           type="source"
           position={Position.Left}
-          id={`left-${idx}`}
-          className="w-1.5! h-1.5! transition-all hover:scale-150! opacity-30! hover:opacity-100! border-0!"
+          id={`left-s-${idx}`}
+          className="w-2! h-2! transition-all hover:scale-150! opacity-40! hover:opacity-100! border-0!"
           style={{
             background: service.color,
             top: `${offset}%`,
@@ -140,8 +141,8 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
           key={`left-target-${idx}`}
           type="target"
           position={Position.Left}
-          id={`left-${idx}`}
-          className="w-1.5! h-1.5! transition-all hover:scale-150! opacity-30! hover:opacity-100! border-0!"
+          id={`left-t-${idx}`}
+          className="w-2! h-2! transition-all hover:scale-150! opacity-40! hover:opacity-100! border-0!"
           style={{
             background: service.color,
             top: `${offset}%`,
@@ -152,11 +153,11 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
       {/* Right handles - organic positioning */}
       {handleOffsets.map((offset, idx) => (
         <Handle
-          key={`right-${idx}`}
+          key={`right-source-${idx}`}
           type="source"
           position={Position.Right}
-          id={`right-${idx}`}
-          className="w-1.5! h-1.5! transition-all hover:scale-150! opacity-30! hover:opacity-100! border-0!"
+          id={`right-s-${idx}`}
+          className="w-2! h-2! transition-all hover:scale-150! opacity-40! hover:opacity-100! border-0!"
           style={{
             background: service.color,
             top: `${offset}%`,
@@ -168,8 +169,8 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
           key={`right-target-${idx}`}
           type="target"
           position={Position.Right}
-          id={`right-${idx}`}
-          className="w-1.5! h-1.5! transition-all hover:scale-150! opacity-30! hover:opacity-100! border-0!"
+          id={`right-t-${idx}`}
+          className="w-2! h-2! transition-all hover:scale-150! opacity-40! hover:opacity-100! border-0!"
           style={{
             background: service.color,
             top: `${offset}%`,
@@ -235,11 +236,11 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
       {/* Bottom handles - organic positioning */}
       {handleOffsets.map((offset, idx) => (
         <Handle
-          key={`bottom-${idx}`}
+          key={`bottom-source-${idx}`}
           type="source"
           position={Position.Bottom}
-          id={`bottom-${idx}`}
-          className="w-1.5! h-1.5! transition-all hover:scale-150! opacity-30! hover:opacity-100! border-0!"
+          id={`bottom-s-${idx}`}
+          className="w-2! h-2! transition-all hover:scale-150! opacity-40! hover:opacity-100! border-0!"
           style={{
             background: service.color,
             left: `${offset}%`,
@@ -251,8 +252,8 @@ const CustomNode = ({ data, selected }: NodeProps<ServiceNodeData>) => {
           key={`bottom-target-${idx}`}
           type="target"
           position={Position.Bottom}
-          id={`bottom-${idx}`}
-          className="w-1.5! h-1.5! transition-all hover:scale-150! opacity-30! hover:opacity-100! border-0!"
+          id={`bottom-t-${idx}`}
+          className="w-2! h-2! transition-all hover:scale-150! opacity-40! hover:opacity-100! border-0!"
           style={{
             background: service.color,
             left: `${offset}%`,

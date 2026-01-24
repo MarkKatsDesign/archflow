@@ -300,7 +300,6 @@ function ArchitectureCanvasInner() {
   const onReconnect = useCallback(
     (oldEdge: Edge, newConnection: Connection) => {
       edgeReconnectSuccessful.current = true;
-      // reconnectEdge returns the updated edges array with the reconnected edge
       const updatedEdges = reconnectEdge(oldEdge, newConnection, edges) as typeof edges;
       setEdges(updatedEdges);
     },
@@ -308,11 +307,13 @@ function ArchitectureCanvasInner() {
   );
 
   const onReconnectEnd = useCallback(() => {
-    if (!edgeReconnectSuccessful.current) {
-      // User dropped the edge endpoint in empty space - keep the original edge
-      // Optionally, you could delete the edge here if that's preferred UX
-    }
+    // Reset the flag - if reconnect wasn't successful, the edge stays as-is
     edgeReconnectSuccessful.current = true;
+  }, []);
+
+  // Connection validation - prevent self-connections
+  const isValidConnection = useCallback((connection: Connection) => {
+    return connection.source !== connection.target;
   }, []);
 
   // Sort nodes so groups render behind services (lower zIndex)
@@ -401,6 +402,7 @@ function ArchitectureCanvasInner() {
         onReconnectStart={onReconnectStart}
         onReconnect={onReconnect}
         onReconnectEnd={onReconnectEnd}
+        isValidConnection={isValidConnection}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         defaultEdgeOptions={{
@@ -423,7 +425,7 @@ function ArchitectureCanvasInner() {
           interactionWidth: 20,
         }}
         elevateEdgesOnSelect
-        connectionRadius={30}
+        connectionRadius={15}
         connectionLineType={ConnectionLineType.Bezier}
         connectionLineStyle={{
           strokeWidth: 2,
