@@ -17,6 +17,27 @@ interface TerraformFiles {
   'README.md': string;
 }
 
+// Helper functions to detect which cloud providers are in use
+function hasAwsServices(nodes: ServiceNode[]): boolean {
+  return nodes.some((node) => {
+    const id = node.data.service.id;
+    return (
+      id.startsWith('aws-') ||
+      id === 'postgres-rds' ||
+      id === 'dynamodb' ||
+      id === 'redis-elasticache'
+    );
+  });
+}
+
+function hasGcpServices(nodes: ServiceNode[]): boolean {
+  return nodes.some((node) => node.data.service.id.startsWith('gcp-'));
+}
+
+function hasAzureServices(nodes: ServiceNode[]): boolean {
+  return nodes.some((node) => node.data.service.id.startsWith('azure-'));
+}
+
 // Map ArchFlow service IDs to Terraform resource generators
 const serviceToTerraform: Record<
   string,
@@ -842,6 +863,330 @@ resource "aws_security_group" "elasticache_${index}_sg" {
 }
 `,
   }),
+
+  // ============================================================================
+  // GCP SERVICES
+  // ============================================================================
+
+  // GCP Cloud Run
+  'gcp-cloud-run': (_node, index) => ({
+    type: 'google_cloud_run_v2_service',
+    name: `cloud_run_${index}`,
+    config: `
+resource "google_cloud_run_v2_service" "cloud_run_${index}" {
+  name     = "\${var.cloud_run_${index}_name}"
+  location = var.gcp_region
+
+  template {
+    containers {
+      image = "\${var.cloud_run_${index}_image}"
+
+      ports {
+        container_port = 8080
+      }
+
+      resources {
+        limits = {
+          cpu    = "\${var.cloud_run_${index}_cpu}"
+          memory = "\${var.cloud_run_${index}_memory}"
+        }
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = "\${var.environment}"
+      }
+    }
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 10
+    }
+  }
+
+  traffic {
+    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+  }
+
+  labels = {
+    environment = "\${var.environment}"
+    managed-by  = "archflow"
+  }
+}
+
+# Allow unauthenticated access (change to specific members for private access)
+resource "google_cloud_run_service_iam_member" "cloud_run_${index}_invoker" {
+  location = google_cloud_run_v2_service.cloud_run_${index}.location
+  service  = google_cloud_run_v2_service.cloud_run_${index}.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+`,
+  }),
+
+  // GCP Pub/Sub
+  'gcp-pubsub': (_node, index) => ({
+    type: 'google_pubsub_topic',
+    name: `pubsub_${index}`,
+    config: `
+resource "google_pubsub_topic" "pubsub_${index}" {
+  name = "\${var.pubsub_${index}_topic_name}"
+
+  message_retention_duration = "604800s" # 7 days
+
+  labels = {
+    environment = "\${var.environment}"
+    managed-by  = "archflow"
+  }
+}
+
+resource "google_pubsub_subscription" "pubsub_${index}_subscription" {
+  name  = "\${var.pubsub_${index}_topic_name}-subscription"
+  topic = google_pubsub_topic.pubsub_${index}.name
+
+  ack_deadline_seconds       = 20
+  message_retention_duration = "604800s" # 7 days
+  retain_acked_messages      = false
+
+  expiration_policy {
+    ttl = "" # Never expires
+  }
+
+  retry_policy {
+    minimum_backoff = "10s"
+    maximum_backoff = "600s"
+  }
+
+  enable_message_ordering = false
+
+  labels = {
+    environment = "\${var.environment}"
+    managed-by  = "archflow"
+  }
+}
+
+# Dead letter topic for failed messages
+resource "google_pubsub_topic" "pubsub_${index}_dlq" {
+  name = "\${var.pubsub_${index}_topic_name}-dlq"
+
+  labels = {
+    environment = "\${var.environment}"
+    managed-by  = "archflow"
+  }
+}
+`,
+  }),
+
+  // GCP Cloud Storage
+  'gcp-cloud-storage': (_node, index) => ({
+    type: 'google_storage_bucket',
+    name: `gcs_${index}`,
+    config: `
+resource "google_storage_bucket" "gcs_${index}" {
+  name     = "\${var.gcs_${index}_bucket_name}"
+  location = var.gcp_region
+
+  uniform_bucket_level_access = true
+  public_access_prevention    = "enforced"
+
+  versioning {
+    enabled = true
+  }
+
+  lifecycle_rule {
+    condition {
+      age = 30
+    }
+    action {
+      type          = "SetStorageClass"
+      storage_class = "NEARLINE"
+    }
+  }
+
+  lifecycle_rule {
+    condition {
+      age = 90
+    }
+    action {
+      type          = "SetStorageClass"
+      storage_class = "COLDLINE"
+    }
+  }
+
+  labels = {
+    environment = "\${var.environment}"
+    managed-by  = "archflow"
+  }
+}
+`,
+  }),
+
+  // ============================================================================
+  // AZURE SERVICES
+  // ============================================================================
+
+  // Azure Functions
+  'azure-functions': (_node, index) => ({
+    type: 'azurerm_linux_function_app',
+    name: `func_${index}`,
+    config: `
+resource "azurerm_resource_group" "func_${index}_rg" {
+  name     = "\${var.func_${index}_name}-rg"
+  location = var.azure_region
+
+  tags = {
+    Environment = "\${var.environment}"
+    ManagedBy   = "ArchFlow"
+  }
+}
+
+resource "azurerm_storage_account" "func_${index}_sa" {
+  name                     = replace("\${var.func_${index}_name}sa", "-", "")
+  resource_group_name      = azurerm_resource_group.func_${index}_rg.name
+  location                 = azurerm_resource_group.func_${index}_rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  tags = {
+    Environment = "\${var.environment}"
+    ManagedBy   = "ArchFlow"
+  }
+}
+
+resource "azurerm_service_plan" "func_${index}_plan" {
+  name                = "\${var.func_${index}_name}-plan"
+  resource_group_name = azurerm_resource_group.func_${index}_rg.name
+  location            = azurerm_resource_group.func_${index}_rg.location
+  os_type             = "Linux"
+  sku_name            = "Y1" # Consumption plan
+
+  tags = {
+    Environment = "\${var.environment}"
+    ManagedBy   = "ArchFlow"
+  }
+}
+
+resource "azurerm_linux_function_app" "func_${index}" {
+  name                = "\${var.func_${index}_name}"
+  resource_group_name = azurerm_resource_group.func_${index}_rg.name
+  location            = azurerm_resource_group.func_${index}_rg.location
+
+  storage_account_name       = azurerm_storage_account.func_${index}_sa.name
+  storage_account_access_key = azurerm_storage_account.func_${index}_sa.primary_access_key
+  service_plan_id            = azurerm_service_plan.func_${index}_plan.id
+
+  site_config {
+    application_stack {
+      node_version = "20"
+    }
+  }
+
+  app_settings = {
+    "FUNCTIONS_WORKER_RUNTIME" = "node"
+    "ENVIRONMENT"              = "\${var.environment}"
+  }
+
+  tags = {
+    Environment = "\${var.environment}"
+    ManagedBy   = "ArchFlow"
+  }
+}
+
+resource "azurerm_application_insights" "func_${index}_insights" {
+  name                = "\${var.func_${index}_name}-insights"
+  resource_group_name = azurerm_resource_group.func_${index}_rg.name
+  location            = azurerm_resource_group.func_${index}_rg.location
+  application_type    = "Node.JS"
+
+  tags = {
+    Environment = "\${var.environment}"
+    ManagedBy   = "ArchFlow"
+  }
+}
+`,
+  }),
+
+  // Azure Container Apps
+  'azure-container-apps': (_node, index) => ({
+    type: 'azurerm_container_app',
+    name: `aca_${index}`,
+    config: `
+resource "azurerm_resource_group" "aca_${index}_rg" {
+  name     = "\${var.aca_${index}_name}-rg"
+  location = var.azure_region
+
+  tags = {
+    Environment = "\${var.environment}"
+    ManagedBy   = "ArchFlow"
+  }
+}
+
+resource "azurerm_log_analytics_workspace" "aca_${index}_law" {
+  name                = "\${var.aca_${index}_name}-law"
+  resource_group_name = azurerm_resource_group.aca_${index}_rg.name
+  location            = azurerm_resource_group.aca_${index}_rg.location
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+
+  tags = {
+    Environment = "\${var.environment}"
+    ManagedBy   = "ArchFlow"
+  }
+}
+
+resource "azurerm_container_app_environment" "aca_${index}_env" {
+  name                       = "\${var.aca_${index}_name}-env"
+  location                   = azurerm_resource_group.aca_${index}_rg.location
+  resource_group_name        = azurerm_resource_group.aca_${index}_rg.name
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.aca_${index}_law.id
+
+  tags = {
+    Environment = "\${var.environment}"
+    ManagedBy   = "ArchFlow"
+  }
+}
+
+resource "azurerm_container_app" "aca_${index}" {
+  name                         = "\${var.aca_${index}_name}"
+  container_app_environment_id = azurerm_container_app_environment.aca_${index}_env.id
+  resource_group_name          = azurerm_resource_group.aca_${index}_rg.name
+  revision_mode                = "Single"
+
+  template {
+    container {
+      name   = "\${var.aca_${index}_name}"
+      image  = "\${var.aca_${index}_image}"
+      cpu    = 0.25
+      memory = "0.5Gi"
+
+      env {
+        name  = "ENVIRONMENT"
+        value = "\${var.environment}"
+      }
+    }
+
+    min_replicas = 0
+    max_replicas = 10
+  }
+
+  ingress {
+    external_enabled = true
+    target_port      = 8080
+
+    traffic_weight {
+      percentage      = 100
+      latest_revision = true
+    }
+  }
+
+  tags = {
+    Environment = "\${var.environment}"
+    ManagedBy   = "ArchFlow"
+  }
+}
+`,
+  }),
 };
 
 // SaaS services that don't have Terraform configs
@@ -868,6 +1213,9 @@ const saasServices = [
   'render',
   'doppler',
   'github-actions',
+  // GCP/Azure ML platforms - managed via console/SDK
+  'gcp-vertex-ai',
+  'azure-ml',
 ];
 
 function generateSaaSComment(service: ServiceNode): string {
@@ -1016,24 +1364,55 @@ export async function exportToTerraform(nodes: ServiceNode[], _edges: ServiceEdg
     'README.md': '',
   };
 
+  // Detect which cloud providers are in use
+  const hasAws = hasAwsServices(nodes);
+  const hasGcp = hasGcpServices(nodes);
+  const hasAzure = hasAzureServices(nodes);
+
+  // Build required_providers block based on what's needed
+  let requiredProviders = '';
+  if (hasAws) {
+    requiredProviders += `
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }`;
+  }
+  if (hasGcp) {
+    requiredProviders += `
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 5.0"
+    }`;
+  }
+  if (hasAzure) {
+    requiredProviders += `
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }`;
+  }
+
   // Header for main.tf
   files['main.tf'] = `# Generated by ArchFlow - https://markkatsdesign.github.io/archflow
 # Generated on: ${new Date().toISOString()}
 #
 # This Terraform configuration represents your architecture design.
 # Please review and customize the variables before applying.
+#
+# Cloud Providers: ${[hasAws && 'AWS', hasGcp && 'GCP', hasAzure && 'Azure'].filter(Boolean).join(', ') || 'None'}
 
 terraform {
   required_version = ">= 1.0"
 
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
+  required_providers {${requiredProviders}
   }
 }
+`;
 
+  // Add AWS provider if AWS services are present
+  if (hasAws) {
+    files['main.tf'] += `
 provider "aws" {
   region = var.aws_region
 
@@ -1047,16 +1426,38 @@ provider "aws" {
   }
 }
 `;
+  }
 
-  // Initialize variables
+  // Add GCP provider if GCP services are present
+  if (hasGcp) {
+    files['main.tf'] += `
+provider "google" {
+  project = var.gcp_project_id
+  region  = var.gcp_region
+
+  default_labels = {
+    project     = var.project_name
+    environment = var.environment
+    managed-by  = "terraform"
+    generated-by = "archflow"
+  }
+}
+`;
+  }
+
+  // Add Azure provider if Azure services are present
+  if (hasAzure) {
+    files['main.tf'] += `
+provider "azurerm" {
+  features {}
+  subscription_id = var.azure_subscription_id
+}
+`;
+  }
+
+  // Initialize variables - common variables first
   files['variables.tf'] = `# Variables for your infrastructure
 # Customize these values in terraform.tfvars
-
-variable "aws_region" {
-  description = "AWS region for resources"
-  type        = string
-  default     = "us-east-1"
-}
 
 variable "project_name" {
   description = "Project name for resource naming"
@@ -1068,6 +1469,24 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+`;
+
+  files['terraform.tfvars.example'] = `# Copy this file to terraform.tfvars and customize
+# cp terraform.tfvars.example terraform.tfvars
+
+project_name = "my-project"
+environment  = "dev"
+`;
+
+  // Add AWS-specific variables if AWS services are present
+  if (hasAws) {
+    files['variables.tf'] += `
+# AWS Configuration
+variable "aws_region" {
+  description = "AWS region for resources"
+  type        = string
+  default     = "us-east-1"
+}
 
 variable "vpc_cidr" {
   description = "CIDR block for VPC"
@@ -1075,15 +1494,56 @@ variable "vpc_cidr" {
   default     = "10.0.0.0/16"
 }
 `;
-
-  files['terraform.tfvars.example'] = `# Copy this file to terraform.tfvars and customize
-# cp terraform.tfvars.example terraform.tfvars
-
+    files['terraform.tfvars.example'] += `
+# AWS Configuration
 aws_region   = "us-east-1"
-project_name = "my-project"
-environment  = "dev"
 vpc_cidr     = "10.0.0.0/16"
 `;
+  }
+
+  // Add GCP-specific variables if GCP services are present
+  if (hasGcp) {
+    files['variables.tf'] += `
+# GCP Configuration
+variable "gcp_project_id" {
+  description = "GCP project ID"
+  type        = string
+}
+
+variable "gcp_region" {
+  description = "GCP region for resources"
+  type        = string
+  default     = "us-central1"
+}
+`;
+    files['terraform.tfvars.example'] += `
+# GCP Configuration
+gcp_project_id = "my-gcp-project"
+gcp_region     = "us-central1"
+`;
+  }
+
+  // Add Azure-specific variables if Azure services are present
+  if (hasAzure) {
+    files['variables.tf'] += `
+# Azure Configuration
+variable "azure_subscription_id" {
+  description = "Azure subscription ID"
+  type        = string
+}
+
+variable "azure_region" {
+  description = "Azure region for resources"
+  type        = string
+  default     = "eastus"
+}
+`;
+    files['terraform.tfvars.example'] += `
+# Azure Configuration
+azure_subscription_id = "your-subscription-id"
+azure_region          = "eastus"
+`;
+  }
 
   files['outputs.tf'] = `# Output values from your infrastructure
 `;
@@ -1173,7 +1633,7 @@ ${resources.map((r) => r.config).join('\n')}
   });
 
   // Generate README
-  files['README.md'] = generateReadme(nodes, _edges, needsVpc);
+  files['README.md'] = generateReadme(nodes, _edges, needsVpc, hasAws, hasGcp, hasAzure);
 
   // Create ZIP file
   const zip = new JSZip();
@@ -1191,7 +1651,17 @@ function generateVariablesForResource(resource: TerraformResource): string {
   if (!varMatches) return '';
 
   const uniqueVars = [...new Set(varMatches.map((v) => v.replace('var.', '')))];
-  const excludeVars = ['aws_region', 'project_name', 'environment', 'vpc_cidr'];
+  // Exclude base variables for all cloud providers
+  const excludeVars = [
+    'aws_region',
+    'project_name',
+    'environment',
+    'vpc_cidr',
+    'gcp_project_id',
+    'gcp_region',
+    'azure_subscription_id',
+    'azure_region',
+  ];
 
   return uniqueVars
     .filter((v) => !excludeVars.includes(v))
@@ -1210,7 +1680,17 @@ function generateTfvarsForResource(resource: TerraformResource): string {
   if (!varMatches) return '';
 
   const uniqueVars = [...new Set(varMatches.map((v) => v.replace('var.', '')))];
-  const excludeVars = ['aws_region', 'project_name', 'environment', 'vpc_cidr'];
+  // Exclude base variables for all cloud providers
+  const excludeVars = [
+    'aws_region',
+    'project_name',
+    'environment',
+    'vpc_cidr',
+    'gcp_project_id',
+    'gcp_region',
+    'azure_subscription_id',
+    'azure_region',
+  ];
 
   return uniqueVars
     .filter((v) => !excludeVars.includes(v))
@@ -1243,6 +1723,7 @@ function generateTfvarsForResource(resource: TerraformResource): string {
 function generateOutputsForResource(resource: TerraformResource): string {
   const outputs: string[] = [];
 
+  // AWS Outputs
   if (resource.type === 'aws_lambda_function') {
     outputs.push(`
 output "${resource.name}_arn" {
@@ -1293,35 +1774,147 @@ output "${resource.name}_endpoint" {
 }`);
   }
 
+  // GCP Outputs
+  if (resource.type === 'google_cloud_run_v2_service') {
+    outputs.push(`
+output "${resource.name}_url" {
+  description = "URL of Cloud Run service ${resource.name}"
+  value       = google_cloud_run_v2_service.${resource.name}.uri
+}`);
+  }
+
+  if (resource.type === 'google_pubsub_topic') {
+    outputs.push(`
+output "${resource.name}_id" {
+  description = "ID of Pub/Sub topic ${resource.name}"
+  value       = google_pubsub_topic.${resource.name}.id
+}
+
+output "${resource.name}_subscription_id" {
+  description = "ID of Pub/Sub subscription for ${resource.name}"
+  value       = google_pubsub_subscription.${resource.name}_subscription.id
+}`);
+  }
+
+  if (resource.type === 'google_storage_bucket') {
+    outputs.push(`
+output "${resource.name}_name" {
+  description = "Name of GCS bucket ${resource.name}"
+  value       = google_storage_bucket.${resource.name}.name
+}
+
+output "${resource.name}_url" {
+  description = "URL of GCS bucket ${resource.name}"
+  value       = google_storage_bucket.${resource.name}.url
+}`);
+  }
+
+  // Azure Outputs
+  if (resource.type === 'azurerm_linux_function_app') {
+    outputs.push(`
+output "${resource.name}_url" {
+  description = "URL of Azure Function App ${resource.name}"
+  value       = "https://\${azurerm_linux_function_app.${resource.name}.default_hostname}"
+}
+
+output "${resource.name}_id" {
+  description = "ID of Azure Function App ${resource.name}"
+  value       = azurerm_linux_function_app.${resource.name}.id
+}`);
+  }
+
+  if (resource.type === 'azurerm_container_app') {
+    outputs.push(`
+output "${resource.name}_url" {
+  description = "URL of Azure Container App ${resource.name}"
+  value       = "https://\${azurerm_container_app.${resource.name}.ingress[0].fqdn}"
+}
+
+output "${resource.name}_id" {
+  description = "ID of Azure Container App ${resource.name}"
+  value       = azurerm_container_app.${resource.name}.id
+}`);
+  }
+
   return outputs.join('\n');
 }
 
-function generateReadme(nodes: ServiceNode[], _edges: ServiceEdge[], needsVpc: boolean): string {
-  const awsServices = nodes.filter((n) => !saasServices.includes(n.data.service.id));
+function generateReadme(
+  nodes: ServiceNode[],
+  _edges: ServiceEdge[],
+  needsVpc: boolean,
+  hasAws: boolean,
+  hasGcp: boolean,
+  hasAzure: boolean
+): string {
+  // Categorize services by provider
+  const awsResources = nodes.filter(
+    (n) =>
+      !saasServices.includes(n.data.service.id) &&
+      (n.data.service.id.startsWith('aws-') ||
+        n.data.service.id === 'postgres-rds' ||
+        n.data.service.id === 'dynamodb' ||
+        n.data.service.id === 'redis-elasticache')
+  );
+  const gcpResources = nodes.filter(
+    (n) => !saasServices.includes(n.data.service.id) && n.data.service.id.startsWith('gcp-')
+  );
+  const azureResources = nodes.filter(
+    (n) => !saasServices.includes(n.data.service.id) && n.data.service.id.startsWith('azure-')
+  );
   const saasServicesList = nodes.filter((n) => saasServices.includes(n.data.service.id));
+  const totalTerraformResources = awsResources.length + gcpResources.length + azureResources.length;
+
+  // Build cloud providers string
+  const cloudProviders = [hasAws && 'AWS', hasGcp && 'GCP', hasAzure && 'Azure']
+    .filter(Boolean)
+    .join(', ');
 
   return `# Infrastructure as Code - Generated by ArchFlow
 
 **Generated on:** ${new Date().toLocaleString()}
+**Cloud Providers:** ${cloudProviders || 'None'}
 **Total Services:** ${nodes.length}
-**Terraform Resources:** ${awsServices.length}
+**Terraform Resources:** ${totalTerraformResources}
 **SaaS Services:** ${saasServicesList.length}
 
 ## Architecture Overview
 
-This Terraform configuration represents your architecture design from ArchFlow.
+This Terraform configuration represents your multi-cloud architecture design from ArchFlow.
 
-### AWS Resources (${awsServices.length})
-${awsServices.map((n) => `- **${n.data.service.name}** (${n.data.service.category})`).join('\n')}
-
-### Managed SaaS Services (${saasServicesList.length})
+${
+  awsResources.length > 0
+    ? `### AWS Resources (${awsResources.length})
+${awsResources.map((n) => `- **${n.data.service.name}** (${n.data.service.category})`).join('\n')}
+`
+    : ''
+}
+${
+  gcpResources.length > 0
+    ? `### GCP Resources (${gcpResources.length})
+${gcpResources.map((n) => `- **${n.data.service.name}** (${n.data.service.category})`).join('\n')}
+`
+    : ''
+}
+${
+  azureResources.length > 0
+    ? `### Azure Resources (${azureResources.length})
+${azureResources.map((n) => `- **${n.data.service.name}** (${n.data.service.category})`).join('\n')}
+`
+    : ''
+}
+${
+  saasServicesList.length > 0
+    ? `### Managed SaaS Services (${saasServicesList.length})
 ${saasServicesList
   .map(
     (n) =>
       `- **${n.data.service.name}** - Configure via [${n.data.service.provider}](${n.data.service.documentation || '#'})`
   )
   .join('\n')}
-
+`
+    : ''
+}
 ## Prerequisites
 
 1. **Terraform**: Install Terraform >= 1.0
@@ -1331,14 +1924,53 @@ ${saasServicesList
 
    # Or download from https://www.terraform.io/downloads
    \`\`\`
-
+${
+  hasAws
+    ? `
 2. **AWS CLI**: Configure AWS credentials
    \`\`\`bash
    aws configure
+   # Or set environment variables:
+   # export AWS_ACCESS_KEY_ID="your-access-key"
+   # export AWS_SECRET_ACCESS_KEY="your-secret-key"
    \`\`\`
+`
+    : ''
+}
+${
+  hasGcp
+    ? `
+${hasAws ? '3' : '2'}. **Google Cloud CLI**: Configure GCP credentials
+   \`\`\`bash
+   # Install gcloud CLI
+   # https://cloud.google.com/sdk/docs/install
 
-3. **AWS Account**: Ensure you have appropriate IAM permissions
+   # Authenticate
+   gcloud auth application-default login
 
+   # Set project
+   gcloud config set project YOUR_PROJECT_ID
+   \`\`\`
+`
+    : ''
+}
+${
+  hasAzure
+    ? `
+${hasAws && hasGcp ? '4' : hasAws || hasGcp ? '3' : '2'}. **Azure CLI**: Configure Azure credentials
+   \`\`\`bash
+   # Install Azure CLI
+   # https://docs.microsoft.com/cli/azure/install-azure-cli
+
+   # Authenticate
+   az login
+
+   # Set subscription
+   az account set --subscription YOUR_SUBSCRIPTION_ID
+   \`\`\`
+`
+    : ''
+}
 ## Setup Instructions
 
 ### Step 1: Customize Variables
@@ -1350,21 +1982,22 @@ ${saasServicesList
 
 2. Edit \`terraform.tfvars\` with your values:
    - Update \`project_name\` to your project name
-   - Change \`aws_region\` if needed
-   - Set all service-specific variables
-   - **IMPORTANT**: Replace all passwords with secure values
+${hasAws ? '   - Set `aws_region` for AWS resources\n' : ''}${hasGcp ? '   - Set `gcp_project_id` and `gcp_region` for GCP resources\n' : ''}${hasAzure ? '   - Set `azure_subscription_id` and `azure_region` for Azure resources\n' : ''}   - Set all service-specific variables
+   - **IMPORTANT**: Replace all passwords and secrets with secure values
 
 ### Step 2: Review Configuration
 
 1. Open \`main.tf\` and review all resources
 2. Adjust instance sizes, storage, and configurations as needed
-3. Review security group rules and IAM policies
+3. Review security settings (security groups, IAM policies, service accounts)
 
 ### Step 3: Initialize Terraform
 
 \`\`\`bash
 terraform init
 \`\`\`
+
+This will download the required providers: ${cloudProviders || 'none'}
 
 ### Step 4: Plan Deployment
 
@@ -1387,21 +2020,29 @@ Type \`yes\` when prompted to confirm.
 ### Security Considerations
 
 ${
-  awsServices.some((n) => n.data.service.id === 'postgres-rds')
-    ? `
-- **Database Passwords**: The RDS password is stored in \`terraform.tfvars\`. Consider using AWS Secrets Manager instead.
-- **Security Groups**: Review all security group rules and restrict access as needed.
+  awsResources.some((n) => n.data.service.id === 'postgres-rds')
+    ? `- **Database Passwords**: The RDS password is stored in \`terraform.tfvars\`. Consider using AWS Secrets Manager instead.
 `
     : ''
-}
-${
+}${
   needsVpc
     ? `- **VPC Configuration**: A VPC with public and private subnets is automatically created.
-- **NAT Gateways**: Two NAT gateways are created for high availability (additional cost).
+- **NAT Gateways**: Two NAT gateways are created for high availability (additional cost ~$65/month).
+`
+    : ''
+}${
+  hasGcp
+    ? `- **GCP Service Accounts**: Consider using dedicated service accounts with minimal permissions.
+- **Cloud Run Access**: By default, Cloud Run services are configured for public access. Modify IAM bindings for private services.
+`
+    : ''
+}${
+  hasAzure
+    ? `- **Azure Managed Identity**: Consider using managed identities instead of service principals where possible.
+- **Resource Groups**: Each Azure service creates its own resource group for isolation.
 `
     : ''
 }
-
 ### Cost Estimates
 
 Based on your architecture design:
@@ -1409,13 +2050,15 @@ ${nodes
   .filter((n) => n.data.service.costModel?.estimatedMonthlyCost)
   .map((n) => {
     const cost = n.data.service.costModel!.estimatedMonthlyCost!;
-    return `- **${n.data.service.name}**: $${cost.min}-${cost.max}/month`;
+    return `- **${n.data.service.name}** (${n.data.service.provider}): $${cost.min}-${cost.max}/month`;
   })
   .join('\n')}
 
 **Note**: Actual costs may vary based on usage, data transfer, and other factors.
 
-### Manual Configuration Required
+${
+  saasServicesList.length > 0
+    ? `### Manual Configuration Required
 
 The following services need manual setup via their dashboards:
 ${saasServicesList
@@ -1428,16 +2071,14 @@ ${saasServicesList
 - Update your application with API keys/credentials
 `
   )
-  .join('\n')}
+  .join('\n')}`
+    : ''
+}
 
 ## Outputs
 
 After applying, Terraform will output important values like:
-- Database endpoints
-- Load balancer DNS names
-- API Gateway URLs
-- S3 bucket names
-
+${hasAws ? '- AWS: Database endpoints, Load balancer DNS names, API Gateway URLs, S3 bucket names\n' : ''}${hasGcp ? '- GCP: Cloud Run service URLs, Pub/Sub topic IDs, GCS bucket names\n' : ''}${hasAzure ? '- Azure: Function App URLs, Container App URLs, Resource IDs\n' : ''}
 Access these with:
 \`\`\`bash
 terraform output
@@ -1450,7 +2091,7 @@ To destroy all resources:
 terraform destroy
 \`\`\`
 
-**WARNING**: This will delete all resources. Ensure you have backups if needed.
+**WARNING**: This will delete all resources across all cloud providers. Ensure you have backups if needed.
 
 ## Next Steps
 
@@ -1461,11 +2102,10 @@ terraform destroy
 5. ✅ Configure monitoring and alerting
 6. ✅ Implement backup and disaster recovery procedures
 
-## Support
+## Documentation
 
-- **Terraform Documentation**: https://www.terraform.io/docs
-- **AWS Documentation**: https://docs.aws.amazon.com
-- **ArchFlow**: https://markkatsdesign.github.io/archflow
+- **Terraform**: https://www.terraform.io/docs
+${hasAws ? '- **AWS**: https://docs.aws.amazon.com\n' : ''}${hasGcp ? '- **GCP**: https://cloud.google.com/docs\n' : ''}${hasAzure ? '- **Azure**: https://docs.microsoft.com/azure\n' : ''}- **ArchFlow**: https://markkatsdesign.github.io/archflow
 
 ---
 

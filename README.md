@@ -1,4 +1,4 @@
-# ArchFlow - Phase 10 Complete
+# ArchFlow - Phase 12 Complete
 
 Visual System Architecture Designer - A drag-and-drop webapp for designing, documenting, and sharing production-ready system architectures.
 
@@ -163,6 +163,7 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing, docu
 ### Phase 8: Infrastructure as Code (Terraform) ✅
 - ✅ **Terraform Code Generation** - Export architecture as Infrastructure as Code:
   - Generates complete Terraform configuration from visual design
+  - Multi-cloud support: AWS, GCP, and Azure (see Phase 12 for GCP/Azure details)
   - Multi-file structure (main.tf, variables.tf, outputs.tf, terraform.tfvars.example)
   - Comprehensive README with setup instructions and prerequisites
   - Downloads as convenient ZIP file for immediate use
@@ -282,6 +283,33 @@ Visual System Architecture Designer - A drag-and-drop webapp for designing, docu
   - Refined success, warning, and error states
   - Better contrast ratios for accessibility
 
+### Phase 12: Multi-Cloud Terraform Support ✅
+- ✅ **GCP Provider Support** - Full Terraform generation for Google Cloud Platform:
+  - Automatic GCP provider configuration when GCP services are present
+  - **Cloud Run**: Serverless container service with IAM configuration
+  - **Pub/Sub**: Topic and subscription with dead-letter queue support
+  - **Cloud Storage**: GCS buckets with versioning and lifecycle rules
+  - Vertex AI handled as managed SaaS (configured via console)
+- ✅ **Azure Provider Support** - Full Terraform generation for Microsoft Azure:
+  - Automatic Azure provider configuration when Azure services are present
+  - **Azure Functions**: Linux function app with consumption plan and App Insights
+  - **Azure Container Apps**: Container app with environment and Log Analytics
+  - Azure ML handled as managed SaaS (configured via portal)
+- ✅ **Multi-Cloud Detection** - Intelligent provider detection:
+  - Only includes providers that are actually used in the architecture
+  - Generates cloud-specific variables (project_id, subscription_id, regions)
+  - Separates resources by cloud provider in generated documentation
+- ✅ **Enhanced README Generation**:
+  - Cloud-specific prerequisites (gcloud CLI, Azure CLI)
+  - Provider-aware setup instructions
+  - Multi-cloud security considerations
+  - Cloud-specific output documentation
+- ✅ **Smart Variable Generation**:
+  - Cloud-specific base variables only added when needed
+  - GCP: `gcp_project_id`, `gcp_region`
+  - Azure: `azure_subscription_id`, `azure_region`
+  - Service-specific variables for all new resources
+
 ## Getting Started
 
 ### Use Online (Recommended)
@@ -354,7 +382,7 @@ npm run build
     - **Share Visually**: Export to PNG for presentations, Slack, or documentation
     - **Document**: Export to Markdown for GitHub READMEs or wikis
     - **Professional Reports**: Export to PDF for client deliverables
-    - **Deploy Infrastructure**: Export to Terraform for Infrastructure as Code deployment
+    - **Deploy Infrastructure**: Export to Terraform for multi-cloud IaC deployment (AWS, GCP, Azure)
 
 ## Architecture Templates
 
@@ -515,7 +543,6 @@ ArchFlow now includes comprehensive support for building AI-powered applications
 ## Next Steps (Future Phases)
 
 - Phase 11: Collaboration features (real-time editing, comments, version history)
-- Phase 12: Multi-cloud support (GCP and Azure Terraform generation)
 - Phase 13: Advanced diagramming (custom icons, annotations, multi-page layouts)
 
 ## Project Structure
