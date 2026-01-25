@@ -493,6 +493,25 @@ type HandleSide = "top" | "bottom" | "left" | "right";
 type HandleId = string;
 
 /**
+ * Parse a handle ID to extract side and index
+ * Supports both formats:
+ * - New format: "side-type-index" (e.g., "left-s-4", "top-t-0")
+ * - Legacy format: "side-index" (e.g., "left-4", "top-0")
+ */
+function parseHandleId(handleId: string): { side: string; index: number } {
+  const parts = handleId.split("-");
+  if (parts.length === 3) {
+    // New format: "side-type-index"
+    return { side: parts[0], index: parseInt(parts[2], 10) };
+  } else if (parts.length === 2) {
+    // Legacy format: "side-index"
+    return { side: parts[0], index: parseInt(parts[1], 10) };
+  }
+  // Fallback
+  return { side: "top", index: 0 };
+}
+
+/**
  * Get handle position on a node for a specific handle ID
  * Handles are distributed along each side
  * Handle ID format: "side-type-index" (e.g., "left-s-4" or "left-t-4")
@@ -1396,20 +1415,20 @@ function optimizeAutoEdges(
   // Initialize with all current assignments
   for (const edge of optimizedEdges) {
     if (edge.sourceHandle) {
-      const [side, indexStr] = edge.sourceHandle.split("-");
+      const { side, index } = parseHandleId(edge.sourceHandle);
       const key = `${edge.source}:${side}`;
       if (!finalUsedHandles.has(key)) {
         finalUsedHandles.set(key, new Set());
       }
-      finalUsedHandles.get(key)!.add(parseInt(indexStr, 10));
+      finalUsedHandles.get(key)!.add(index);
     }
     if (edge.targetHandle) {
-      const [side, indexStr] = edge.targetHandle.split("-");
+      const { side, index } = parseHandleId(edge.targetHandle);
       const key = `${edge.target}:${side}`;
       if (!finalUsedHandles.has(key)) {
         finalUsedHandles.set(key, new Set());
       }
-      finalUsedHandles.get(key)!.add(parseInt(indexStr, 10));
+      finalUsedHandles.get(key)!.add(index);
     }
   }
 
@@ -1420,9 +1439,8 @@ function optimizeAutoEdges(
     // Multiple edges using same handle on same node - reassign all but the first
     const colonIdx = key.lastIndexOf(":");
     const nodeId = key.substring(0, colonIdx);
-    const handleId = key.substring(colonIdx + 1);
-    const [side, currentIndexStr] = handleId.split("-");
-    const currentIndex = parseInt(currentIndexStr, 10);
+    const handleIdFromKey = key.substring(colonIdx + 1);
+    const { side, index: currentIndex } = parseHandleId(handleIdFromKey);
     const usedKey = `${nodeId}:${side}`;
 
     // Keep first edge as-is, reassign others
